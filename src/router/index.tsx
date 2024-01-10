@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Home, Login, Profile, Welcome } from '../pages';
+import { Home, Login, Profile, Register, Welcome } from '../pages';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, View, Text } from 'react-native';
 
@@ -49,6 +49,7 @@ const Router = () => {
         }}>
             <Stack.Screen name="Welcome" component={Welcome}/>
             <Stack.Screen name="Login" component={Login}/>
+            <Stack.Screen name="Register" component={Register}/>
             <Stack.Screen name="Tabs" component={Tabs}/>
         </Stack.Navigator>
     )

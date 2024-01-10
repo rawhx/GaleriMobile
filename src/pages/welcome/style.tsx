@@ -1,20 +1,23 @@
 import { StyleSheet } from "react-native";
-import { color } from "../../assets/colors";
+import { theme } from "../../assets/colors";
 
 const Style = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: color.default
+        backgroundColor: theme.colors.background
     },
     textJudul: {
         fontSize: 25,
         fontWeight: 'bold',
     },
     Image: {
-        width: 350,
-        height: 350,  
+        width: 340,
+        height: 340,  
     },
-    Button: {
+    welcome: {
+        fontWeight: 'bold',
+        elevation: 9,
+        shadowRadius: 15,
         width: 250,
     }
 })
