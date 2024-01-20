@@ -1,11 +1,6 @@
 import { StyleSheet } from "react-native";
-import { theme } from "../../assets/colors";
 
 const Style = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: theme.colors.background
-    },
     textJudul: {
         fontSize: 25,
         fontWeight: 'bold',
@@ -18,7 +13,7 @@ const Style = StyleSheet.create({
         fontWeight: 'bold',
         elevation: 9,
         shadowRadius: 15,
-        width: 250,
+        width: 'auto'
     }
 })
 

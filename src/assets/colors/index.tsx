@@ -1,14 +1,16 @@
-const color = {
+const palet = {
     default: '#eff3f7',
-    dark: '#0000',
+    dark: '#000000',
 }
 
-export const theme = {
-    colors: {
-        background: color.default,
-        success: color.default,
-        danger: color.default,
-        info: color.default,
-        white: '#ffffff'
-    },
+export const colors = {
+    background: palet.default,
+    success: palet.default,
+    danger: palet.dark,
+    info: palet.default,
+    white: '#ffffff',
+    header: '#00020F',
+    button: '#022A59',
+    iconNotActive: '#747474',
+    blue: '#4999EC'
 }

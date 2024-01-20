@@ -1,11 +1,14 @@
-import React from 'react'
-import { Text, View, Image, Button, Colors } from 'react-native-ui-lib'
+import React, { useContext } from 'react'
+import { Text, View, Image, Button, Colors, TouchableOpacity } from 'react-native-ui-lib'
 import Style from "./style";
-import { gambar } from '../../assets/images';
 import { useNavigation } from '@react-navigation/native';
 import { ButtonC, container } from '../../components';
+import { AuthContext } from '../../context/auth';
+import Icon from "react-native-vector-icons/FontAwesome6"
+import { assets } from '../../assets';
 
 const Welcome = () => {
+    const val = useContext(AuthContext)
     const navigation = useNavigation()
 
     const handleLoginPress = (screen) => {
@@ -14,45 +17,43 @@ const Welcome = () => {
 
     return (
         <View center style={container.default}>
-            <Text style={Style.textJudul}>Welcome To MyApp</Text>
-            <Text style={{textAlign:'center'}}>bla bla bla bla bla</Text>
-            <Image source={gambar} style={Style.Image}/>
-            <ButtonC 
-                marginV-10 
-                paddingV-10 
-                label="Login"
-                style={Style.welcome}
-                backgroundColor={Colors.blue30} 
-                onPress={() => handleLoginPress('Login')}
-            />
-            <ButtonC 
-                marginV-10 
-                paddingV-10 
-                label="Register"
-                style={Style.welcome}
-                backgroundColor={Colors.grey40}
-                onPress={() => handleLoginPress('Register')}
-            />
-            {/* <Button 
-                label={'Login'} 
-                size='medium' 
-                borderRadius={20} 
-                backgroundColor={Colors.blue30} 
-                marginV-10 
-                paddingV-10 
-                style={Style.welcome}  
-                onPress={() => handleLoginPress('Login')}
-            />
-            <Button 
-                label={'Register'} 
-                size='medium' 
-                borderRadius={20} 
-                backgroundColor={Colors.grey40} 
-                marginV-10 
-                paddingV-10 
-                style={Style.welcome} 
-                onPress={() => handleLoginPress('Register')}
-            /> */}
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Tabs')}
+                style={{
+                    position: 'absolute',
+                    left:21,
+                    top: 40,
+                }}
+            >
+                <Icon name="chevron-left" size={30} />
+            </TouchableOpacity>
+            <View>
+                <View center>
+                    <Image source={assets.images.pictsea} style={{
+                        width: 125, 
+                        resizeMode: 'contain',
+                    }}/>
+                </View>
+                {/* <Text style={Style.textJudul}>PICTSEA</Text> */}
+                <Text style={{textAlign:'center'}}>Temukan dan unduh ide ide menarik disini!</Text>
+                <Image source={assets.images.gambar} style={Style.Image}/>
+                <ButtonC 
+                    marginV-10 
+                    paddingV-10 
+                    label="Login"
+                    style={Style.welcome}
+                    backgroundColor={assets.colors.button} 
+                    onPress={() => handleLoginPress('Login')}
+                />
+                <ButtonC 
+                    marginV-10 
+                    paddingV-10 
+                    label="Register"
+                    style={Style.welcome}
+                    backgroundColor={Colors.grey40}
+                    onPress={() => handleLoginPress('Register')}
+                />
+            </View>
         </View>
     )
 }

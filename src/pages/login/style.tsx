@@ -1,11 +1,11 @@
 import { StyleSheet, Platform } from "react-native";
-import { theme } from "../../assets/colors";
+import { assets } from "../../assets";
 
 const style = StyleSheet.create({
     formGroup: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: theme.colors.white,
+        backgroundColor: assets.colors.white,
         borderRadius: 20,
         elevation: 9,
         paddingLeft: 20,

@@ -1,7 +1,7 @@
 import React from "react"
 import { StyleSheet, TextInput } from "react-native"
 import { View } from "react-native-ui-lib"
-import { theme } from "../../assets/colors"
+import { assets } from "../../assets"
 
 const Input = props => {
     return (
@@ -22,7 +22,7 @@ const Input = props => {
 const style = StyleSheet.create({
     input: {
         marginVertical: 10,
-        backgroundColor: theme.colors.white,
+        backgroundColor: assets.colors.white,
         fontSize: 15,
         height: 45,
         paddingHorizontal: 20,

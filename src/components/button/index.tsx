@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { theme } from "../../assets/colors";
 import { Button, View } from "react-native-ui-lib";
 
 const ButtonC = props => {

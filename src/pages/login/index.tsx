@@ -1,24 +1,36 @@
-import React, { useState } from "react"
-import { Button, Colors, Text, TextField, TouchableOpacity, View } from "react-native-ui-lib"
+import React, { useContext, useState } from "react"
+import { Checkbox, Colors, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import style from "./style"
-import { useNavigation } from "@react-navigation/native"
 import { ButtonC, Input, container } from "../../components"
-import Icon from "react-native-vector-icons/FontAwesome"
+import Icon from "react-native-vector-icons/FontAwesome6"
+import { AuthContext } from "../../context/auth"
+import { assets } from "../../assets"
 
-const Login = () => {
-    const navigation = useNavigation()
+const Login = ({navigation}) => {
+    const val = useContext(AuthContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     
     return (
         <View style={container.default}>
-            <View center marginT-150>
-                <Text text40>Welcome Back!</Text>
-                <Text text70>Sign to continue</Text>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Tabs')}
+                style={{
+                    position: 'absolute',
+                    left: 21,
+                    top: 40,
+                }}
+            >
+                <Icon name="chevron-left" size={30} />
+            </TouchableOpacity>
+            
+            <View center>
+                <Text text40 style={assets.fonts.default}>Selamat Datang!</Text>
+                <Text style={assets.fonts.default}>Masuk dengan akun anda terlebih dahulu.</Text>
             </View>
             <View margin-40 style={{justifyContent: 'center'}}>
                 <View marginV-10 style={style.formGroup}>
-                    <Icon name="envelope" color={Colors.grey30} />
+                    <Icon name="envelope" color={Colors.grey30} solid />
                     <Input
                         style={{marginLeft: 10, paddingRight: 30}}
                         placeholder={'Email'}
@@ -28,28 +40,33 @@ const Login = () => {
                     />
                 </View>
                 <View marginV-10 marginB-15 style={style.formGroup}>
-                    <Icon name="lock" color={Colors.grey30} size={15} />
+                    <Icon name="lock" color={Colors.grey30} />
                     <Input
                         style={{marginLeft: 10, paddingRight: 30}}
-                        placeholder={'Password'}
+                        placeholder={'Kata Sandi'}
                         value={password}
                         onChangeText={text => setPassword(text)}
                         type="password"
                     />
                 </View>
+                <Checkbox
+                    label='Ingatkan saya'
+                    containerStyle={{
+                    }}
+                />
                 {/* <TouchableOpacity right marginV-5>
                     <Text>Forgot Password?</Text>
                 </TouchableOpacity> */}
                 <ButtonC 
-                    label="Sign in"
-                    backgroundColor={Colors.blue30} 
+                    label="Masuk"
+                    backgroundColor={assets.colors.button} 
                 />
                 <View center marginT-20 style={{display: 'flex', flexDirection: 'row'}}>
-                    <Text>You need account ? </Text>
+                    <Text>Belum punya akun? </Text>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Register')}
                     >
-                        <Text style={{fontWeight: 'bold'}}>Sign up</Text>
+                        <Text style={{fontWeight: 'bold'}} color={assets.colors.blue} >Daftar</Text>
                     </TouchableOpacity>
                 </View>
             </View>

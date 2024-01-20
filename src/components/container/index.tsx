@@ -1,10 +1,15 @@
 import { StyleSheet } from "react-native";
-import { theme } from "../../assets/colors";
+import { assets } from "../../assets";
 
 const container = StyleSheet.create({
     default: {
         flex: 1,
-        backgroundColor: theme.colors.background
+        backgroundColor: assets.colors.background,
+        justifyContent: 'center'
+    },
+    defaultTab: {
+        flex: 1,
+        backgroundColor: assets.colors.white,
     }
 })
 
