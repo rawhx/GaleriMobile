@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useImperativeHandle, useState } from "react";
 import { Colors, View } from "react-native-ui-lib";
 import { Input } from "..";
 import { StyleSheet } from "react-native";
@@ -6,19 +6,16 @@ import Icon from "react-native-vector-icons/FontAwesome"
 import { assets } from "../../assets";
 
 const ButtonSearch = props => {
-    const [search, setSearch] = useState('')
-    
     return (
         <View marginV-10 style={props.styleView ? props.styleView : style.formGroup}>
             <Icon name="search" color={Colors.grey30} size={20} solid />
             <Input 
-                style={{marginLeft: 5, paddingRight: 30}}
+                style={[{marginLeft: 5, paddingRight: 30}, assets.fonts.input]}
                 placeholder="Mau cari apa?"
-                // value={search}
-                onChangeText={props.onChangeText ? props.onChangeText : text => setSearch(text)}
+                value={props.value}
+                onChangeText={props.onChangeText}
             />
         </View>
-
     )
 }
 

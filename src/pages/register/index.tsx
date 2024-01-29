@@ -23,6 +23,9 @@ const Register = ({navigation}) => {
         let url = `https://picsea-1-k3867505.deta.app/register?email=${email}&username=${username}&nama_lengkap=${nama_lengkap}&alamat=${alamat}&password=${password}&konfirmasi_password=${konfirmasi_password}`
         try {
             const response = await axios.post(url);
+            console.log('====================================');
+            console.log(response);
+            console.log('====================================');
             navigation.navigate('Login')
         } catch (error) {
             console.error(error.response.data);
@@ -40,17 +43,17 @@ const Register = ({navigation}) => {
                     top: 40,
                 }}
             >
-                <Icon name="chevron-left" size={30} />
+                <Icon name="arrow-left" size={30} color="black" />
             </TouchableOpacity>
             <View center marginT-50>
-                <Text text50>Daftar</Text>
-                <Text>Silahkan Buat Akun Anda disini!</Text>
+                <Text style={assets.fonts.judul}>Daftar</Text>
+                <Text style={assets.fonts.default}>Silahkan Buat Akun Anda disini!</Text>
             </View>
             <View margin-40>
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="user" color={Colors.grey30} solid />
                     <Input 
-                        style={{marginLeft: 10, paddingRight: 30}}
+                        style={[{marginLeft: 10, paddingRight: 30}, assets.fonts.input]}
                         placeholder="Username"
                         value={username}
                         onChangeText={text => setUsername(text)}
@@ -59,8 +62,8 @@ const Register = ({navigation}) => {
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="address-card" color={Colors.grey30} solid />
                     <Input 
-                        placeholder="Name"
-                        style={{marginLeft: 10, paddingRight: 30}}
+                        placeholder="Nama"
+                        style={[{marginLeft: 10, paddingRight: 30}, assets.fonts.input]}
                         value={nama_lengkap}
                         onChangeText={text => setName(text)}
                     />
@@ -68,7 +71,7 @@ const Register = ({navigation}) => {
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="envelope" color={Colors.grey30} solid />
                     <Input 
-                        style={{marginLeft: 10, paddingRight: 30}}
+                        style={[{marginLeft: 10, paddingRight: 30}, assets.fonts.input]}
                         placeholder="Email"
                         value={email}
                         onChangeText={text => setEmail(text)}
@@ -78,8 +81,8 @@ const Register = ({navigation}) => {
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="map-location-dot" color={Colors.grey30} />
                     <Input 
-                        style={{marginLeft: 10, paddingRight: 30}}
-                        placeholder="Address"
+                        style={[{marginLeft: 10, paddingRight: 30}, assets.fonts.input]}
+                        placeholder="Alamat"
                         value={alamat}
                         onChangeText={text => setAlamat(text)}
                     />
@@ -87,8 +90,8 @@ const Register = ({navigation}) => {
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="lock" color={Colors.grey30} />
                     <Input 
-                        style={{marginLeft: 10, paddingRight: 30}}
-                        placeholder="Password"
+                        style={[{marginLeft: 10, paddingRight: 30}, assets.fonts.input]}
+                        placeholder="Kata Sandi"
                         value={password}
                         onChangeText={text => setPassword(text)}
                         type="password"
@@ -97,8 +100,8 @@ const Register = ({navigation}) => {
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="lock" color={Colors.grey30} />
                     <Input 
-                        style={{marginLeft: 10, paddingRight: 30,}}
-                        placeholder="Confirm Password"
+                        style={[{marginLeft: 10, paddingRight: 30}, assets.fonts.input]}
+                        placeholder="Konfirmasi Kata Sandi"
                         value={konfirmasi_password}
                         onChangeText={text => setConfirmPassword(text)}
                         type="password"
@@ -114,11 +117,11 @@ const Register = ({navigation}) => {
                 </View>
 
                 <View center marginT-20 style={{display: 'flex', flexDirection: 'row'}}>
-                    <Text>Sudah punya akun? </Text>
+                    <Text style={{fontFamily: 'Poppins-Regular'}}>Sudah punya akun? </Text>
                     <TouchableOpacity
                     onPress={() => navigation.navigate('Login')}
                     >
-                        <Text style={{fontWeight: 'bold'}} color={assets.colors.blue}>Masuk</Text>
+                        <Text style={{fontWeight: 'bold', fontFamily: 'Poppins-Regular'}} color={assets.colors.blue}>Masuk</Text>
                     </TouchableOpacity>
                 </View>
             </View>

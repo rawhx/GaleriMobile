@@ -25,7 +25,7 @@ const Welcome = () => {
                     top: 40,
                 }}
             >
-                <Icon name="chevron-left" size={30} />
+                <Icon name="arrow-left" size={30} color="black" />
             </TouchableOpacity>
             <View>
                 <View center>
@@ -35,7 +35,7 @@ const Welcome = () => {
                     }}/>
                 </View>
                 {/* <Text style={Style.textJudul}>PICTSEA</Text> */}
-                <Text style={{textAlign:'center'}}>Temukan dan unduh ide ide menarik disini!</Text>
+                <Text style={{textAlign:'center', fontFamily: 'Poppins-Regular'}}>Temukan dan unduh ide ide menarik disini!</Text>
                 <Image source={assets.images.gambar} style={Style.Image}/>
                 <ButtonC 
                     marginV-10 

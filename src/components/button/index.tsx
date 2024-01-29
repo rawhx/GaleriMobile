@@ -6,7 +6,7 @@ const ButtonC = props => {
         <View>
             <Button 
                 label={props.label} 
-                labelStyle={style.label}
+                labelStyle={[style.label, props.labelStyle]}
                 size='medium' 
                 borderRadius={props.borderRadius ?? 20} 
                 backgroundColor={props.backgroundColor} 
@@ -21,7 +21,7 @@ const ButtonC = props => {
 
 const style = StyleSheet.create({
     label: {
-        fontWeight: 'bold'
+        fontFamily: 'Poppins-Bold',
     },
     default: {
         elevation: 9,

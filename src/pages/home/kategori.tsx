@@ -53,7 +53,7 @@ const Kategori = () => {
 
 const style = StyleSheet.create({
   text: {
-    fontWeight: 'bold', 
+    fontFamily: 'Poppins-Bold',
     fontSize:14
   },
   sectionKategori: {

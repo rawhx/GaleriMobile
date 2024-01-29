@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import Router from './router';
 import { AuthProvider } from './context/auth';
-import { Alert, BackHandler } from 'react-native';
+import { Alert, BackHandler, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import { Text, View } from 'react-native-ui-lib';
 
 const App = () => {
   const lastBackPressed = useRef(0);
@@ -36,7 +37,13 @@ const App = () => {
 
   return (
     // <AuthProvider>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+
       <Router />
+    </KeyboardAvoidingView>
     // </AuthProvider>
   )
 }

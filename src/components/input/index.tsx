@@ -7,12 +7,14 @@ const Input = props => {
     return (
         <View>
             <TextInput 
+                onFocus={()=>{}}
                 value={props.value}
                 keyboardType={props.keyboardType}
                 placeholder={props.placeholder}
                 onChangeText={props.onChangeText}
-                style={props.style ?? style.input}
-                placeholderTextColor={props.placeholderTextColor}
+                style={[props.style ?? style.input, {color: 'grey'}]}
+                placeholderTextColor={'grey'}
+                multiline={props.multiline? props.multiline : false}
                 secureTextEntry={(props.type == 'password' ? true : false)}
             />
         </View>
@@ -24,7 +26,7 @@ const style = StyleSheet.create({
         marginVertical: 10,
         backgroundColor: assets.colors.white,
         fontSize: 15,
-        height: 45,
+        height: 50,
         paddingHorizontal: 20,
         borderRadius: 20,
         elevation: 9,

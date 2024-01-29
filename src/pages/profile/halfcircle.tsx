@@ -1,42 +1,24 @@
 import React from "react"
-import { Dimensions, StyleSheet } from "react-native";
-import { Text, View } from "react-native-ui-lib";
-import { assets } from "../../assets";
-import HeaderProfile from "./header";
+import { ImageBackground, StyleSheet } from "react-native"
+import { Text, View } from "react-native-ui-lib"
+import { assets } from "../../assets"
 
-const window = Dimensions.get('window')
-
-const HalfCircle = () => {
-  return(
-    <View>
-      <View style={{backgroundColor: 'red', justifyContent: 'space-between', flexDirection: 'row'}}>
-        <Text text60>ab</Text>
-        <Text text60>b</Text>
-        <Text text60>c</Text>
-      </View>
-      <View style={styles.parent}>
-        <View style={styles.child}></View>
-      </View>
+const HalfCricle = (props) => {
+  return (
+    <View style={{}}>
+      <ImageBackground source={assets.images.halfCircle} style={style.kategoriImg}>
+        {props.view}
+      </ImageBackground>
     </View>
-  );
+  )
 }
 
-const styles = StyleSheet.create({
-  parent : {
-      height : '30%',
-      width : '100%',
-      transform : [ { scaleX : 2 } ],
-      borderBottomStartRadius : 500,
-      borderBottomEndRadius : 500,
-      overflow : 'hidden',
+const style = StyleSheet.create({
+  kategoriImg: {
+    width: '100%',
+    aspectRatio: 1,
+    transform: [{ translateY: -210 }],
   },
-  child : {
-      flex : 1,
-      transform : [ { scaleX : 0.5 } ],
-      backgroundColor : 'blue',
-      alignItems : 'center',
-      justifyContent : 'center'
-  }
 })
 
-export default HalfCircle
+export default HalfCricle
