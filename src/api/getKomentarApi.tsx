@@ -10,11 +10,11 @@ export const getKomentarApi = async (data) => {
     );
     
     const komentar = response.data.Data
-
     let hasil
     if (response.data.ErrMsg == 404) {
         hasil = {
             count: 0,
+            komentar: null
         }
     } else {
         const promisesUser = komentar.map(async (komentar) => {

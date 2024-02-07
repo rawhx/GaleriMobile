@@ -7,6 +7,7 @@ const Input = props => {
     return (
         <View>
             <TextInput 
+                onKeyPress={props.onKeyPress}
                 onFocus={()=>{}}
                 value={props.value}
                 keyboardType={props.keyboardType}
@@ -16,6 +17,7 @@ const Input = props => {
                 placeholderTextColor={'grey'}
                 multiline={props.multiline? props.multiline : false}
                 secureTextEntry={(props.type == 'password' ? true : false)}
+                editable={props.editable !== undefined ? props.editable : true}
             />
         </View>
     )

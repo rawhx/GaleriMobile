@@ -9,5 +9,10 @@ import { getKomentarApi } from "./getKomentarApi";
 import { countPostingan } from "./countPostingan";
 import { kategoriApi } from "./kategoriApi";
 import { addKomentar } from "./addKomentar";
+import { postLike } from "./postLike";
+import { addAlbum } from "./addAlbum";
+import { cariAlbum } from "./cariAlbum";
+import { getFotoProfile } from "./getFotoProfile";
+import { addFoto } from "./addFoto";
 
-export { addKomentar as postKomentar, kategoriApi, countPostingan, loginApi as LoginApi, logoutApi, getProfile, getImgAkun, getUserImg, getUserCari, getFollowCariApi, getKomentarApi }
+export { addFoto, getFotoProfile, cariAlbum, addAlbum, postLike, addKomentar as postKomentar, kategoriApi, countPostingan, loginApi as LoginApi, logoutApi, getProfile, getImgAkun, getUserImg, getUserCari, getFollowCariApi, getKomentarApi }

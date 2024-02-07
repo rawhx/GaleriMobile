@@ -28,7 +28,7 @@ const DataKomentar = (props) => {
             {profile()}
             <View paddingL-10 paddingR-40>
                 <Text style={[assets.fonts.bold, { fontSize: 15 }]}>{props.username}</Text>
-                <Text style={[assets.fonts.default, {textAlign: 'justify'}]}>{props.isikomentar}</Text>
+                <Text style={[assets.fonts.default, {textAlign: 'justify', color: 'black'}]}>{props.isikomentar}</Text>
             </View>
         </View>
     )

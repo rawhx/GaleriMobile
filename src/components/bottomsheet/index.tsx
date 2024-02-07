@@ -1,26 +1,29 @@
-import {Dimensions, StyleSheet, View} from 'react-native';
+import {Dimensions, KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
 import React, {
   forwardRef,
   useImperativeHandle,
   useCallback,
-  ReactNode,
+  useState,
+  useEffect,
 } from 'react';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   withTiming,
+  useAnimatedScrollHandler,
+  AnimatedScrollViewProps,
+  runOnJS,
 } from 'react-native-reanimated';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import BackDrop from './BackDrop';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
-type Props = {
+interface Props extends AnimatedScrollViewProps {
   snapTo: string;
-  children?: ReactNode;
   backgroundColor: string;
   backDropColor: string;
-};
+}
 
 export interface BottomSheetMethods {
   expand: () => void;
@@ -28,7 +31,7 @@ export interface BottomSheetMethods {
 }
 
 const BottomSheet = forwardRef<BottomSheetMethods, Props>(
-  ({snapTo, children, backgroundColor, backDropColor}: Props, ref) => {
+  ({snapTo, children, backgroundColor, backDropColor, ...rest}: Props, ref) => {
     const inset = useSafeAreaInsets();
     const {height} = Dimensions.get('screen');
     const percentage = parseFloat(snapTo.replace('%', '')) / 100;
@@ -36,6 +39,9 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
     const openHeight = height - height * percentage;
     const topAnimation = useSharedValue(closeHeight);
     const context = useSharedValue(0);
+    const scrollBegin = useSharedValue(0);
+    const scrollY = useSharedValue(0);
+    const [enableScroll, setEnableScroll] = useState(true);
 
     const expand = useCallback(() => {
       'worklet';
@@ -94,6 +100,56 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
         }
       });
 
+    const onScroll = useAnimatedScrollHandler({
+      onBeginDrag: event => {
+        scrollBegin.value = event.contentOffset.y;
+      },
+      onScroll: event => {
+        scrollY.value = event.contentOffset.y;
+      },
+    });
+
+    const panScroll = Gesture.Pan()
+      .onBegin(() => {
+        context.value = topAnimation.value;
+      })
+      .onUpdate(event => {
+        if (event.translationY < 0) {
+          topAnimation.value = withSpring(openHeight, {
+            damping: 100,
+            stiffness: 400,
+          });
+        } else if (event.translationY > 0 && scrollY.value === 0) {
+          runOnJS(setEnableScroll)(false);
+          topAnimation.value = withSpring(
+            Math.max(
+              context.value + event.translationY - scrollBegin.value,
+              openHeight,
+            ),
+            {
+              damping: 100,
+              stiffness: 400,
+            },
+          );
+        }
+      })
+      .onEnd(() => {
+        runOnJS(setEnableScroll)(true);
+        if (topAnimation.value > openHeight + 50) {
+          topAnimation.value = withSpring(closeHeight, {
+            damping: 100,
+            stiffness: 400,
+          });
+        } else {
+          topAnimation.value = withSpring(openHeight, {
+            damping: 100,
+            stiffness: 400,
+          });
+        }
+      });
+
+    const scrollViewGesture = Gesture.Native();
+
     return (
       <>
         <BackDrop
@@ -111,12 +167,28 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
               {
                 backgroundColor: backgroundColor,
                 paddingBottom: inset.bottom,
+                paddingHorizontal: 10
               },
             ]}>
             <View style={styles.lineContainer}>
               <View style={styles.line} />
             </View>
-            {children}
+            <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1, marginBottom: 20}}
+            >
+              <GestureDetector
+                gesture={Gesture.Simultaneous(scrollViewGesture, panScroll)}>
+                <Animated.ScrollView
+                  {...rest}
+                  scrollEnabled={enableScroll}
+                  bounces={false}
+                  scrollEventThrottle={16}
+                  onScroll={onScroll}>
+                  {children}
+                </Animated.ScrollView>
+              </GestureDetector>
+            </KeyboardAvoidingView>
           </Animated.View>
         </GestureDetector>
       </>

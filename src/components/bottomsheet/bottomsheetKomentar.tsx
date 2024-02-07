@@ -62,12 +62,9 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
       const getData = async () => {
         const komentar = await getKomentarApi({fotoId: fotoId, limit: 20})
         setKomentar(komentar)
-        console.log('====================================');
-        console.log(komentar);
-        console.log('====================================');
       }
       getData()
-    },[])
+    }, [fotoId])
 
     const expand = useCallback(() => {
       'worklet';
@@ -192,9 +189,6 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
 
     const ViewKomentar = () => {
       const komen = dataKomentar.komentar
-      console.log('====================================');
-      console.log(komen);
-      console.log('====================================');
       if (komen) {
         return (
             <View>
@@ -242,7 +236,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
             <Text style={[assets.fonts.bold, {textAlign: 'center', fontSize: 18}]}>{dataKomentar.count} Komentar</Text>
             <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1, paddingVertical: 20 }}
+            style={{ flex: 1, marginBottom: 10}}
             >
               <View paddingH-25>
                 <View style={assets.styleDefault.garis2} />
@@ -268,7 +262,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
               <View paddingH-25>
                 <View style={assets.styleDefault.garis2} />
               </View>
-              <View paddingH-20 marginB-20>
+              <View paddingH-20>
                 <InputKomentar 
                   value={addKomentar}
                   onChangeText={text => setAddKomentar(text)}

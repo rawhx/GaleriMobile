@@ -14,6 +14,7 @@ const ButtonSearch = props => {
                 placeholder="Mau cari apa?"
                 value={props.value}
                 onChangeText={props.onChangeText}
+                onKeyPress={props.onKeyPress}
             />
         </View>
     )

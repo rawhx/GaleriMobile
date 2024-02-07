@@ -8,7 +8,7 @@ const ImageBg = (props) => {
     Image.getSize(`data:image/png;base64,${props.foto}`, (width, height) => setRatio(width / height))
 
     return (
-        <ImageBackground source={{uri: `data:image/png;base64,${props.foto}`}}
+        <ImageBackground source={{uri: `data:image/*;base64,${props.foto}`}}
             style={{ 
                 borderRadius: 10, 
                 width: '100%', 
@@ -16,7 +16,7 @@ const ImageBg = (props) => {
             }}
         >
             <View>
-                {props.View}
+                {props.children}
             </View>
         </ImageBackground>
     )

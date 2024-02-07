@@ -8,7 +8,7 @@ export const Font = StyleSheet.create({
     input: {
         fontSize: 12,
         fontFamily: 'Poppins-Medium',
-        width: 200,
+        width: 250,
     },
     judul: {
         fontFamily: 'Poppins-Bold',
@@ -16,6 +16,7 @@ export const Font = StyleSheet.create({
     },
     bold: {
         fontFamily: 'Poppins-Bold',
-        fontSize: 13
+        fontSize: 13,
+        color: 'black'
     }
 })  

@@ -12,24 +12,32 @@ import { getProfile } from '../api/api';
 import { BelumLogin } from '../components';
 import AddFoto from '../pages/addfoto';
 import Test from '../pages/test';
+import ProfileLain from '../pages/userLain';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DetailAlbum from '../pages/detailalbum';
+import DetailPencarianProfile from '../pages/detailpencarianprofile';
+import EditProfile from '../pages/editprofile';
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
 const Tabs = () => {
     const [getDataDetail, setGetDataDetail] = useState({})
-
-    const getDetailRoute = async () => {
-        const user = await getProfile()
-        if (user) {
-            setGetDataDetail({
-                profile: user.FotoProfil,
-                username: user.Username
-            })
-        }
-    } 
-
+    const [jwt, setjwt] = useState()
+    
     useEffect(() => {
+        const getDetailRoute = async () => {
+            const datajwt = await AsyncStorage.getItem('cache')
+            setjwt(datajwt)
+            const user = await getProfile()
+            if (user) {
+                setGetDataDetail({
+                    profile: user.FotoProfil,
+                    username: user.Username,
+                })
+            }
+        } 
+        
         getDetailRoute();
     }, []);
 
@@ -40,7 +48,9 @@ const Tabs = () => {
     const ProfileUser = props => {
         if (getDataDetail.profile === ' ' || !getDataDetail.profile) {
             return (
-                <Icon color={props.color} name="circle-user" size={20} solid />
+                <>
+                    <Icon color={props.color} name="circle-user" size={20} solid />
+                </>
             )
         }  else {
             return (
@@ -64,7 +74,7 @@ const Tabs = () => {
             headerShown: false,
             tabBarStyle: style.tabBar,
         }}>
-            <Tab.Screen name="Home" component={Home} 
+            <Tab.Screen name="Home" component={TabsHome} 
             options={{
                 tabBarLabelStyle: {
                     display: 'none'
@@ -77,11 +87,11 @@ const Tabs = () => {
             }}
             listeners={({ navigation }) => ({
                 tabPress: (event) => {
-                  event.preventDefault()
-                  resetScreen(navigation, 'Home');
+                    event.preventDefault()
+                    resetScreen(navigation, 'Home');
                 },
             })} />
-            <Tab.Screen name="search" component={Search} 
+            <Tab.Screen name="search" component={TabsSearch} 
             options={{
                 tabBarLabelStyle: {
                     display: 'none'
@@ -98,41 +108,139 @@ const Tabs = () => {
                   resetScreen(navigation, 'search');
                 },
             })}/>
-            <Tab.Screen name="Add" component={getDataDetail.username ? AddFoto : BelumLogin} 
-            options={{
-                tabBarLabelStyle: {
-                    display: 'none'
-                },
-                tabBarIcon: ({focused}) => (
-                    <View style={focused ? style.icon : {}}>
-                        <Icon color={focused ? 'white' : 'grey'} name="square-plus" size={20} solid />
-                    </View>
-                )
-            }}
-            listeners={({ navigation }) => ({
-                tabPress: (event) => {
-                  event.preventDefault()
-                  resetScreen(navigation, 'Add');
-                },
-            })}/>
-            <Tab.Screen name="Profile" component={getDataDetail.username ? Profile : BelumLogin} 
-            options={{
-                tabBarLabelStyle: {
-                    display: 'none'
-                },
-                tabBarIcon: ({focused}) => (
-                    <View style={focused ? style.icon : {}}>
-                        <ProfileUser color={focused ? 'white' : 'grey'}/>
-                    </View>
-                )
-            }}
-            listeners={({ navigation }) => ({
-                tabPress: (event) => {
-                  event.preventDefault()
-                  resetScreen(navigation, 'Profile');
-                },
-            })}/>
+            {jwt ? (
+                <>
+                    <Tab.Screen name="Add" component={AddFoto} 
+                    options={{
+                        tabBarLabelStyle: {
+                            display: 'none'
+                        },
+                        tabBarIcon: ({focused}) => (
+                            <View style={focused ? style.icon : {}}>
+                                <Icon color={focused ? 'white' : 'grey'} name="square-plus" size={20} solid />
+                            </View>
+                        )
+                    }}
+                    listeners={({ navigation }) => ({
+                        tabPress: (event) => {
+                            event.preventDefault()
+                            resetScreen(navigation, 'Add');
+                        },
+                    })}/>
+                    <Tab.Screen name="Profile" component={TabsProfile} 
+                        options={{
+                            tabBarLabelStyle: {
+                                display: 'none'
+                            },
+                            tabBarIcon: ({focused}) => (
+                                <View style={focused ? style.icon : {}}>
+                                    <ProfileUser color={focused ? 'white' : 'grey'}/>
+                                </View>
+                            )
+                        }}
+                        listeners={({ navigation }) => ({
+                            tabPress: (event) => {
+                            event.preventDefault()
+                            resetScreen(navigation, 'Profile');
+                            },
+                    })}/>
+                </>
+            ) : (
+                <>
+                    <Tab.Screen name="Add" component={BelumLogin} 
+                    options={{
+                        tabBarLabelStyle: {
+                            display: 'none'
+                        },
+                        tabBarIcon: ({focused}) => (
+                            <View style={focused ? style.icon : {}}>
+                                <Icon color={focused ? 'white' : 'grey'} name="square-plus" size={20} solid />
+                            </View>
+                        )
+                    }}
+                    listeners={({ navigation }) => ({
+                        tabPress: (event) => {
+                            event.preventDefault()
+                            resetScreen(navigation, 'Add');
+                        },
+                    })}/>
+                    <Tab.Screen name="Profile" component={BelumLogin} 
+                        options={{
+                            tabBarLabelStyle: {
+                                display: 'none'
+                            },
+                            tabBarIcon: ({focused}) => (
+                                <View style={focused ? style.icon : {}}>
+                                    <ProfileUser color={focused ? 'white' : 'grey'}/>
+                                </View>
+                            )
+                        }}
+                        listeners={({ navigation }) => ({
+                            tabPress: (event) => {
+                            event.preventDefault()
+                            resetScreen(navigation, 'Profile');
+                            },
+                    })}/>
+                </>
+            )}
         </Tab.Navigator>
+    )
+}
+
+const TabsSearch = () => {
+    return (
+        <Stack.Navigator 
+        initialRouteName='TabSearch'
+        screenOptions={{
+            headerShown: false
+        }}>
+            <Stack.Screen name="TabSearch" component={Search}/>
+            <Stack.Screen name="TabSearchProfileLain" component={ProfileLain}/>
+            <Stack.Screen name="TabSearchDetailFoto" component={DetailPencarian}/>
+        </Stack.Navigator>
+    )
+}
+
+const TabsHome = () => {
+    return (
+        <Stack.Navigator 
+        screenOptions={{
+            headerShown: false
+        }}>
+            <Stack.Screen name="TabDefault" component={Home}/>
+            <Stack.Screen name="ProfileLain" component={ProfileLain}/>
+            <Stack.Screen name="DetailFoto" component={DetailPencarian}/>
+        </Stack.Navigator>
+    )
+}
+
+const TabsProfile = () => {
+    const [getDataDetail, setGetDataDetail] = useState({})
+    
+    useEffect(() => {
+        const getDetailRoute = async () => {
+            const user = await getProfile()
+            if (user) {
+                setGetDataDetail({
+                    profile: user.FotoProfil,
+                    username: user.Username
+                })
+            }
+        } 
+        getDetailRoute();
+    }, []);
+
+    return (
+        <Stack.Navigator 
+        screenOptions={{
+            headerShown: false
+        }}>
+            
+            <Stack.Screen name="TabProfile" component={Profile}/>
+            {/* <Stack.Screen name="TabProfile" component={jwt ? Profile : BelumLogin}/> */}
+            <Stack.Screen name="TabProfileLain" component={ProfileLain}/>
+            <Stack.Screen name="TabDetailFotoProfile" component={DetailPencarianProfile}/>
+        </Stack.Navigator>
     )
 }
 
@@ -144,18 +252,20 @@ const Router = () => {
                 barStyle={"dark-content"}
             />
             <Stack.Navigator 
-            initialRouteName='SplashScreen'
+            // initialRouteName='SplashScreen'
             screenOptions={{
                 headerShown: false
             }}>
                 {/* <Stack.Screen name="SplashScreen" component={Test}/> */}
+                {/* <Stack.Screen name="SplashScreen" component={ProfileLain}/> */}
                 <Stack.Screen name="SplashScreen" component={SplashScreen}/>
                 <Stack.Screen name="Welcome" component={Welcome}/>
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="Register" component={Register}/>
                 
                 <Stack.Screen name="Tabs" component={Tabs}/>
-                <Stack.Screen name="DetailFoto" component={DetailPencarian}/>
+                <Stack.Screen name="DetailAlbum" component={DetailAlbum}/>
+                <Stack.Screen name="EditProfile" component={EditProfile}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
