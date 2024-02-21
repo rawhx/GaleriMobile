@@ -14,6 +14,7 @@ const SplashScreen = ({navigation}) => {
 
     const HandleItem = async () => {
         const dataToken = await AsyncStorage.getItem('cache')
+        // await AsyncStorage.removeItem('cache')
         console.log('====================================');
         console.log(dataToken);
         console.log('====================================');

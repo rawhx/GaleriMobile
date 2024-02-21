@@ -1,17 +1,66 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, TextInput } from "react-native";
 import { Text, TouchableOpacity, View } from "react-native-ui-lib";
-import { ButtonC, container } from "../../components";
+import { ButtonC, Pin, container } from "../../components";
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { assets } from "../../assets";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const DetailAlbum = ({route, navigation}) => {
+    console.log('album id', route.params.dataAlbum.id);
+    
+    const [data, setData] = useState([]);
+    const [formData, setFormData] = useState({});
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
     const pressHandler = useCallback(() => {
            bottomSheetRef.current?.expand();
     }, [])
+    var tanggalParsed = new Date(route.params.dataAlbum.TanggalDibuat);
+    var tanggalUbahFormat = ("0" + tanggalParsed.getDate()).slice(-2) + "/" + ("0" + (tanggalParsed.getMonth() + 1)).slice(-2) + "/" + tanggalParsed.getFullYear();
+    
+    const fetchData = async () => {
+        const jwtToken = await AsyncStorage.getItem('cache')
+        let url = `https://picsea-1-k3867505.deta.app/foto-cari/profil?page=1&limit=20&album_id=${route.params.dataAlbum.id}`
+        const response = await axios.get(url, {
+            headers: { Authorization: `Bearer ${jwtToken}` }
+        });
+
+        setData(response.data.Data);
+    };
+
+    useEffect(() => {
+        setFormData({
+            id: route.params.dataAlbum.id,
+            nama_album: route.params.dataAlbum.NamaAlbum,
+            deskripsi_album: route.params.dataAlbum.Deskripsi
+        })
+        fetchData()
+    }, [route.params.dataAlbum.id]);
+
+    const Grid = () => {    
+        return (
+            <View style={{flexDirection: 'row'}} marginT-10>
+                <View style={{flex: 1}}>
+                {
+                    data.filter((item, index) => index % 2 == 0).map((item) => (
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
+                        ))
+                    }
+                </View>
+                <View style={{flex: 1}}>
+                {
+                    data.filter((item, index) => index % 2 == 1).map((item) => (
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
+                    ))
+                }
+                </View>
+            </View>
+        )
+    }
+
     return (
         <GestureHandlerRootView style={{flex: 1}}>
             <ScrollView style={container.defaultTab}>
@@ -37,12 +86,13 @@ const DetailAlbum = ({route, navigation}) => {
                         <View>
                             <Text style={[assets.fonts.bold, {fontSize: 17, textAlign: 'center'}]}>{route.params.dataAlbum.NamaAlbum}</Text>
                             <Text style={[assets.fonts.default, {textAlign: 'justify', fontSize: 11, paddingHorizontal: 20}]}>{route.params.dataAlbum.Deskripsi}</Text>
-                            <Text style={[assets.fonts.default, {fontSize: 11, textAlign: 'right', marginRight: 20}]}>17/11/2022</Text>
+                            <Text style={[assets.fonts.default, {fontSize: 11, textAlign: 'right', marginRight: 20}]}>{tanggalUbahFormat}</Text>
                         </View>
                     </View>
                 </View>
                 <View marginH-20 marginV-10>
-                    <Text style={[{fontFamily: 'Poppins-SemiBold', fontSize: 12}]}>74 Foto</Text>
+                    <Text style={[{fontFamily: 'Poppins-SemiBold', fontSize: 12}]}>{route.params.dataAlbum.Jumlah} Foto</Text>
+                    {Grid()}
                 </View>
             </ScrollView>
 
@@ -62,9 +112,9 @@ const DetailAlbum = ({route, navigation}) => {
                             <View paddingV-5 style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <Icon color={'grey'} name="circle-plus" size={20} solid/>
                                 <TextInput
-                                    // value={formData.nama_album}
+                                    value={formData.nama_album}
                                     placeholder="Tambahkan judul seperti, “Hewan Bagusku”"
-                                    // onChangeText={txt => handleInputChange('nama_album', txt)}
+                                    onChangeText={txt => handleInputChange('nama_album', txt)}
                                     placeholderTextColor={'grey'}
                                     multiline={false} 
                                     numberOfLines={2}
@@ -78,9 +128,9 @@ const DetailAlbum = ({route, navigation}) => {
                                 <Icon color={'grey'} name="circle-plus" size={20} solid/>
                                 <TextInput
                                     numberOfLines={3}
-                                    // value={formData.deskripsi_album}
+                                    value={formData.deskripsi_album}
                                     placeholder="Tambahkan deskripsi seperti, “Gambar foto makanan ini cocok untuk tugasku”"
-                                    // onChangeText={txt => handleInputChange('deskripsi_album', txt)}
+                                    onChangeText={txt => handleInputChange('deskripsi_album', txt)}
                                     placeholderTextColor={'grey'}
                                     multiline={true} 
                                     style={[{ flex: 1, width: '100%', color: 'black', marginLeft: 10}, assets.fonts.input]}

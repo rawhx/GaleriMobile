@@ -1,7 +1,18 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, View } from "react-native-ui-lib";
 
 const ButtonC = props => {
+    const [Token, setToken] = useState()
+    useEffect(()=>{
+        token()
+    })
+
+    const token = async () => {
+        const jwtToken = await AsyncStorage.getItem('cache')
+        setToken(jwtToken)
+    }
     return (
         <View>
             <Button 
@@ -13,7 +24,7 @@ const ButtonC = props => {
                 marginV-10 
                 paddingV-10 
                 style={props.style ?? style.default} 
-                onPress={props.onPress}
+                onPress={Token? props.onPress : props.blokir ? props.onPress :  null}
             />
         </View>
     )

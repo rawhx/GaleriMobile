@@ -284,6 +284,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    zIndex: 100,
+    bottom: 0
   },
   lineContainer: {
     marginVertical: 10,

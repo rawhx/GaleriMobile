@@ -6,6 +6,7 @@ import { assets } from '../../assets'
 import { Text, TouchableOpacity, View } from 'react-native-ui-lib'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = ({route, navigation}) => {
     const [loading, setLoading] = useState(false)
@@ -19,6 +20,7 @@ const Home = ({route, navigation}) => {
         const response = await axios.get(url, {
             headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
         });
+
         setData(response.data.Data);
     };
 
@@ -40,14 +42,14 @@ const Home = ({route, navigation}) => {
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 0).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
                         ))
                     }
                 </View>
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 1).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
                     ))
                 }
                 </View>
@@ -56,7 +58,7 @@ const Home = ({route, navigation}) => {
     }
 
     return (
-        <View style={container.defaultTab}>
+        <SafeAreaView style={container.defaultTab}>
             <ScrollView showsVerticalScrollIndicator={false} 
                 refreshControl={
                     <RefreshControl refreshing={loading} onRefresh={Refresh} />
@@ -66,6 +68,9 @@ const Home = ({route, navigation}) => {
                 <View marginH-20>
                     <TouchableOpacity>
                         <ButtonSearch 
+                        onChangeText={(txt)=>{
+                            // navigation.navigate('TabSearch', {search: {label: txt}, focus: true})
+                        }}
                         styleView={style.view} />
                     </TouchableOpacity>
                     <ScrollView>
@@ -78,7 +83,7 @@ const Home = ({route, navigation}) => {
                     { Grid() }
                 </View>
             </ScrollView>
-        </View>
+        </SafeAreaView>
     )
 }
 

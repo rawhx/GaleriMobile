@@ -38,6 +38,7 @@ const Welcome = () => {
                 <Text style={{textAlign:'center', fontFamily: 'Poppins-Regular'}}>Temukan dan unduh ide ide menarik disini!</Text>
                 <Image source={assets.images.gambar} style={Style.Image}/>
                 <ButtonC 
+                    blokir={true}
                     marginV-10 
                     paddingV-10 
                     label="Login"
@@ -46,6 +47,7 @@ const Welcome = () => {
                     onPress={() => handleLoginPress('Login')}
                 />
                 <ButtonC 
+                    blokir={true}
                     marginV-10 
                     paddingV-10 
                     label="Register"

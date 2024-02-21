@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Colors, Text, TouchableOpacity, View } from "react-native-ui-lib";
-import { ButtonC, Input, container } from "../../components";
+import { ButtonC, Input, ModalC, container } from "../../components";
 import style from "./style";
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { assets } from "../../assets";
@@ -14,22 +14,40 @@ const Register = ({navigation}) => {
     const [alamat, setAlamat] = useState('')
     const [password, setPassword] = useState('')
     const [konfirmasi_password, setConfirmPassword] = useState('')
+    const [modal, setModal] = useState(false)
+    const [errormsg, setErrorMsg] = useState('')
 
     const submitForm = async () => {
         if (password != konfirmasi_password) {
-            return Alert.alert('', 'Kata sandi tidak sama')
+            setModal(true)
+            setErrorMsg('Kata sandi tidak sama')
+            return 
         }
         
         let url = `https://picsea-1-k3867505.deta.app/register?email=${email}&username=${username}&nama_lengkap=${nama_lengkap}&alamat=${alamat}&password=${password}&konfirmasi_password=${konfirmasi_password}`
-        try {
-            const response = await axios.post(url);
-            console.log('====================================');
-            console.log(response);
-            console.log('====================================');
-            navigation.navigate('Login')
-        } catch (error) {
-            console.error(error.response.data);
-        }
+        
+        const response = await axios.post(url).then((res)=>{
+            if (res.data.IsError) {
+                setModal(true)
+                setErrorMsg(res.data.ErrMsg)
+                return 
+            } else if (!res.data.IsError && res.data.IsError !== undefined){
+                navigation.navigate('Login', {verifikasi: true, msg: res.data.Output})
+                setEmail('')
+                setAlamat('')
+                setPassword('')
+                setConfirmPassword('')
+                setName('')
+                setUsername('')
+                console.log(res.data.IsError);
+                return
+            } else {
+                setModal(true)
+                setErrorMsg(res.data)
+                return
+            }
+            
+        })
 
     }
 
@@ -110,6 +128,7 @@ const Register = ({navigation}) => {
                 
                 <View marginT-5>
                     <ButtonC 
+                        blokir={true}
                         label="Daftar"
                         backgroundColor={assets.colors.button} 
                         onPress={() => submitForm()}
@@ -121,10 +140,30 @@ const Register = ({navigation}) => {
                     <TouchableOpacity
                     onPress={() => navigation.navigate('Login')}
                     >
-                        <Text style={{fontWeight: 'bold', fontFamily: 'Poppins-Regular'}} color={assets.colors.blue}>Masuk</Text>
+                        <Text style={{fontFamily: 'Poppins-SemiBold'}} color={assets.colors.blue}>Masuk</Text>
                     </TouchableOpacity>
                 </View>
             </View>
+
+            <ModalC
+                visible={modal}
+                setModal={setModal}
+            >
+                <View style={{
+                    backgroundColor: '#C51313',
+                    borderRadius: 100,
+                    padding: 10,
+                    width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                    height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 20
+                }}>
+                    <Icon name="xmark" size={25} color="white" solid />
+                </View>
+                <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal masuk ke aplikasi!</Text>
+                <Text style={[{fontSize: 12, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{errormsg}</Text>
+            </ModalC>
         </View>
     )
 }

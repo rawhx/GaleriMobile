@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, Button, ImageBackground, TextInput, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native'
-import { BelumLogin, ButtonC, container } from '../../components'
+import { BelumLogin, ButtonC, Input, ModalC, container, formatCurrency } from '../../components'
 import HalfCircle from './halfcircle'
 import HeaderProfile from './header'
 import Icon from "react-native-vector-icons/FontAwesome6"
@@ -11,12 +11,14 @@ import MyFoto from './myFoto'
 import BottomSheet, { BottomSheetMethods } from '../../components/bottomsheet'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { addAlbum, cariAlbum, countPostingan, getFotoProfile, getProfile, logoutApi } from '../../api/api'
+import { addAlbum, cariAlbum, countPostingan, getFotoProfile, getProfile, logoutApi, updateProfile } from '../../api/api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import FotoMember from './fotoMeber'
 import Album from './album'
+import EditProfile from '../editprofile'
 
-const Profile = ({navigation}) => {
+const Profile = ({route, navigation}) => {
+    const [penarikan, setTipePenarikan] = useState('')
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
     const [dataProfile, setDataProfile] = useState()
@@ -24,11 +26,21 @@ const Profile = ({navigation}) => {
     const [gambarGratis, setGambarGratis] = useState()
     const [gambarMember, setGambarMember] = useState()
     const [active, setActive] = useState('foto')
-    const [username, setUsername] = useState('')
-    const [name, setName] = useState('')
+    const [username, setUsername] = useState('username')
+    const [name, setName] = useState('name')
     const [fotoProfile, setProfile] = useState(' ')
-    const [count, setCount] = useState({})
+    const [hargaMember, setHargaMember] = useState(0)
+    const [count, setCount] = useState({
+        postingan: 0,
+        pengikut: 0,
+        member: 0,
+    })
     const [formData, setFormData] = useState({})
+    const [modal, setModal] = useState(false)
+    const [modalnotif, setModalNotif] = useState(false)
+    const [pesan, setPesan] = useState('')
+    const [pendapatan, setPendapatan] = useState(0)
+    const [modalHarga, setModalHarga] = useState(false)
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
     const bottomSheetRefAlbum = useRef<BottomSheetMethods>(null)
     const pressHandler = useCallback(() => {
@@ -43,26 +55,28 @@ const Profile = ({navigation}) => {
     };
     
     const fetchData = async () => {
-        const dataAlbum = await cariAlbum({select: false})
+        const profile = await getProfile()
+        console.log(profile.id);
+        setHargaMember(parseFloat(profile.HargaMember))
+        setDataProfile(profile)
+        setUsername(profile.Username)
+        setName(profile.NamaLengkap)
+        setPendapatan(profile.Pendapatan)
+        if (profile.FotoProfil) {
+            setProfile(profile.FotoProfil)
+        }
+        setCount({
+            postingan: profile.jmlhFoto,
+            pengikut: profile.jmlhFollowers,
+            member: profile.jmlhMembership
+        })
         const datagambarGratis = await getFotoProfile()
+        const dataAlbum = await cariAlbum({select: false})
         const datagambarMember = await getFotoProfile(true)
         setAlbum(dataAlbum)
         setGambarGratis(datagambarGratis)
         setGambarMember(datagambarMember)
-        const profile = await getProfile();
-        setDataProfile(profile)
         // if (profile) {
-            setUsername(profile.Username)
-            setName(profile.NamaLengkap)
-            if (profile.FotoProfil) {
-                setProfile(profile.FotoProfil)
-            }
-            const count = await countPostingan()
-            setCount({
-                postingan: count.countPostingan,
-                pengikut: count.countFollowers,
-                member: count.countMember,
-            })
         // }
         setVisible(false)
     };
@@ -70,7 +84,7 @@ const Profile = ({navigation}) => {
     useEffect(() => {
         setVisible(true)
         fetchData();
-    }, []);
+    }, [route.params?.id]);
 
     const Refresh = async () => {
         await fetchData()
@@ -80,7 +94,7 @@ const Profile = ({navigation}) => {
     const Profile = () => {
         if (fotoProfile === ' ') {
             return (
-                <View>
+                <View marginT-15>
                     <Icon color={'grey'} name="circle-user" size={100} solid />
                 </View>
             )
@@ -216,7 +230,7 @@ const Profile = ({navigation}) => {
 
             <BottomSheet
                 ref={bottomSheetRef}
-                snapTo={'52%'}
+                snapTo={'60%'}
                 backgroundColor={'white'}
                 backDropColor={'black'}
             >
@@ -229,11 +243,24 @@ const Profile = ({navigation}) => {
                     onPress={()=>navigation.navigate('EditProfile', {data: dataProfile})}>
                         <Text color='black' style={[assets.fonts.default, {fontSize: 15, marginVertical: 13}]}>Edit Profile</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={()=>{
+                            setModal(true)
+                            bottomSheetRef.current?.close()
+                        }}
+                    >
                         <Text color='black' style={[assets.fonts.default, {fontSize: 15, marginVertical: 13}]}>Saldo</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={()=>{
+                            setModalHarga(true)
+                            bottomSheetRef.current?.close()
+                        }}
+                    >
                         <Text color='black' style={[assets.fonts.default, {fontSize: 15, marginVertical: 13}]}>Atur Harga</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Text color='black' style={[assets.fonts.default, {fontSize: 15, marginVertical: 13}]}>Riwayat Transaksi</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={()=>logoutApi(navigation)}
@@ -291,12 +318,195 @@ const Profile = ({navigation}) => {
                             style={{elevation: 0}}
                             onPress={async ()=>{
                                 await addAlbum(formData)
+                                bottomSheetRefAlbum.current?.close();
                                 setFormData({})
                             }}
                         />
                     </View>
                 </View>
             </BottomSheet>
+
+            <ModalC
+                visible={modal}
+                setModal={setModal}
+                styleContainer={{
+                    alignItems: '',
+                }}
+            >
+                <>
+                    <Text marginB-20 style={[assets.fonts.bold, {fontSize: 15, textAlign: 'center'}]}>Cek Saldomu Sekarang</Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBlockColor: 'grey'}}>
+                        <Text color={'black'} marginB-10 style={[{fontSize: 13, fontFamily: 'Poppins-SemiBold'}]}>Total Saldo</Text>
+                        <Text color={'black'} marginB-10 style={[{fontSize: 13, fontFamily: 'Poppins-SemiBold'}]}>Rp {pendapatan.toLocaleString()}</Text>
+                    </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 5}}>
+                        <Text color={'black'} marginB-10 style={[{fontSize: 10, fontFamily: 'Poppins-Medium'}]}>Batas penarikan uang</Text>
+                        <Text color={'black'} marginB-10 style={[{fontSize: 10, fontFamily: 'Poppins-Medium'}]}>Rp 100,000</Text>
+                    </View>
+                    <View>
+                        <Text marginT-10 style={[assets.fonts.bold]}>Metode Penarikan</Text>
+                        <View marginT-15 style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', borderBottomWidth: 1, borderBlockColor: 'grey'}}>
+                            <TouchableOpacity 
+                            onPress={()=>setTipePenarikan('gopay')}
+                            style={{
+                                paddingVertical: 10, 
+                                paddingHorizontal: 5,
+                                width: 80, 
+                                height: 50, 
+                                borderWidth: penarikan == 'gopay' ? 0 : 1, 
+                                marginRight: 25,
+                                marginBottom: 15,
+                                borderRadius: 10,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: penarikan == 'gopay' ? '#F0F6FC' : 'white'
+                            }}>
+                                <Image source={assets.images.gopay} />
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                            onPress={()=>setTipePenarikan('shopeepay')}
+                            style={{
+                                paddingVertical: 10, 
+                                paddingHorizontal: 5,
+                                width: 80, 
+                                height: 50, 
+                                borderWidth:  penarikan == 'shopeepay' ? 0 : 1, 
+                                marginRight: 25,
+                                marginBottom: 15,
+                                borderRadius: 10,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: penarikan == 'shopeepay' ? '#F0F6FC' : 'white'
+                            }}>
+                                <Image source={assets.images.shope} />
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                            onPress={()=>setTipePenarikan('ovo')}
+                            style={{
+                                paddingVertical: 10, 
+                                paddingHorizontal: 5,
+                                width: 80, 
+                                height: 50, 
+                                borderWidth: penarikan == 'ovo' ? 0 : 1, 
+                                marginRight: 25,
+                                marginBottom: 15,
+                                borderRadius: 10,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: penarikan == 'ovo' ? '#F0F6FC' : 'white'
+                            }}>
+                                <Image source={assets.images.ovo} />
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                            onPress={()=>setTipePenarikan('dana')}
+                            style={{
+                                paddingVertical: 10, 
+                                paddingHorizontal: 5,
+                                width: 80, 
+                                height: 50, 
+                                borderWidth: penarikan == 'dana' ? 0 : 1, 
+                                marginRight: 25,
+                                marginBottom: 15,
+                                borderRadius: 10,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                backgroundColor: penarikan == 'dana' ? '#F0F6FC' : 'white'
+                            }}>
+                                <Image source={assets.images.dana} />
+                            </TouchableOpacity>
+                        </View>
+                        <Text color={'black'} marginV-10 style={[{fontSize: 10, fontFamily: 'Poppins-Medium'}]}>Pastikan kamu sudah mengisi no handphone pada halaman edit profile!</Text>
+                    </View>
+                     <ButtonC
+                        label='Tarik Saldo'
+                        borderRadius={10}
+                        backgroundColor={assets.colors.button}
+                        style={{elevation: 0}}
+                        onPress={async ()=>{
+                            await setTipePenarikan('')
+                        }}
+                    />
+                </>
+            </ModalC>
+
+            <ModalC
+                visible={modalHarga}
+                setModal={setModalHarga}
+                styleContainer={{
+                    alignItems: '',
+                }}
+            >
+                <>
+                    <Text marginB-5 style={[assets.fonts.bold, {fontSize: 15, textAlign: 'center'}]}>Atur Harga Berlangganan</Text>
+                    <Text marginB-20 style={[assets.fonts.bold, {textAlign: 'center'}]}>@{username}</Text>
+                    <Text marginB-10 style={[{fontSize: 13, fontFamily: 'Poppins-Medium'}]}>Atur Harga</Text>
+                    <Input
+                        keyboardType={'numeric'}
+                        value={'Rp '+ hargaMember.toLocaleString()}
+                        style={[assets.fonts.default, {
+                            backgroundColor: '#F5F5F5',
+                            borderRadius: 10,
+                            paddingHorizontal: 15,
+                            marginBottom: 10
+                        }]}
+                        onChangeText={txt=>{
+                            const cleanedValue = txt.replace(/[^0-9.]/g, '')
+                            const floatValue = parseFloat(cleanedValue);
+                            if (!isNaN(floatValue) && floatValue > 0) {
+                                setHargaMember(floatValue)
+                            } else {
+                                setHargaMember(0)
+                            }
+                        }}
+                    />
+                     <ButtonC
+                        label='Atur Harga'
+                        borderRadius={10}
+                        backgroundColor={assets.colors.button}
+                        style={{elevation: 0}}
+                        onPress={async ()=>{
+                            await updateProfile({
+                                harga_member: hargaMember 
+                            }).then(async (res)=>{
+                                if (res) {
+                                    await setPesan('Harga member  berhasil disimpan')
+                                    await setModalNotif(true)
+                                    setModalHarga(false)
+                                    setTimeout(()=>{
+                                        setModalNotif(false)
+                                    }, 3000)
+                                } else {
+                                    await setPesan('Harga member tidak tersimpan')
+                                    await setModalNotif(true)
+                                    setTimeout(()=>{
+                                        setModalNotif(false)
+                                    }, 3000)
+                                }
+                            })
+                        }}
+                    />
+                </>
+            </ModalC>
+
+            <ModalC
+                style={{
+                    justifyContent: ''
+                }}
+                overlayBackgroundColor='transparent'
+                visible={modalnotif}
+                setModal={setModalNotif}
+                styleContainer={{
+                    minHeight: 0,
+                    minWidth: 0,
+                    padding: 5,
+                    bordeRadius: 2,
+                    marginTop: 10
+                }}
+            >
+                <>
+                    <Text marginB-5 style={[assets.fonts.bold, {fontSize: 13, textAlign: 'center'}]}>{pesan}</Text>
+                </>
+            </ModalC>
         </GestureHandlerRootView>
     )
 }

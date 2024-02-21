@@ -14,5 +14,13 @@ import { addAlbum } from "./addAlbum";
 import { cariAlbum } from "./cariAlbum";
 import { getFotoProfile } from "./getFotoProfile";
 import { addFoto } from "./addFoto";
+import { userCari } from "./userCari";
+import { getFollowApi } from "./getFollowApi";
+import { EditFoto } from "./editFoto";
+import { updateProfile } from "./updateProfile";
+import { deleteFoto } from "./deleteFoto";
+import { reportFoto } from "./reportFoto";
+import { reportUser } from "./reportUser";
+import { membershipAdd } from "./membershipAdd";
 
-export { addFoto, getFotoProfile, cariAlbum, addAlbum, postLike, addKomentar as postKomentar, kategoriApi, countPostingan, loginApi as LoginApi, logoutApi, getProfile, getImgAkun, getUserImg, getUserCari, getFollowCariApi, getKomentarApi }
+export { membershipAdd, reportUser, reportFoto, deleteFoto, updateProfile, EditFoto, getFollowApi, userCari, addFoto, getFotoProfile, cariAlbum, addAlbum, postLike, addKomentar as postKomentar, kategoriApi, countPostingan, loginApi as LoginApi, logoutApi, getProfile, getImgAkun, getUserImg, getUserCari, getFollowCariApi, getKomentarApi }

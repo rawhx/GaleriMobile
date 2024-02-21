@@ -1,27 +1,30 @@
-import React, { useState } from "react";
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import React, { useEffect, useState } from "react";
+import { Image, LoaderScreen, Modal, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { ButtonC, Input, container } from "../../components";
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { assets } from "../../assets";
+import RNFS from 'react-native-fs'
+import DocumentPicker from 'react-native-document-picker'
 import { Alert, ScrollView, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { updateProfile } from "../../api/updateProfile";
 
 const EditProfile = ({route, navigation}) => {
     const [username, setUsername] = useState(route.params.data.Username)
     const [namalengkap, setNamaLengkap] = useState(route.params.data.NamaLengkap)
     const [alamat, setAlamat] = useState(route.params.data.Alamat)
+    const [hp, setHp] = useState(route.params.data.NoHP)
     const [modal, setModal] = useState(false)
+    const [img, setImg] = useState(route.params.data.FotoProfil)
+    const [formData, setFormData] = useState(new FormData())
+    const [visible, setVisible] = useState(false)
+    
     const Profile = () => {
-        if (!route.params && !route.params.data.FotoProfil) {
-            return (
-                <View>
-                    <Icon color={'grey'} name="circle-user" size={100} solid />
-                </View>
-            )
-        } else {
+        if (img !== ' ') {
             return (
                 <View>
                     <Image
-                    source={{ uri: `data:image/png;base64,${route.params.data.FotoProfil}` }}
+                    // source={{ uri: `data:image/png;base64,${route.params.data.FotoProfil}` }}
+                    source={{ uri: `data:image/png;base64,${img}` }}
                     style={{
                         width: 108,
                         height: 108,
@@ -30,11 +33,54 @@ const EditProfile = ({route, navigation}) => {
                     />
                 </View>
             )
+        } else {
+            return (
+                <View>
+                    <Icon color={'grey'} name="circle-user" size={100} solid />
+                </View>
+            )
+        }
+    }
+
+    const handleInputChange = (name, value) => {
+        formData.append(name, value);
+    };
+
+    useEffect(() => {
+        handleInputChange('foto_profile', img)
+        handleInputChange('username', username)
+        handleInputChange('nama_lengkap', namalengkap)
+        handleInputChange('alamat', alamat)
+    }, [])
+
+    const uploadFile = async () => {
+        const pickImg = await DocumentPicker.pick({
+            type: [DocumentPicker.types.images],
+        });
+
+        if (pickImg) {
+            const fileUri = pickImg[0].uri
+            const data = await RNFS.readFile(fileUri, 'base64')
+            setImg(data)
+            console.log(pickImg);
+            
+            handleInputChange('foto_profil', {
+                uri: fileUri,
+                name: pickImg[0].name,
+                type: pickImg[0].type
+            })
+        } else {
+            if (DocumentPicker.isCancel(pickImg)) {
+                console.log('Pemilihan dibatalkan');
+            } else {
+                console.error('Error picking image:', pickImg);
+            }
         }
     }
 
     return (
         <View style={container.defaultTab}>
+            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{display: visible ? 'block' : 'none'}}/>
             <ScrollView>
                 <View marginT-15 marginH-15>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -47,6 +93,13 @@ const EditProfile = ({route, navigation}) => {
 
                     <View marginV-20 style={{alignItems: 'center'}}>
                         {Profile()}
+                        <TouchableOpacity
+                            onPress={()=>{
+                                uploadFile()
+                            }}
+                        >
+                            <Text marginT-10 style={[assets.fonts.bold, {textAlign: 'center'}]}>Ubah Foto</Text>
+                        </TouchableOpacity>
                     </View>
                     <View marginH-10>
                         <View marginV-10>
@@ -75,7 +128,10 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>setUsername(txt)}
+                                    onChangeText={txt=>{
+                                        setUsername(txt)
+                                        handleInputChange('username', txt)
+                                    }}
                                 />
                             </View>
                         </View>
@@ -90,7 +146,29 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>setNamaLengkap(txt)}
+                                    onChangeText={txt=>{
+                                        setNamaLengkap(txt)
+                                        handleInputChange('nama_lengkap', txt)
+                                    }}
+                                />
+                            </View>
+                        </View>
+                        <View marginV-10>
+                            <Text marginB-10 style={assets.fonts.bold}>No Telepon :</Text>
+                            <View style={[style.input]}>
+                                <Input
+                                    keyboardType="phone-pad"
+                                    placeholder="No Telepon"
+                                    value={hp}
+                                    style={[assets.fonts.default, {
+                                        backgroundColor: 'white',
+                                        borderRadius: 10,
+                                        paddingHorizontal: 15,
+                                    }]}
+                                    onChangeText={txt=>{
+                                        setHp(txt)
+                                        handleInputChange('no_hp', txt)
+                                    }}
                                 />
                             </View>
                         </View>
@@ -105,7 +183,10 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>setAlamat(txt)}
+                                    onChangeText={txt=>{
+                                        setAlamat(txt)
+                                        handleInputChange('alamat', txt)
+                                    }}
                                 />
                             </View>
                         </View>
@@ -115,7 +196,15 @@ const EditProfile = ({route, navigation}) => {
                                 borderRadius={10}
                                 backgroundColor={assets.colors.button}
                                 style={{}}
-                                onPress={()=>setModal(true)}
+                                onPress={async () => {
+                                    await setVisible(true)
+                                    const res = await updateProfile(formData)
+                                    console.log(res);
+                                    if (res) {
+                                        setModal(true)
+                                    }
+                                    setVisible(false)
+                                }}
                             />
                         </View>
                     </View>
@@ -142,6 +231,18 @@ const EditProfile = ({route, navigation}) => {
                                 shadowOpacity: 5,
                                 elevation: 5,
                             }}>
+                                <View style={{
+                                    backgroundColor: 'green',
+                                    borderRadius: 100,
+                                    padding: 10,
+                                    width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                    height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: 20
+                                }}>
+                                    <Icon name="check" size={25} color="white" solid />
+                                </View>
                                 <Text style={[assets.fonts.bold, {fontSize: 17, textAlign: 'center'}]}>Data anda berhasil {'\n'} disimpan!</Text>
                             </View>
                         </View>

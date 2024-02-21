@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Pin, ViewAddKomentar, container } from "../../components"
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native-ui-lib"
-import { ScrollView, StyleSheet } from "react-native"
+import { RefreshControl, ScrollView, StyleSheet } from "react-native"
 import axios from "axios"
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { assets } from "../../assets"
@@ -14,24 +14,22 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 const Search = ({route, navigation}) => {
     const [search, setSearch] = useState(route.params && route.params.search.label ? route.params.search.label : '')
     const [data, setData] = useState([]);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(2);
     const [loading, setLoading] = useState(false);
 
     const fetchData = async () => {
         const jwtToken = await AsyncStorage.getItem('cache');
         let url
         if (jwtToken) {
-            url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=false&keduanya=false&page=${page}&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
+            url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=false&keduanya=false&page=1&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
         } else {
-            url = 'https://picsea-1-k3867505.deta.app/foto-cari/guest?page=1&limit=20'
+            url = `https://picsea-1-k3867505.deta.app/foto-cari/guest?page=1&limit=20${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`
         }
         const response = await axios.get(url, {
             headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
         });
-        // const newResponse = [...response.data.Data];
-        // setData((prevData) => [...prevData, ...response.data.Data]);
         setData(response.data.Data);
-        // setPage(page + 1);
+        setPage(2);
     };
 
     useEffect(() => {
@@ -48,20 +46,26 @@ const Search = ({route, navigation}) => {
         fetchData()
     }
 
+    const Refresh = async () => {
+        setLoading(true)
+        await fetchData()
+        setLoading(false)
+    }
+
     const Grid = () => {
         return (
             <View style={{flexDirection: 'row'}} marginT-10>
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 0).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true})} />
                     ))
                 }
                 </View>
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 1).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true})} />
                     ))
                 }
                 </View>
@@ -69,21 +73,45 @@ const Search = ({route, navigation}) => {
         )
     }
 
-    const handleScroll = (event) => {
+    const handleScroll = async (event) => {
+        console.log('====================================');
+        console.log('page:',page);
+        console.log('====================================');
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-
+    
         const isCloseToBottom =
             layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+        const isCloseToTop = contentOffset.y <= 0;
 
-        if (isCloseToBottom && !loading) {
-            setLoading(true);
-            fetchData();
+        if (isCloseToBottom && !isCloseToTop && !loading) {
+            const jwtToken = await AsyncStorage.getItem('cache');
+            let url;
+            await setLoading(true);
+            if (jwtToken) {
+                url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=false&keduanya=false&page=${page}&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
+            } else {
+                url = `https://picsea-1-k3867505.deta.app/foto-cari/guest?page=${page}&limit=20${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`
+            }
+            const response = await axios.get(url, {
+                headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
+            });
+            
+            if (!response.data.IsError) {
+                const newData = response.data.Data;
+    
+                await setData(prevData => [...prevData, ...newData]);
+    
+                if (response.data.Data.length !== 0) {
+                    setPage(prevPage => prevPage + 1);
+                }
+            }
+            setLoading(false);
         }
-    };
+    }    
 
     return (
         <View style={container.defaultTab}>
-            <Header search={true} value={ route.params && route.params.search.label ? route.params.search.label : search} onChangeText={handleSearch} />
+            <Header search={true} value={ route.params && route.params.search.label ? route.params.search.label : search} onChangeText={handleSearch} onFocus={route.params && route.params.focus ? true : false}/>
             {
                 search ? (
                     <Text  style={[{paddingHorizontal: 20, paddingBottom: 10}, assets.fonts.bold]}>Berikut foto yang berkaitan dengan "{search}".</Text>
@@ -96,7 +124,10 @@ const Search = ({route, navigation}) => {
             }
             <ScrollView style={{paddingHorizontal: 15}}
             onScroll={handleScroll}
-            scrollEventThrottle={16}
+            scrollEventThrottle={14}
+            refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={Refresh} />
+            }
             >
                 { Grid() }
             </ScrollView>

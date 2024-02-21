@@ -17,6 +17,7 @@ const BelumLogin = () => {
                 <Text style={[assets.fonts.judul, {fontSize: 20}]}>Ups anda belum login!</Text>    
                 <Text marginV-10 style={[assets.fonts.default, {textAlign: 'center', paddingHorizontal: 80}]}>Silahkan login terlebih dahulu untuk mengakses lebih fitur kami</Text>  
                 <ButtonC 
+                    blokir={true}
                     marginV-10 
                     paddingV-10 
                     label="Masuk"

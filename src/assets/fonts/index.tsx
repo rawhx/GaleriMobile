@@ -15,6 +15,11 @@ export const Font = StyleSheet.create({
         fontSize: 30,
     },
     bold: {
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 13,
+        color: 'black'
+    },
+    boldReal: {
         fontFamily: 'Poppins-Bold',
         fontSize: 13,
         color: 'black'

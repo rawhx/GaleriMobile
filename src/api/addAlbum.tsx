@@ -3,19 +3,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const addAlbum = async (data) => {
   try {
+    console.log(data);
+    
     const jwtToken = await AsyncStorage.getItem('cache')
+    console.log(jwtToken);
     
     const res = await axios.post(
-      `https://picsea-1-k3867505.deta.app/album-tambah?nama_album=${data.nama_album}&deskripsi_album=${data.deskripsi_album}`,
+      `https://picsea-1-k3867505.deta.app/album-tambah`, 
+      data,
       {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
       }
     );
-
-    console.log('success');
-    
     
     return res.data.Data
   } catch (error) {

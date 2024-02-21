@@ -17,6 +17,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DetailAlbum from '../pages/detailalbum';
 import DetailPencarianProfile from '../pages/detailpencarianprofile';
 import EditProfile from '../pages/editprofile';
+import DetailFotoUserLain from '../pages/detailfotouserlain';
+import ViewFavorite from '../pages/favorite';
+import ViewMember from '../pages/member';
+import Pembayaran from '../pages/member/pembayaran';
+import HistoryTransaksi from '../pages/historytransaksi';
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -104,8 +109,8 @@ const Tabs = () => {
             }}
             listeners={({ navigation }) => ({
                 tabPress: (event) => {
-                  event.preventDefault()
-                  resetScreen(navigation, 'search');
+                event.preventDefault()
+                resetScreen(navigation, 'search');
                 },
             })}/>
             {jwt ? (
@@ -197,6 +202,7 @@ const TabsSearch = () => {
             <Stack.Screen name="TabSearch" component={Search}/>
             <Stack.Screen name="TabSearchProfileLain" component={ProfileLain}/>
             <Stack.Screen name="TabSearchDetailFoto" component={DetailPencarian}/>
+            <Stack.Screen name="SearchDetailFotoUserLain" component={DetailFotoUserLain}/>
         </Stack.Navigator>
     )
 }
@@ -210,6 +216,7 @@ const TabsHome = () => {
             <Stack.Screen name="TabDefault" component={Home}/>
             <Stack.Screen name="ProfileLain" component={ProfileLain}/>
             <Stack.Screen name="DetailFoto" component={DetailPencarian}/>
+            <Stack.Screen name="DetailFotoUserLain" component={DetailFotoUserLain}/>
         </Stack.Navigator>
     )
 }
@@ -264,8 +271,15 @@ const Router = () => {
                 <Stack.Screen name="Register" component={Register}/>
                 
                 <Stack.Screen name="Tabs" component={Tabs}/>
+
+                <Stack.Screen name="DetailImg" component={DetailPencarian}/>
+
                 <Stack.Screen name="DetailAlbum" component={DetailAlbum}/>
                 <Stack.Screen name="EditProfile" component={EditProfile}/>
+                <Stack.Screen name="ViewFavorite" component={ViewFavorite}/>
+                <Stack.Screen name="Member" component={ViewMember}/>
+                <Stack.Screen name="Pembayaran" component={Pembayaran}/>
+                <Stack.Screen name="HistoryTransaksi" component={HistoryTransaksi}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
@@ -279,7 +293,7 @@ const style = StyleSheet.create({
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         shadowOpacity: 0,
-        shadowRadius: 0
+        shadowRadius: 0,
     },
     icon: {
         borderBottomColor: 'black',

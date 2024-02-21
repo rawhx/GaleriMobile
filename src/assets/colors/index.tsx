@@ -12,5 +12,6 @@ export const colors = {
     header: '#00020F',
     button: '#022A59',
     iconNotActive: '#747474',
-    blue: '#4999EC'
+    blue: '#4999EC',
+    red: '#C51313'
 }

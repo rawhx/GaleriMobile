@@ -8,8 +8,17 @@ import { useNavigation } from "@react-navigation/native";
 const Album = props => {
     const navigation = useNavigation()
     const data = props.data
-    console.log(data);
-    
+
+    const getRandomColor = () => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
+
+    const [backgroundColor, setBackgroundColor] = useState(getRandomColor());
 
     return (
         <View paddingH-5>
@@ -32,7 +41,11 @@ const Album = props => {
                                     onPress={() => navigation.navigate('DetailAlbum', { dataAlbum: item })}
                                 >
                                     {/* Gunakan gambar dari item atau dari assets.images.hewanRusa */}
-                                    <Image source={{uri: `data:image/png;base64,${item.Sampul}`}} style={style.images} />
+                                    {item.Sampul !== ' ' ? (
+                                        <Image source={{uri: `data:image/png;base64,${item.Sampul}`}} style={style.images} />
+                                    ) : (
+                                        <View style={[style.images, {backgroundColor, borderRadius: 10}]}/>
+                                    )}
                                     <View paddingH-15 paddingT-5>
                                         {/* Gunakan NamaAlbum dari item */}
                                         <Text style={[assets.fonts.default]}>{item.NamaAlbum}</Text>
@@ -48,7 +61,11 @@ const Album = props => {
                                         onPress={() => navigation.navigate('DetailAlbum', { dataAlbum: data[index + 1] })}
                                     >
                                         {/* Gunakan gambar dari item atau dari assets.images.hewanRusa */}
-                                        <Image source={{uri: `data:image/png;base64,${data[index + 1].Sampul}`} || assets.images.hewanRusa} style={style.images} />
+                                        {data[index + 1].Sampul !== ' ' ? (
+                                            <Image source={{uri: `data:image/png;base64,${data[index + 1].Sampul}`}} style={style.images} />
+                                        ) : (
+                                            <View style={style.images}/>
+                                        )}
                                         <View paddingH-15 paddingT-5>
                                             {/* Gunakan NamaAlbum dari item */}
                                             <Text style={[assets.fonts.default]}>{data[index + 1].NamaAlbum}</Text>

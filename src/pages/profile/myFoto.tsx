@@ -21,7 +21,7 @@ const MyFoto = props => {
                     <React.Fragment key={item.id}>
                         {/* Check if the index is divisible by 3 */}
                         {index % 3 === 0 && (
-                            <View style={{ flexDirection: 'row', marginBottom: 5, justifyContent: 'space-between' }}>
+                            <View style={{ flexDirection: 'row', marginBottom: 3, justifyContent: 'space-between' }}>
                                 {/* Item 1 */}
                                 <TouchableOpacity style={{width: '33%', aspectRatio: 1}} onPress={()=>navigation.navigate('TabDetailFotoProfile', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: props.profile})}>
                                     <Image source={{ uri: `data:image/*;base64,${item.Foto}` }} style={{ flex: 1}} />

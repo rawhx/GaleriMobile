@@ -2,6 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const getFollowCariApi = async (data) => {
+  console.log(data);
+  
   try {
     const jwtToken = await AsyncStorage.getItem('cache')
     const res = await axios.get(
@@ -12,6 +14,7 @@ export const getFollowCariApi = async (data) => {
           },
         }
     );
+    console.log(res);
     
     return res.data.Data
   } catch (error) {

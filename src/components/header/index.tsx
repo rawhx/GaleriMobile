@@ -1,10 +1,19 @@
-import React from "react"
-import { StyleSheet } from "react-native"
+import React, { useState } from "react"
+import { Alert, StyleSheet } from "react-native"
 import { Colors, Image, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import Icon from "react-native-vector-icons/FontAwesome6"
-import { ButtonSearch, LoginButton } from ".."
+import { ButtonSearch, LoginButton, ModalC } from ".."
+import { useNavigation } from "@react-navigation/native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+
+const GetToken = async () => {
+    const jwtToken = await AsyncStorage.getItem('cache')
+    return jwtToken
+}
 
 const awal = () => {
+    const navigation = useNavigation()
+
     return (
         <View style={Style.container}>
             <View marginT-20 style={Style.section}>
@@ -16,7 +25,10 @@ const awal = () => {
                     <Text style={Style.fontJudul}>Inspirasimu</Text>
                 </View>
                 <View style={Style.section2}>
-                    <Icon name="heart" size={20} color="grey" solid/>
+                    <TouchableOpacity 
+                    onPress={()=>navigation.navigate("ViewFavorite")}>
+                        <Icon name="heart" size={20} color="#040326" solid/>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -61,6 +73,8 @@ const detailGambar = (props) => {
 }
 
 const profile = () => {
+    const navigation = useNavigation()
+
     return (
         <View style={Style.container}>
             <View marginT-20 style={Style.section}>
@@ -72,7 +86,10 @@ const profile = () => {
                     <Text text60 marginT-10 style={Style.fontJudul}>Inspirasimu</Text>
                 </View>
                 <View style={Style.section2}>
-                    <Icon name="heart" size={20} color="grey" />
+                    <TouchableOpacity 
+                    onPress={()=>navigation.navigate("ViewFavorite")}>
+                        <Icon name="heart" size={20} color="#040326" />
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>
@@ -80,15 +97,21 @@ const profile = () => {
 }
 
 const Search = props => {
+    console.log(props);
+    
+    const navigation = useNavigation()
     return (
         <View style={Style.container}>
             <View style={Style.section2}>
                 <ButtonSearch
+                onFocus={props.onFocus}
                 value={props.value}
                 onChangeText={props.onChangeText}
                 />
                 <View marginL-20 style={Style.section2}>
-                    <Icon name="heart" size={20} color="grey" solid/>
+                    <TouchableOpacity onPress={()=>navigation.navigate('ViewFavorite')}>
+                        <Icon name="heart" size={20} color="#040326" solid/>
+                    </TouchableOpacity>
                 </View>
             </View>
         </View>

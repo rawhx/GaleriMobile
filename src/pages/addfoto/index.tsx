@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Image, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib"
-import { BelumLogin, ButtonC, ImageBg, Input, Select, container } from "../../components"
+import { BelumLogin, ButtonC, ImageBg, Input, ModalC, Select, container } from "../../components"
 import { assets } from "../../assets"
 import { addFoto, cariAlbum, kategoriApi } from "../../api/api"
-import { ImageBackground, ScrollView, StyleSheet } from "react-native"
+import { ImageBackground, Linking, ScrollView, StyleSheet } from "react-native"
 import DocumentPicker from 'react-native-document-picker'
 import RNFS from 'react-native-fs'
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -24,6 +24,9 @@ const AddFoto = () => {
     const [apiKategori, setKategori] = useState()
     const [apiAlbum, setAlbum] = useState()
     const [visible, setVisible] = useState(false)
+    const [modal, setModal] = useState(false)
+    const [pesanModal, setPesanModal] = useState('')
+    const [error, setError] = useState(true)
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
     const pressHandler = useCallback(() => {
         bottomSheetRef.current?.expand();
@@ -115,8 +118,13 @@ const AddFoto = () => {
                     <View center marginT-20 paddingH-15>
                         <Text style={[assets.fonts.judul, {fontSize: 20}]}>Apa Postingan Barumu?</Text>
                         <Text color="grey" style={[assets.fonts.default, {textAlign: 'center', fontSize: 10}]}>
-                            Jika Anda ingin mengunggah foto untuk layanan keanggotaan, harap tunggu persetujuan dari admin terlebih dahulu agar foto dapat dikonfirmasi dan muncul di halaman tersebut. Jika tidak ada konfirmasi lebih lanjut, pengguna dapat menghubungi admin melalui informasi kontak yang tersedia pada halaman 'Tentang Kami
+                        Jika ingin mengunggah foto layanan keanggotaan, tunggu persetujuan admin setelah mengunggah foto ke layanan keanggotaan. Cek email secara rutin untuk konfirmasi. Jika tidak ada konfirmasi lebih lanjut, hubungi admin melalui informasi kontak di
+                            <Text onPress={()=>{ 
+                                // Linking.openURL('https://wa.me/6289607810680')
+                                Linking.openURL('https://example.com')
+                            }} style={[assets.fonts.default, {color: 'blue', fontSize: 10, margin: 0}]}> Website Tentang Kami.</Text>
                         </Text>
+
                         <View style={assets.styleDefault.garis2}/>
                     </View>
                     <View paddingH-15>
@@ -254,14 +262,29 @@ const AddFoto = () => {
                                 borderRadius={5}
                                 backgroundColor={assets.colors.button}
                                 style={{borderWidth: 1}}
-                                onPress={()=>{
+                                onPress={async ()=>{
                                     handleInputChange('membership', jenisFotoSelect === 'member'? true : false)
                                     setVisible(true)
-                                    let oprasi = addFoto(formData)
-                                    if (oprasi) {
-                                        Refresh()
+                                    let oprasi = await addFoto(formData).then((res)=>{                                        
+                                        if(!res.IsError) {
+                                            Refresh()
+                                            setError(false)
+                                            setModal(true)
+                                            if (res.Data[0].Membership) {
+                                                setPesanModal('Silahkan menunggu persetujuan admin')
+                                            } else {
+                                                setPesanModal('Foto berhasil ditambahkan')
+                                            }
+                                            setVisible(false)
+                                            return 
+                                        }  
                                         setVisible(false)
-                                    }
+                                    }).catch((err)=>{
+                                        setError(true)
+                                        setModal(true)
+                                        setPesanModal('Data tidak disimpan')
+                                        setVisible(false)
+                                    })
                                 }}
                             />
                         </View>
@@ -280,18 +303,63 @@ const AddFoto = () => {
                     <View style={assets.styleDefault.garis2}/>
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                    <TouchableOpacity onPress={()=>uploadFile()}>
+                    <TouchableOpacity onPress={()=>uploadFile()} style={{alignItems: 'center'}}>
                         <View marginH-20 style={{backgroundColor: assets.colors.button, height: 45, width: 45, justifyContent: 'center', borderRadius: 10, alignItems: 'center'}}>
-                            <Icon name="file-image"  color='white' size={25} solid />
+                            <Icon name="file-image"  color='white' size={20} solid />
                         </View>
+                        <Text style={[assets.fonts.bold]} >Galeri</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>uploadCamera(true)}>
+                    <TouchableOpacity onPress={()=>uploadCamera(true)} style={{alignItems: 'center'}}>
                         <View marginH-20 style={{backgroundColor: assets.colors.button, height: 45, width: 45, justifyContent: 'center', borderRadius: 10, alignItems: 'center'}}>
-                            <Icon name="camera" size={25} color='white' solid />
+                            <Icon name="camera" size={20} color='white' solid />
                         </View>
+                        <Text style={[assets.fonts.bold]} >Kamera</Text>
                     </TouchableOpacity>
                 </View>
             </BottomSheet>
+
+            <ModalC
+                visible={modal}
+                setModal={setModal}
+            >
+                {
+                   !error ? (
+                        <>
+                            <View style={{
+                                backgroundColor: 'green',
+                                borderRadius: 100,
+                                padding: 10,
+                                width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: 20
+                            }}>
+                                <Icon name="check" size={25} color="white" solid />
+                            </View>
+                            <Text style={[assets.fonts.bold, {fontSize: 15, textAlign: 'center'}]}>Success!</Text>
+                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium'}]}>{pesanModal}</Text>
+                        </>
+                    ) : (
+                        <>
+                            <View style={{
+                                backgroundColor: '#C51313',
+                                borderRadius: 100,
+                                padding: 10,
+                                width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: 20
+                            }}>
+                                <Icon name="xmark" size={25} color="white" solid />
+                            </View>
+                            <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal mengupload foto!</Text>
+                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{pesanModal}</Text>
+                        </>
+                    )
+                }
+            </ModalC>
         </GestureHandlerRootView>
     )
 }

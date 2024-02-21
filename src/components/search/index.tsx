@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome"
 import { assets } from "../../assets";
 
-const ButtonSearch = props => {
+const ButtonSearch = props => {    
     return (
         <View marginV-10 style={props.styleView ? props.styleView : style.formGroup}>
             <Icon name="search" color={Colors.grey30} size={20} solid />
@@ -15,6 +15,7 @@ const ButtonSearch = props => {
                 value={props.value}
                 onChangeText={props.onChangeText}
                 onKeyPress={props.onKeyPress}
+                onFocus={props.onFocus}
             />
         </View>
     )

@@ -1,81 +1,80 @@
-import DocumentPicker from 'react-native-document-picker';
-import ImagePicker from 'react-native-image-picker';
-import { Image } from 'react-native';
+import React from 'react';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+import { StyleSheet, View, TextInput, Image, Text, TouchableOpacity } from 'react-native';
+import BottomSheet from '@gorhom/bottom-sheet';
+import Webview from './components/Webview';
 
-const Test = async (imageUri, quality = 85) => {
-  const options = {
-    title: 'Select Image',
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-    maxWidth: 800,
-    maxHeight: 600,
-    quality: quality / 100,
-  };
+function Test() {
+  const [isOpen, setOpen] = React.useState(false);
+  const [uri, setUri] = React.useState('');
 
-  const response = await ImagePicker.showImagePicker(options);
-
-  if (response.didCancel) {
-    console.log('User cancelled image picker');
-    return;
-  } else if (response.error) {
-    console.log('ImagePicker Error: ', response.error);
-    return;
-  } else if (response.customButton) {
-    console.log('User tapped custom button: ', response.customButton);
-    return;
-  }
-
-  const { uri } = response;
-
-  Image.getSize(uri, async (width, height) => {
-    const aspectRatio = width / height;
-    const maxWidth = 800;
-    const maxHeight = 600;
-
-    let newWidth = width;
-    let newHeight = height;
-
-    if (newWidth > maxWidth || newHeight > maxHeight) {
-      if (aspectRatio < 1) {
-        newWidth = Math.min(width, maxWidth);
-        newHeight = newWidth / aspectRatio;
-      } else {
-        newHeight = Math.min(height, maxHeight);
-        newWidth = newHeight * aspectRatio;
+  return (
+    <View style={styles.container}>
+      <Image source={require('./images/midtrans-logo.png')} style={styles.image} />
+      <Text style={styles.title}>SNAP on React Native Webview</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={setUri}
+        value={null}
+        placeholder="Put your SNAP link (optional)"
+        keyboardType="default"
+      />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setOpen(!isOpen)}
+      >
+        <Text style={styles.button__text}>Open SNAP</Text>
+      </TouchableOpacity>
+      {
+        isOpen && (
+          <BottomSheet
+            snapPoints={['95%']}
+            enablePanDownToClose={true}
+            onClose={() => setOpen(false)}
+          >
+            <Webview uri={uri} />
+          </BottomSheet>
+        )
       }
-    }
-
-    const resizedUri = await new Promise((resolve, reject) => {
-      ImageEditor.cropImage(uri,
-        {
-          offset: { x: 0, y: 0 },
-          size: { width: width, height: height },
-          displaySize: { width: newWidth, height: newHeight },
-          resizeMode: 'contain',
-        },
-        (uri) => {
-          resolve(uri);
-        },
-        (error) => {
-          console.error('ImageEditor cropImage error:', error);
-          reject(error);
-        });
-    });
-
-    const image = await ImageResizer.createResizedImage(
-      resizedUri,
-      newWidth,
-      newHeight,
-      'JPEG',
-      quality
-    );
-
-    const compressedUri = image.uri;
-
-    console.log('Compressed image uri:', compressedUri);
-  });
+    </View>
+  );
 };
 
-export default Test
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 100,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  image: {
+    height: 50,
+    width: 200,
+    resizeMode: 'contain',
+  },
+  title: {
+    fontSize: 18,
+    margin: 12,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    width: 300,
+    borderColor: '#EAEAEA',
+  },
+  button: {
+    width: 150,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#355f86',
+  },
+  button__text: {
+    color: '#FFFFFF'
+  },
+});
+
+export default gestureHandlerRootHOC(Test);

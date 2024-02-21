@@ -3,6 +3,7 @@ import Router from './router';
 import { AuthProvider } from './context/auth';
 import { Alert, BackHandler, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { Text, View } from 'react-native-ui-lib';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const App = () => {
   const lastBackPressed = useRef(0);
@@ -37,13 +38,15 @@ const App = () => {
 
   return (
     // <AuthProvider>
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-
-      <Router />
-    </KeyboardAvoidingView>
+    <SafeAreaView style={{flex: 1}}>
+      <KeyboardAvoidingView
+        // keyboardVerticalOffset={60}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <Router />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
     // </AuthProvider>
   )
 }

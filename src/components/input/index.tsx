@@ -13,11 +13,12 @@ const Input = props => {
                 keyboardType={props.keyboardType}
                 placeholder={props.placeholder}
                 onChangeText={props.onChangeText}
-                style={[props.style ?? style.input, {color: 'grey'}]}
+                style={[props.style ?? style.input, {color: 'black'}]}
                 placeholderTextColor={'grey'}
                 multiline={props.multiline? props.multiline : false}
                 secureTextEntry={(props.type == 'password' ? true : false)}
                 editable={props.editable !== undefined ? props.editable : true}
+                autoFocus={props.onFocus}
             />
         </View>
     )

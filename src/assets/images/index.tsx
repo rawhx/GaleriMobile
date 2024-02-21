@@ -10,5 +10,9 @@ const galaxy = require('./galaxy.png')
 const kotaKategori = require('./kota-kategori.png')
 const musimKategori = require('./musim-kategori.png')
 const tumbuhanKategori = require('./tumbuhanKategori.png')
+const dana = require('./dana.png')
+const gopay = require('./gopay.png')
+const shope = require('./shope.png')
+const ovo = require('./ovo.png')
 
-export const images = { galaxy, musimKategori, tumbuhanKategori, hewanRusa, kotaKategori, abstrakKategori, downloadIcon, gambar, pictsea, kategioriHewan, halfCircle, logindulu }
+export const images = { dana, ovo, gopay, shope, galaxy, musimKategori, tumbuhanKategori, hewanRusa, kotaKategori, abstrakKategori, downloadIcon, gambar, pictsea, kategioriHewan, halfCircle, logindulu }

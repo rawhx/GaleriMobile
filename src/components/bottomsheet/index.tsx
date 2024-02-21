@@ -32,17 +32,39 @@ export interface BottomSheetMethods {
 
 const BottomSheet = forwardRef<BottomSheetMethods, Props>(
   ({snapTo, children, backgroundColor, backDropColor, ...rest}: Props, ref) => {
-    const inset = useSafeAreaInsets();
-    const {height} = Dimensions.get('screen');
+    // const inset = useSafeAreaInsets();
+    // const {height} = Dimensions.get('screen');
     const percentage = parseFloat(snapTo.replace('%', '')) / 100;
-    const closeHeight = height;
-    const openHeight = height - height * percentage;
-    const topAnimation = useSharedValue(closeHeight);
+    // const closeHeight = height;
+    // const openHeight = height - height * percentage;
+    // const topAnimation = useSharedValue(closeHeight);
     const context = useSharedValue(0);
     const scrollBegin = useSharedValue(0);
     const scrollY = useSharedValue(0);
     const [enableScroll, setEnableScroll] = useState(true);
 
+    const inset = useSafeAreaInsets();
+    const { height } = Dimensions.get('screen');
+    const [openHeight, setOpenHeight] = useState(height);
+    const closeHeight = height;
+    const topAnimation = useSharedValue(closeHeight);
+
+    useEffect(() => {
+      // console.log(snapTo);
+      const percentage = parseFloat(snapTo.replace('%', '')) / 100;
+      setOpenHeight(height - height * percentage);
+    }, [height, snapTo]);
+
+    useEffect(() => {
+      'worklet';
+      if (topAnimation.value !== closeHeight) {
+        topAnimation.value = withSpring(openHeight, {
+          damping: 300,
+          stiffness: 400,
+        });
+      }
+    }, [openHeight, topAnimation]);
+    
     const expand = useCallback(() => {
       'worklet';
       topAnimation.value = withTiming(openHeight);
@@ -158,6 +180,7 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
           closeHeight={closeHeight}
           openHeight={openHeight}
           close={close}
+          style={{ position: 'absolute', zIndex: 1 }}
         />
         <GestureDetector gesture={pan}>
           <Animated.View

@@ -1,18 +1,28 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { Checkbox, Colors, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import style from "./style"
-import { ButtonC, Input, container } from "../../components"
+import { ButtonC, Input, ModalC, container } from "../../components"
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { AuthContext } from "../../context/auth"
 import { assets } from "../../assets"
-import axios from "axios"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { LoginApi } from "../../api/api"
 
-const Login = ({navigation}) => {
+const Login = ({route, navigation}) => {
     const val = useContext(AuthContext)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [modal, setModal] = useState(false)
+    const [verifikasi, setVerifikasi] = useState(false)
+    const [errormsg, setErrorMsg] = useState('')
+
+    const fetchData = async () => {
+        await setVerifikasi(route.params?.verifikasi)
+        await setModal(route.params?.verifikasi)
+        navigation.setParams({})
+    }
+    useEffect(()=>{
+        fetchData()
+    }, [route.params?.verifikasi])
 
     return (
         <View style={container.default}>
@@ -39,7 +49,10 @@ const Login = ({navigation}) => {
                         placeholder={'Email'}
                         keyboardType="email-address"
                         value={email}
-                        onChangeText={text => setEmail(text)}
+                        onChangeText={text => {
+                            setEmail(text)
+                            setVerifikasi(false)
+                        }}
                     />
                 </View>
                 <View marginV-10 marginB-15 style={style.formGroup}>
@@ -48,7 +61,10 @@ const Login = ({navigation}) => {
                         style={[assets.fonts.input, {marginLeft: 10, paddingRight: 30}]}
                         placeholder={'Kata Sandi'}
                         value={password}
-                        onChangeText={text => setPassword(text)}
+                        onChangeText={text => {
+                            setPassword(text)
+                            setVerifikasi(false)
+                        }}
                         type="password"
                     />
                 </View>
@@ -61,9 +77,18 @@ const Login = ({navigation}) => {
                     <Text>Forgot Password?</Text>
                 </TouchableOpacity> */}
                 <ButtonC 
+                    blokir={true}
                     label="Masuk"
                     backgroundColor={assets.colors.button} 
-                    onPress={()=>LoginApi({ email, password}, navigation)}
+                    onPress={()=>LoginApi({ email, password}, navigation).then((res)=>{
+                        if (res.ErrNum === 404) {
+                            setModal(true)
+                            setErrorMsg(res.ErrMsg)
+                        } else if (res.IsError) {
+                            setModal(true)
+                            setErrorMsg(res.ErrMsg)
+                        }
+                    })}
                     // onPress={()=>HandleLogin()}
                 />
                 <View center marginT-20 style={{display: 'flex', flexDirection: 'row'}}>
@@ -75,6 +100,48 @@ const Login = ({navigation}) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <ModalC
+                visible={modal}
+                setModal={setModal}
+            >
+                {
+                   verifikasi ? (
+                        <>
+                            <View style={{
+                                backgroundColor: 'green',
+                                borderRadius: 100,
+                                padding: 10,
+                                width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: 20
+                            }}>
+                                <Icon name="check" size={25} color="white" solid />
+                            </View>
+                            <Text style={[assets.fonts.bold, {fontSize: 15, textAlign: 'center'}]}>Berhasil melakukan registrasi akun!</Text>
+                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium'}]}>{route.params?.msg}</Text>
+                        </>
+                    ) : (
+                        <>
+                            <View style={{
+                                backgroundColor: '#C51313',
+                                borderRadius: 100,
+                                padding: 10,
+                                width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: 20
+                            }}>
+                                <Icon name="xmark" size={25} color="white" solid />
+                            </View>
+                            <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal masuk ke aplikasi!</Text>
+                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{errormsg}</Text>
+                        </>
+                    )
+                }
+            </ModalC>
         </View>
     )
 }

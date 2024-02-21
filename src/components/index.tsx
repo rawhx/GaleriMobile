@@ -11,9 +11,14 @@ import DataKomentar from "./datakomentar";
 import BelumLogin from "./belumlogin";
 import Select from "./select";
 import ViewAddKomentar from "./viewaddkomentar";
+import ModalC from "./modal";
+import Like from "./like";
 
-export { BelumLogin, container, Pin, 
+export { 
+    Like,
+    BelumLogin, container, Pin, 
     ImageBg, InputKomentar, Header, 
     ButtonC, Input, LoginButton, 
     ButtonSearch, DataKomentar, Select,
-    ViewAddKomentar }
+    ViewAddKomentar, ModalC 
+}
