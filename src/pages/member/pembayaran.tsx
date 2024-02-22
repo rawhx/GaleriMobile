@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LoaderScreen, Text, View } from "react-native-ui-lib";
 import WebView from "react-native-webview";
 import { assets } from "../../assets";
@@ -10,6 +10,10 @@ const Pembayaran = ({route, navigation}) => {
     console.log('userId', route.params.userId);
     console.log('transaksi', route.params.idTransaksi);
     const [isLoading, setLoading] = useState(true);
+
+    useEffect(()=>{
+        !route.params.snap ? navigation.goBack() : null
+    })
     
     return (
         <View style={[container.defaultTab, {flex: 1}]}>
@@ -34,11 +38,14 @@ const Pembayaran = ({route, navigation}) => {
                             user_id: route.params.userId,
                             no_transaksi: route.params.idTransaksi,
                         }).then((res)=>{
-                            // console.log('====================================');
-                            // console.log('res AddMember', res);
-                            // console.log('====================================');
-                            navigation.goBack()
-                            navigation.goBack()
+                            console.log('====================================');
+                            console.log('res AddMember', res);
+                            console.log('====================================');
+                            setTimeout(()=>{
+                                navigation.navigate('Home')
+                                // navigation.goBack()
+                                // navigation.goBack()
+                            }, 5000)
                         }).catch((error)=>{
                             if (error.response) {
                                 console.error('Error membership add Response Data:', error.response.data);

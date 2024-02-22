@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome6"
+import Icon5 from "react-native-vector-icons/FontAwesome5"
 import { Image, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Like, ModalC, Pin, ViewAddKomentar, container } from "../../components";
 import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
@@ -83,7 +84,7 @@ const DetailPencarian = ({route, navigation}) => {
                 const jwtToken = await AsyncStorage.getItem('cache');
                 let url = `https://picsea-1-k3867505.deta.app/foto-cari/guest?page=1&limit=20&kategori_id=${route.params.kategoriId}`
                 if (jwtToken) {
-                    url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=false&keduanya=false&page=1&limit=20&kategori_id=${route.params.kategoriId}`
+                    url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=true&keduanya=true&page=1&limit=20&kategori_id=${route.params.kategoriId}`
                 }
                 const response = await axios.get(url, {
                     headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
@@ -99,14 +100,14 @@ const DetailPencarian = ({route, navigation}) => {
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 0).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership})} />
                     ))
                 }
                 </View>
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 1).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership})} />
                     ))
                 }
                 </View>
@@ -216,15 +217,17 @@ const DetailPencarian = ({route, navigation}) => {
                                 </View>
                                 <View paddingH-25 style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={[style.text, {}]}>{route.params.title}</Text>
-                                    {/* <TouchableOpacity
-                                        onPress={() => {
-                                            setLike(like ? false : true)
-                                            postLike({foto_id: route.params.id})
-                                        }}
-                                    >
-                                        <Icon name="heart" size={25} color={like ? "red" : "black"} solid={like} />
-                                    </TouchableOpacity> */}
-                                    <Like fotoId={route.params.id} like={like} />
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                        {
+                                            route.params && route.params.member ? (
+                                                <View marginR-5 padding-5 style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5}}>
+                                                    <Icon5 name="crown" size={10} color={"#FFE500"} solid />
+                                                    <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 9, marginLeft: 5, color: "#FFE500" }}>PICTSEA+</Text>
+                                                </View>
+                                            ) : null
+                                        }
+                                        <Like fotoId={route.params.id} like={like} />
+                                    </View>
                                 </View>
                                 <View paddingH-25 marginT-10>
                                     <Text style={[assets.fonts.default, {textAlign: 'justify'}]}>{route.params.deskripsi}</Text>

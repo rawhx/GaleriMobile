@@ -21,7 +21,7 @@ const Search = ({route, navigation}) => {
         const jwtToken = await AsyncStorage.getItem('cache');
         let url
         if (jwtToken) {
-            url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=false&keduanya=false&page=1&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
+            url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=true&keduanya=true&page=1&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
         } else {
             url = `https://picsea-1-k3867505.deta.app/foto-cari/guest?page=1&limit=20${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`
         }
@@ -58,14 +58,14 @@ const Search = ({route, navigation}) => {
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 0).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership})} />
                     ))
                 }
                 </View>
                 <View style={{flex: 1}}>
                 {
                     data.filter((item, index) => index % 2 == 1).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true})} />
+                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership})} />
                     ))
                 }
                 </View>

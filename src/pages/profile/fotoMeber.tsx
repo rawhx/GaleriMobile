@@ -5,7 +5,7 @@ import { Text, TouchableOpacity } from 'react-native-ui-lib';
 import { getImgAkun } from '../../api/api';
 import { assets } from '../../assets';
 import { useNavigation } from '@react-navigation/native';
-import Icon from "react-native-vector-icons/FontAwesome6"
+import Icon from "react-native-vector-icons/FontAwesome5"
 
 const FotoMmeber = props => {
     const navigation = useNavigation()

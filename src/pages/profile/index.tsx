@@ -5,6 +5,7 @@ import HalfCircle from './halfcircle'
 import HeaderProfile from './header'
 import Icon from "react-native-vector-icons/FontAwesome6"
 import Iconfa5 from "react-native-vector-icons/FontAwesome5"
+import Ionicons from "react-native-vector-icons/Ionicons"
 import { Image, LoaderScreen, Text, TouchableOpacity, View } from 'react-native-ui-lib'
 import { assets } from '../../assets'
 import MyFoto from './myFoto'
@@ -201,7 +202,7 @@ const Profile = ({route, navigation}) => {
                                         <TouchableOpacity
                                             onPress={()=>setActive('foto')}
                                         >
-                                            <Iconfa5 name="table" size={20} color={"black"} />
+                                            <Ionicons name="grid" size={20} color={"black"} />
                                         </TouchableOpacity>
                                     </View>
                                     <View style={active == 'member' ? style.active : null}>
