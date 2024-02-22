@@ -40,25 +40,33 @@ const DetailAlbum = ({route, navigation}) => {
         fetchData()
     }, [route.params.dataAlbum.id]);
 
-    const Grid = () => {    
-        return (
-            <View style={{flexDirection: 'row'}} marginT-10>
-                <View style={{flex: 1}}>
-                {
-                    data.filter((item, index) => index % 2 == 0).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
+    const Grid = () => { 
+        if (data) {
+            return (
+                <View style={{flexDirection: 'row'}} marginT-10>
+                    <View style={{flex: 1}}>
+                    {
+                        data.filter((item, index) => index % 2 == 0).map((item) => (
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
+                            ))
+                        }
+                    </View>
+                    <View style={{flex: 1}}>
+                    {
+                        data.filter((item, index) => index % 2 == 1).map((item) => (
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
                         ))
                     }
+                    </View>
                 </View>
-                <View style={{flex: 1}}>
-                {
-                    data.filter((item, index) => index % 2 == 1).map((item) => (
-                        <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', {id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow})} />
-                    ))
-                }
+            )
+        } else {
+            return (
+                <View style={{alignItems: 'center'}}>
+                    <Text style={{fontFamily: 'Poppins-Regular', fontSize: 13}}>Tidak ada foto</Text>
                 </View>
-            </View>
-        )
+            )
+        }
     }
 
     return (

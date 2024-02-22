@@ -80,3 +80,35 @@ const styles = StyleSheet.create({
 });
 
 export default MyFoto;
+
+
+ // return (
+    //   <>
+    //     {!props.profile.Membership.Status ? (
+    //       <View style={[container.defaultTab, {justifyContent: 'center'}]}>
+    //         <View center>
+    //             <Image source={assets.images.logindulu} style={{
+    //               width: 110,
+    //               height: 110,  
+    //             }} />
+    //             <Text style={[assets.fonts.judul, {fontSize: 15, textAlign: 'center', paddingHorizontal: 20}]}>Sayangnya anda belum {"\n"} menjadi bagian dari kami !</Text>    
+    //             <Text marginV-5 style={[assets.fonts.default, {textAlign: 'center', paddingHorizontal: 10}]}>Untuk mengakses foto lebih banyak dan premium, silahkan gabung dengan melakukan membership terlebih dahulu.</Text>  
+    //             <ButtonC 
+    //                 marginV-10 
+    //                 paddingV-10 
+    //                 label="Masuk"
+    //                 borderRadius={10}
+    //                 backgroundColor={assets.colors.button} 
+    //                 onPress={()=>navigation.navigate("Member", {profile: props.profile})}
+    //             />  
+    //         </View>
+    //       </View>
+    //     ) : (
+    //       // <View style={styles.container}>
+    //         <View>
+    //           <ViewC/>
+    //         </View>
+    //       // </View>
+    //     )} 
+    //   </>
+    // )

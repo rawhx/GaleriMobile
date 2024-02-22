@@ -1,20 +1,47 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { ImageBackground, ScrollView, StyleSheet } from "react-native"
 import { Text, TouchableOpacity, View } from "react-native-ui-lib"
 import { assets } from "../../assets"
 import { useNavigation } from "@react-navigation/native"
 import { getItemLabel } from "react-native-ui-lib/src/components/picker/PickerPresenter"
+import axios from "axios"
 
 
 const Kategori = () => {
     const navigation = useNavigation()
-    const kategoriData = [
-        { imageSource: assets.images.hewanRusa, label: 'Hewan', value: '659e1e792b908d5941344334' },
-        { imageSource: assets.images.tumbuhanKategori, label: 'Tumbuhan', value: '659e1e702b908d5941344333' },
-        { imageSource: assets.images.musimKategori, label: 'Musim', value: null },
-        { imageSource: assets.images.abstrakKategori, label: 'Abstrak', value: '659e1e802b908d5941344335' },
-        { imageSource: assets.images.kotaKategori, label: 'Kota', value: null },
+    const kategoriData_old = [
+        { Sampul: assets.images.hewanRusa, Kategori: 'Hewan', id: '659e1e792b908d5941344334' },
+        { Sampul: assets.images.tumbuhanKategori, Kategori: 'Tumbuhan', id: '659e1e702b908d5941344333' },
+        { Sampul: assets.images.musimKategori, Kategori: 'Musim', id: null },
+        { Sampul: assets.images.abstrakKategori, Kategori: 'Abstrak', id: '659e1e802b908d5941344335' },
+        { Sampul: assets.images.kotaKategori, Kategori: 'Kota', id: null },
     ];
+
+    const [kategoriData, setKategori] = useState([])
+    const [load, setLoad] = useState(false)
+    
+    const fetchData = async () => {
+        await axios.get('https://picsea-1-k3867505.deta.app/kategori-cari?page=1&limit=10').then((res)=>{
+            setKategori(res.data.Data)
+            setLoad(false)
+        })
+    }
+    
+    const getRandomColor = () => {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    };
+    
+    const randomColors = Array.from({ length: 4 }, () => getRandomColor());
+    
+    useEffect(() => {
+        setLoad(true)
+        fetchData()
+    }, []);
 
     return (
         <ScrollView
@@ -23,19 +50,29 @@ const Kategori = () => {
         showsHorizontalScrollIndicator={false}
         >
             <View style={style.sectionKategori}>
-            {kategoriData.map((kategori, index) => (
-                <View key={index} style={style.kategori}>
-                    <TouchableOpacity
-                        onPress={()=>navigation.navigate('TabSearch', {search: {value: kategori.value, label: kategori.label}})}
-                    >
-                        <ImageBackground source={kategori.imageSource} style={style.kategoriImg}>
-                        <View style={style.overlay}>
-                            <Text color='white' style={style.text}>{kategori.label}</Text>
+            {
+                !load ? (
+                    kategoriData.map((kategori, index) => (
+                        <View key={index} style={style.kategori}>
+                            <TouchableOpacity
+                                onPress={()=>navigation.navigate('TabSearch', {search: {value: kategori.id, label: kategori.Kategori}})}
+                            >
+                                <ImageBackground source={{ uri: `data:image/png;base64,${kategori.Sampul}` }} style={style.kategoriImg}>
+                                <View style={style.overlay}>
+                                    <Text color='white' style={style.text}>{kategori.Kategori}</Text>
+                                </View>
+                                </ImageBackground>
+                            </TouchableOpacity>
                         </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                </View>
-            ))}
+                    ))
+                ) : (
+                    randomColors.map((color, index) => (
+                        <View key={index} style={style.kategori}>
+                            <View style={[style.kategoriImg, { backgroundColor: color }]} />
+                        </View>
+                    ))
+                )
+            }
             </View>
         </ScrollView>
     )

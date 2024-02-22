@@ -142,9 +142,9 @@ const ProfileLain = ({route, navigation}) => {
     }
     
     return (
-        <GestureHandlerRootView style={{flex: 1}}>
+        <GestureHandlerRootView style={[{flex: 1, backgroundColor: 'white'}]}>
             <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{display: visible ? 'block' : 'none'}}/>
-            <SafeAreaView style={container.defaultTab}>
+            <SafeAreaView>
                 <ScrollView
                     refreshControl={
                         <RefreshControl refreshing={loading} onRefresh={Refresh} />

@@ -45,8 +45,13 @@ const Register = ({navigation}) => {
                 setModal(true)
                 setErrorMsg(res.data)
                 return
-            }
-            
+            }  
+        }).catch((err)=>{
+            setModal(true)
+            setErrorMsg(err.response.data)
+            console.log('====================================');
+            console.log(err.response.status, err.response.data);
+            console.log('====================================');
         })
 
     }
@@ -161,7 +166,7 @@ const Register = ({navigation}) => {
                 }}>
                     <Icon name="xmark" size={25} color="white" solid />
                 </View>
-                <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal masuk ke aplikasi!</Text>
+                <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal registrasi!</Text>
                 <Text style={[{fontSize: 12, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{errormsg}</Text>
             </ModalC>
         </View>
