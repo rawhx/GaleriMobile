@@ -1,12 +1,13 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const addKomentar = async (data) => {
   try {
     const jwtToken = await AsyncStorage.getItem('cache')
     
     const res = await axios.post(
-        `https://picsea-1-k3867505.deta.app/komentar-tambah`, 
+        `${config.Base_url}/komentar-tambah`, 
         {
             foto_id: data.foto_id,
             komentar: data.komentar

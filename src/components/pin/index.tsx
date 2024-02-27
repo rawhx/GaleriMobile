@@ -4,7 +4,11 @@ import Icon from "react-native-vector-icons/FontAwesome6"
 
 const Pin = (props) => {
   const [ratio, setRatio] = useState(1)
-  Image.getSize(`data:image/png;base64,${props.foto}`, (width, height) => setRatio(width / height))
+  if (props.foto && props.foto.startsWith('https://')) {
+    Image.getSize(props.foto, (width, height) => setRatio(width / height));
+  } else {
+    Image.getSize(`data:image/png;base64,${props.foto}`, (width, height) => setRatio(width / height));
+  }
 
   return (
     <>
@@ -13,7 +17,11 @@ const Pin = (props) => {
           onPress={props.onPress ? props.onPress : null}
         >
           <Image
-            source={{ uri: `data:image/png;base64,${props.foto}` }}
+            source={{
+              uri: props.foto && props.foto.startsWith('https://') 
+                ? props.foto 
+                : props.foto ? `data:image/png;base64,${props.foto}` : null
+            }}        
             style={{ borderRadius: 10, width: '100%', aspectRatio: ratio }}
           />
         </TouchableOpacity>

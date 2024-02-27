@@ -29,7 +29,7 @@ const ViewAddKomentar = (props) => {
         } else {
             return (
                 <Image
-                source={{ uri: `data:image/png;base64,${getData.profile}` }}
+                source={{ uri: getData.profile.startsWith('https://') ? getData.profile : `data:image/png;base64,${getData.profile}` }}
                 style={{
                     width: 45,
                     height: 45,

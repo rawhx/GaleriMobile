@@ -3,12 +3,12 @@ import { Checkbox, Colors, Text, TouchableOpacity, View } from "react-native-ui-
 import style from "./style"
 import { ButtonC, Input, ModalC, container } from "../../components"
 import Icon from "react-native-vector-icons/FontAwesome6"
-import { AuthContext } from "../../context/auth"
 import { assets } from "../../assets"
 import { LoginApi } from "../../api/api"
+import { UserToken } from "../../context/GlobalState";
 
 const Login = ({route, navigation}) => {
-    const val = useContext(AuthContext)
+    const [Token, setToken] = useContext(UserToken)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [modal, setModal] = useState(false)
@@ -87,7 +87,13 @@ const Login = ({route, navigation}) => {
                         } else if (res.IsError) {
                             setModal(true)
                             setErrorMsg(res.ErrMsg)
+                        } else if (!res.IsError) { 
+                            setToken(res.Data)
+                            navigation.replace("Tabs")
                         }
+                    }).catch((err)=>{
+                        setModal(true)
+                        setErrorMsg(err.response.data)
                     })}
                     // onPress={()=>HandleLogin()}
                 />

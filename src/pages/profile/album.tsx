@@ -42,7 +42,13 @@ const Album = props => {
                                 >
                                     {/* Gunakan gambar dari item atau dari assets.images.hewanRusa */}
                                     {item.Sampul !== ' ' ? (
-                                        <Image source={{uri: `data:image/png;base64,${item.Sampul}`}} style={style.images} />
+                                        <Image 
+                                        source={{
+                                            uri: item.Sampul.startsWith('https://') 
+                                              ? item.Sampul 
+                                              : item.Sampul ? `data:image/png;base64,${item.Sampul}` : null
+                                        }}  
+                                        style={style.images} />
                                     ) : (
                                         <View style={[style.images, {backgroundColor, borderRadius: 10}]}/>
                                     )}

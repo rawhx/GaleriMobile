@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler"
 import BottomSheetKomentar from "../../components/bottomsheet/bottomsheetKomentar"
 import { getKomentarApi, getUserCari, postKomentar } from "../../api/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import config from "../../../config"
 
 const Search = ({route, navigation}) => {
     const [search, setSearch] = useState(route.params && route.params.search.label ? route.params.search.label : '')
@@ -21,9 +22,9 @@ const Search = ({route, navigation}) => {
         const jwtToken = await AsyncStorage.getItem('cache');
         let url
         if (jwtToken) {
-            url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=true&keduanya=true&page=1&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
+            url = `${config.apiUrl}foto-cari?membership=true&keduanya=true&page=1&limit=10${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`;
         } else {
-            url = `https://picsea-1-k3867505.deta.app/foto-cari/guest?page=1&limit=20${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`
+            url = `${config.apiUrl}foto-cari/guest?page=1&limit=20${route.params && route.params.search.label !== '' ? `&kategori_id=${route.params.search.value}` : ''}${search !== '' ? `&judul_foto=${search}` : ''}`
         }
         const response = await axios.get(url, {
             headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}

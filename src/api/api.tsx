@@ -22,5 +22,7 @@ import { deleteFoto } from "./deleteFoto";
 import { reportFoto } from "./reportFoto";
 import { reportUser } from "./reportUser";
 import { membershipAdd } from "./membershipAdd";
+import { historyTransaksiApi } from "./historyTransaksiApi";
+import { tarikSaldo } from "./tarikSaldo";
 
-export { membershipAdd, reportUser, reportFoto, deleteFoto, updateProfile, EditFoto, getFollowApi, userCari, addFoto, getFotoProfile, cariAlbum, addAlbum, postLike, addKomentar as postKomentar, kategoriApi, countPostingan, loginApi as LoginApi, logoutApi, getProfile, getImgAkun, getUserImg, getUserCari, getFollowCariApi, getKomentarApi }
+export { tarikSaldo, historyTransaksiApi, membershipAdd, reportUser, reportFoto, deleteFoto, updateProfile, EditFoto, getFollowApi, userCari, addFoto, getFotoProfile, cariAlbum, addAlbum, postLike, addKomentar as postKomentar, kategoriApi, countPostingan, loginApi as LoginApi, logoutApi, getProfile, getImgAkun, getUserImg, getUserCari, getFollowCariApi, getKomentarApi }

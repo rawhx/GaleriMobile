@@ -90,7 +90,7 @@ const ProfileLain = ({route, navigation}) => {
             return (
                 <View>
                     <Image
-                    source={{ uri: `data:image/png;base64,${route.params.fotoProfile}` }}
+                    source={{ uri: (route.params.fotoProfile).startsWith('https://') ? route.params.fotoProfile : `data:image/*;base64,${route.params.fotoProfile}` }}
                     style={styles.profileImage}
                     />
                 </View>

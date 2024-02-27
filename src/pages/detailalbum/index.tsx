@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import config from "../../../config";
 
 const DetailAlbum = ({route, navigation}) => {
     console.log('album id', route.params.dataAlbum.id);
@@ -23,7 +24,7 @@ const DetailAlbum = ({route, navigation}) => {
     
     const fetchData = async () => {
         const jwtToken = await AsyncStorage.getItem('cache')
-        let url = `https://picsea-1-k3867505.deta.app/foto-cari/profil?page=1&limit=20&album_id=${route.params.dataAlbum.id}`
+        let url = `${config.Base_url}/foto-cari/profil?page=1&limit=20&album_id=${route.params.dataAlbum.id}`
         const response = await axios.get(url, {
             headers: { Authorization: `Bearer ${jwtToken}` }
         });

@@ -1,14 +1,15 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const userCari = async (data) => {
   try {
     const jwtToken = await AsyncStorage.getItem('cache')
 
-    let url = `https://picsea-1-k3867505.deta.app/users-cari/guest?page=1&limit=10&user_id=${data.id}`
+    let url = `${config.Base_url}/users-cari/guest?page=1&limit=10&user_id=${data.id}`
 
     if (jwtToken) { 
-      url = `https://picsea-1-k3867505.deta.app/users-cari?page=1&limit=10&user_id=${data.id}`
+      url = `${config.Base_url}/users-cari?page=1&limit=10&user_id=${data.id}`
     }
     const res = await axios.get(
       url,

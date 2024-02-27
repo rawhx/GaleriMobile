@@ -3,12 +3,10 @@ import { Text, View, Image, Button, Colors, TouchableOpacity } from 'react-nativ
 import Style from "./style";
 import { useNavigation } from '@react-navigation/native';
 import { ButtonC, container } from '../../components';
-import { AuthContext } from '../../context/auth';
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { assets } from '../../assets';
 
 const Welcome = () => {
-    const val = useContext(AuthContext)
     const navigation = useNavigation()
 
     const handleLoginPress = (screen) => {

@@ -1,11 +1,12 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const cariAlbum = async (data = { select: false }) => {
   try {
     const jwtToken = await AsyncStorage.getItem('cache')
     const res = await axios.get(
-        `https://picsea-1-k3867505.deta.app/album-cari?page=1&limit=10`, 
+        `${config.Base_url}/album-cari?page=1&limit=10`, 
         {
           headers: {
             Authorization: `Bearer ${jwtToken}`,

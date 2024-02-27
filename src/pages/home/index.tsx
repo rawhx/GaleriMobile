@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Alert, BackHandler, RefreshControl, ScrollView, StyleSheet,} from 'react-native'
 import { ButtonSearch, Header, Pin, container } from '../../components'
 import Kategori from './kategori'
@@ -7,15 +7,16 @@ import { Text, TouchableOpacity, View } from 'react-native-ui-lib'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import config from '../../../config'
 
 const Home = ({route, navigation}) => {
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState([]);
     const fetchData = async () => {
         const jwtToken = await AsyncStorage.getItem('cache')
-        let url = 'https://picsea-1-k3867505.deta.app/foto-trending/guest?page=1&limit=20'
+        let url =  config.apiUrl + 'foto-trending/guest?page=1&limit=20'
         if (jwtToken) {
-            url = 'https://picsea-1-k3867505.deta.app/foto-trending/user?page=1&limit=20'
+            url =  config.apiUrl + 'foto-trending/user?page=1&limit=20'
         }
         const response = await axios.get(url, {
             headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}

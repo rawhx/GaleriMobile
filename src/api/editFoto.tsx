@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const EditFoto = async (data) => {
   try {
@@ -8,7 +9,7 @@ export const EditFoto = async (data) => {
     console.log('prosess Edit Foto');
     console.log('====================================');
     const res = await axios.patch(
-        `https://picsea-1-k3867505.deta.app/foto-edit`, 
+        `${config.Base_url}/foto-edit`, 
         data,
         {
             headers: {

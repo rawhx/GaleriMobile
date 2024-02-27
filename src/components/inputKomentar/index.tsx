@@ -46,7 +46,7 @@ const InputKomentar = (props) => {
                 {getProfilee !== ' '  ? (
                     <View>
                         <Image
-                        source={{ uri: `data:image/png;base64,${getProfilee}` }}
+                        source={{ uri: getProfilee.startsWith('https://') ? getProfilee : `data:image/png;base64,${getProfilee}` }}
                         style={{
                             width: 45,
                             height: 45,

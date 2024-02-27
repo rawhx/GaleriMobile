@@ -10,6 +10,7 @@ const Pembayaran = ({route, navigation}) => {
     console.log('userId', route.params.userId);
     console.log('transaksi', route.params.idTransaksi);
     const [isLoading, setLoading] = useState(true);
+    let logShown = false;
 
     useEffect(()=>{
         !route.params.snap ? navigation.goBack() : null
@@ -32,8 +33,12 @@ const Pembayaran = ({route, navigation}) => {
                 allowFileAccess={true}
                 cacheMode="LOAD_NO_CACHE"
                 onNavigationStateChange={async (navState) => {
-                    if (navState.url.includes('success')) {
-                        const url = navState.url;
+                    const url = navState.url;
+                    console.log('====================================');
+                    console.log('url ', url);
+                    console.log('====================================');
+                    if (navState.url.includes('success') && !logShown) {
+                        logShown = true;
                         await membershipAdd({
                             user_id: route.params.userId,
                             no_transaksi: route.params.idTransaksi,

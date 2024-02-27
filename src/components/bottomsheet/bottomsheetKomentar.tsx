@@ -23,6 +23,8 @@ import { assets } from '../../assets';
 import { getKomentarApi } from '../../api/getKomentarApi';
 import { DataKomentar, InputKomentar, ViewAddKomentar } from '..';
 import { postKomentar } from '../../api/api';
+import { useNavigation } from '@react-navigation/native';
+import styleDefault from '../../assets/styles';
 
 interface Props extends AnimatedScrollViewProps {
   snapTo: string;
@@ -56,7 +58,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
     const [sendKomen, setSendKomen] = useState(false)
     const [komentarList, setKomentarList] = useState([]);
 
-
+    const navigation = useNavigation()
     
     useEffect(()=>{
       const getData = async () => {
@@ -69,11 +71,19 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
     const expand = useCallback(() => {
       'worklet';
       topAnimation.value = withTiming(openHeight);
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+            display: "none"
+        }
+      });
     }, [openHeight, topAnimation]);
 
     const close = useCallback(() => {
       'worklet';
       topAnimation.value = withTiming(closeHeight);
+      navigation.getParent()?.setOptions({
+        tabBarStyle: styleDefault.tabBar
+      });
     }, [closeHeight, topAnimation]);
 
     useImperativeHandle(
@@ -203,7 +213,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
         if (!sendKomen) {
           return (
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontFamily: 'Poppins-Medium', fontSize: 12}}>Tidak ada komenntar</Text>
+              <Text style={{fontFamily: 'Poppins-Medium', fontSize: 12}}>Tidak ada komentar</Text>
             </View>
           )
         }

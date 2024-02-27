@@ -1,11 +1,12 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const countPostingan = async () => {
   try {
     let total = 0
     const jwtToken = await AsyncStorage.getItem('cache')
-    const res = await axios.get(   `https://picsea-1-k3867505.deta.app/get-profil`, {
+    const res = await axios.get(`${config.Base_url}/get-profil`, {
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
         },

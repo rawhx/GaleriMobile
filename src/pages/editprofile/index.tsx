@@ -8,7 +8,7 @@ import DocumentPicker from 'react-native-document-picker'
 import { Alert, ScrollView, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { updateProfile } from "../../api/updateProfile";
 
-const EditProfile = ({route, navigation}) => {
+const EditProfile = ({ route, navigation }) => {
     const [username, setUsername] = useState(route.params.data.Username)
     const [namalengkap, setNamaLengkap] = useState(route.params.data.NamaLengkap)
     const [alamat, setAlamat] = useState(route.params.data.Alamat)
@@ -17,19 +17,21 @@ const EditProfile = ({route, navigation}) => {
     const [img, setImg] = useState(route.params.data.FotoProfil)
     const [formData, setFormData] = useState(new FormData())
     const [visible, setVisible] = useState(false)
-    
+    const [pesan, setPesan] = useState()
+    const [success, setSuccess] = useState(true)
+
     const Profile = () => {
         if (img !== ' ') {
             return (
                 <View>
                     <Image
-                    // source={{ uri: `data:image/png;base64,${route.params.data.FotoProfil}` }}
-                    source={{ uri: `data:image/png;base64,${img}` }}
-                    style={{
-                        width: 108,
-                        height: 108,
-                        borderRadius: 60, 
-                    }}
+                        // source={{ uri: `data:image/png;base64,${route.params.data.FotoProfil}` }}
+                        source={{ uri: img.startsWith('https://') ? img : `data:image/png;base64,${img}` }}
+                        style={{
+                            width: 108,
+                            height: 108,
+                            borderRadius: 60,
+                        }}
                     />
                 </View>
             )
@@ -63,7 +65,7 @@ const EditProfile = ({route, navigation}) => {
             const data = await RNFS.readFile(fileUri, 'base64')
             setImg(data)
             console.log(pickImg);
-            
+
             handleInputChange('foto_profil', {
                 uri: fileUri,
                 name: pickImg[0].name,
@@ -80,7 +82,7 @@ const EditProfile = ({route, navigation}) => {
 
     return (
         <View style={container.defaultTab}>
-            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{display: visible ? 'block' : 'none'}}/>
+            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
             <ScrollView>
                 <View marginT-15 marginH-15>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -91,14 +93,14 @@ const EditProfile = ({route, navigation}) => {
                         <View style={{ width: 20 }} />
                     </View>
 
-                    <View marginV-20 style={{alignItems: 'center'}}>
+                    <View marginV-20 style={{ alignItems: 'center' }}>
                         {Profile()}
                         <TouchableOpacity
-                            onPress={()=>{
+                            onPress={() => {
                                 uploadFile()
                             }}
                         >
-                            <Text marginT-10 style={[assets.fonts.bold, {textAlign: 'center'}]}>Ubah Foto</Text>
+                            <Text marginT-10 style={[assets.fonts.bold, { textAlign: 'center' }]}>Ubah Foto</Text>
                         </TouchableOpacity>
                     </View>
                     <View marginH-10>
@@ -128,7 +130,7 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>{
+                                    onChangeText={txt => {
                                         setUsername(txt)
                                         handleInputChange('username', txt)
                                     }}
@@ -146,7 +148,7 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>{
+                                    onChangeText={txt => {
                                         setNamaLengkap(txt)
                                         handleInputChange('nama_lengkap', txt)
                                     }}
@@ -165,7 +167,7 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>{
+                                    onChangeText={txt => {
                                         setHp(txt)
                                         handleInputChange('no_hp', txt)
                                     }}
@@ -183,27 +185,34 @@ const EditProfile = ({route, navigation}) => {
                                         borderRadius: 10,
                                         paddingHorizontal: 15,
                                     }]}
-                                    onChangeText={txt=>{
+                                    onChangeText={txt => {
                                         setAlamat(txt)
                                         handleInputChange('alamat', txt)
                                     }}
                                 />
                             </View>
                         </View>
-                        <View style={{alignItems: 'center'}} marginV-20>
-                            <ButtonC 
+                        <View style={{ alignItems: 'center' }} marginV-20>
+                            <ButtonC
                                 label='Simpan'
                                 borderRadius={10}
                                 backgroundColor={assets.colors.button}
                                 style={{}}
                                 onPress={async () => {
                                     await setVisible(true)
-                                    const res = await updateProfile(formData)
-                                    console.log(res);
-                                    if (res) {
+                                    const res = await updateProfile(formData).then((res) => {
+                                        if (res.IsError) {
+                                            setSuccess(false)
+                                            setModal(true)
+                                            setPesan(`Username ${username} \n telah digunakan`)
+                                            setVisible(false)
+                                            return
+                                        }
+                                        setSuccess(true)
+                                        setPesan(`Data anda berhasil \n disimpan!`)
                                         setModal(true)
-                                    }
-                                    setVisible(false)
+                                        setVisible(false)
+                                    })
                                 }}
                             />
                         </View>
@@ -219,18 +228,20 @@ const EditProfile = ({route, navigation}) => {
                 onBackgroundPress={() => {
                     setModal(false);
                 }}>
-                    {/* <TouchableWithoutFeedback onPress={() => setModal(false)}> */}
-                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                            <View style={{
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: 'white',
-                                height: 150,
-                                width: 300,
-                                borderRadius: 10,
-                                shadowOpacity: 5,
-                                elevation: 5,
-                            }}>
+                {/* <TouchableWithoutFeedback onPress={() => setModal(false)}> */}
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'white',
+                        height: 150,
+                        width: 300,
+                        borderRadius: 10,
+                        shadowOpacity: 5,
+                        elevation: 5,
+                    }}>
+                        {
+                            success ? (
                                 <View style={{
                                     backgroundColor: 'green',
                                     borderRadius: 100,
@@ -243,11 +254,26 @@ const EditProfile = ({route, navigation}) => {
                                 }}>
                                     <Icon name="check" size={25} color="white" solid />
                                 </View>
-                                <Text style={[assets.fonts.bold, {fontSize: 17, textAlign: 'center'}]}>Data anda berhasil {'\n'} disimpan!</Text>
-                            </View>
-                        </View>
-                    {/* </TouchableWithoutFeedback> */}
-            </Modal> 
+                            ) : (
+                                <View style={{
+                                    backgroundColor: '#C51313',
+                                    borderRadius: 100,
+                                    padding: 10,
+                                    width: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                    height: 50, // Sesuaikan ukuran sesuai kebutuhan
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: 20
+                                }}>
+                                    <Icon name="xmark" size={25} color="white" solid />
+                                </View>
+                            )
+                        }
+                        <Text style={[assets.fonts.bold, { fontSize: 17, textAlign: 'center' }]}>{pesan}</Text>
+                    </View>
+                </View>
+                {/* </TouchableWithoutFeedback> */}
+            </Modal>
         </View>
     )
 }

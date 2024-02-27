@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const deleteFoto = async (id) => {
     console.log(id);
@@ -10,7 +11,7 @@ export const deleteFoto = async (id) => {
     console.log('prosess hapus Foto');
     console.log('====================================');
     const res = await axios.delete(
-        `https://picsea-1-k3867505.deta.app/foto-hapus`, 
+        `${config.Base_url}/foto-hapus`, 
         {
             headers: {
                 'Authorization': `Bearer ${jwtToken}`,

@@ -18,6 +18,8 @@ import Animated, {
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import BackDrop from './BackDrop';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import styleDefault from '../../assets/styles';
 
 interface Props extends AnimatedScrollViewProps {
   snapTo: string;
@@ -49,6 +51,8 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
     const closeHeight = height;
     const topAnimation = useSharedValue(closeHeight);
 
+    const navigation = useNavigation()
+
     useEffect(() => {
       // console.log(snapTo);
       const percentage = parseFloat(snapTo.replace('%', '')) / 100;
@@ -67,11 +71,19 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
     
     const expand = useCallback(() => {
       'worklet';
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+            display: "none"
+        }
+      });
       topAnimation.value = withTiming(openHeight);
     }, [openHeight, topAnimation]);
 
     const close = useCallback(() => {
       'worklet';
+      navigation.getParent()?.setOptions({
+        tabBarStyle: styleDefault.tabBar
+      });
       topAnimation.value = withTiming(closeHeight);
     }, [closeHeight, topAnimation]);
 

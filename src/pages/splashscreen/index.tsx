@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
 import { Image, Text, View } from "react-native-ui-lib";
 import { assets } from "../../assets";
 import { container } from "../../components";

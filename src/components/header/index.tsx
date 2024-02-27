@@ -1,18 +1,15 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { Alert, StyleSheet } from "react-native"
 import { Colors, Image, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { ButtonSearch, LoginButton, ModalC } from ".."
 import { useNavigation } from "@react-navigation/native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-
-const GetToken = async () => {
-    const jwtToken = await AsyncStorage.getItem('cache')
-    return jwtToken
-}
+import { UserToken } from '../../context/GlobalState'
 
 const awal = () => {
     const navigation = useNavigation()
+
+    const [Token, setToken] = useContext(UserToken)
 
     return (
         <View style={Style.container}>
@@ -25,9 +22,9 @@ const awal = () => {
                     <Text style={Style.fontJudul}>Inspirasimu</Text>
                 </View>
                 <View style={Style.section2}>
-                    <TouchableOpacity 
-                    onPress={()=>navigation.navigate("ViewFavorite")}>
-                        <Icon name="heart" size={20} color="#040326" solid/>
+                    <TouchableOpacity
+                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => {}}>
+                        <Icon name="heart" size={20} color="#040326" solid />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -43,13 +40,13 @@ const detailGambar = (props) => {
                     <TouchableOpacity onPress={props.onPress}>
                         <View style={{
                             backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                            height: 35, 
-                            width: 35, 
+                            height: 35,
+                            width: 35,
                             borderRadius: 35,
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
-                            <Icon name="arrow-left" size={20} color="white" solid style={{elevation: 5}} />
+                            <Icon name="arrow-left" size={20} color="white" solid style={{ elevation: 5 }} />
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -57,13 +54,13 @@ const detailGambar = (props) => {
                     <TouchableOpacity onPress={props.onPressBottomSheet}>
                         <View style={{
                             backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                            height: 35, 
-                            width: 35, 
+                            height: 35,
+                            width: 35,
                             borderRadius: 35,
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
-                            <Icon name="ellipsis-vertical" size={20} color="white" solid/>
+                            <Icon name="ellipsis-vertical" size={20} color="white" solid />
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -74,6 +71,8 @@ const detailGambar = (props) => {
 
 const profile = () => {
     const navigation = useNavigation()
+
+    const [Token, setToken] = useContext(UserToken)
 
     return (
         <View style={Style.container}>
@@ -86,8 +85,8 @@ const profile = () => {
                     <Text text60 marginT-10 style={Style.fontJudul}>Inspirasimu</Text>
                 </View>
                 <View style={Style.section2}>
-                    <TouchableOpacity 
-                    onPress={()=>navigation.navigate("ViewFavorite")}>
+                    <TouchableOpacity
+                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { }}>
                         <Icon name="heart" size={20} color="#040326" />
                     </TouchableOpacity>
                 </View>
@@ -97,20 +96,20 @@ const profile = () => {
 }
 
 const Search = props => {
-    console.log(props);
-    
+    const [Token, setToken] = useContext(UserToken)
+
     const navigation = useNavigation()
     return (
         <View style={Style.container}>
             <View style={Style.section2}>
                 <ButtonSearch
-                onFocus={props.onFocus}
-                value={props.value}
-                onChangeText={props.onChangeText}
+                    onFocus={props.onFocus}
+                    value={props.value}
+                    onChangeText={props.onChangeText}
                 />
                 <View marginL-20 style={Style.section2}>
-                    <TouchableOpacity onPress={()=>navigation.navigate('ViewFavorite')}>
-                        <Icon name="heart" size={20} color="#040326" solid/>
+                    <TouchableOpacity onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { }}>
+                        <Icon name="heart" size={20} color="#040326" solid />
                     </TouchableOpacity>
                 </View>
             </View>

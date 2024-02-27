@@ -4,6 +4,11 @@ import { AuthProvider } from './context/auth';
 import { Alert, BackHandler, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { Text, View } from 'react-native-ui-lib';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
   const lastBackPressed = useRef(0);
@@ -38,7 +43,7 @@ const App = () => {
 
   return (
     // <AuthProvider>
-    <SafeAreaView style={{flex: 1}}>
+    <GestureHandlerRootView style={{flex: 1}}>
       <KeyboardAvoidingView
         // keyboardVerticalOffset={60}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -46,7 +51,7 @@ const App = () => {
       >
         <Router />
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </GestureHandlerRootView>
     // </AuthProvider>
   )
 }

@@ -12,7 +12,7 @@ const DataKomentar = (props) => {
         } else {
             return (
                 <Image
-                source={{ uri: `data:image/png;base64,${props.profile}` }}
+                source={{ uri: props.profile.startsWith('https://') ? props.profile : `data:image/png;base64,${props.profile}` }}
                 style={{
                     width: 45,
                     height: 45,

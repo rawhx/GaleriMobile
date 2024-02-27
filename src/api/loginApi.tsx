@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import axios from "axios"
 import { Alert } from "react-native"
+import config from "../../config"
 
 
 export const loginApi = async (data, navigation) => {
     // try {
-        let url = `https://picsea-1-k3867505.deta.app/login/users?email=${data.email}&password=${data.password}`
+        let url = `${config.Base_url}/login/users?email=${data.email}&password=${data.password}`
         const res = await axios.post(url)
         // .then(async(res)=>{
             if (res.data.Admin) { 
@@ -17,7 +18,7 @@ export const loginApi = async (data, navigation) => {
             if (!res.data.IsError) {
                 let jwt = res.data.Data
                 await AsyncStorage.setItem('cache', jwt)
-                navigation.replace("Tabs")
+                // navigation.replace("Tabs")
             }
             return res.data
         // }).catch((err)=>console.error(err))

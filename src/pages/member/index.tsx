@@ -8,12 +8,25 @@ import { assets } from "../../assets"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import WebView from "react-native-webview"
 import axios from "axios"
+import { getUserCari } from "../../api/api"
 
 const ViewMember = ({route, navigation}) => {
     const [snapToken, setSnap] = useState('')
     const [modal, setModal] = useState(false)
     const [visible, setVisible] = useState(false)
     const [pesan, setPesan] = useState('')
+    const [HargaMember, setHargaMember] = useState(route.params.profile.HargaMember || 0)
+
+    const fetchData = async () => {
+        await getUserCari({id: route.params.profile.id}).then((res)=>{
+            setHargaMember(res.HargaMember)  
+        })
+    }
+
+    useEffect(()=>{
+        setHargaMember(route.params.profile.HargaMember)
+        fetchData()
+    }, [route.params.profile.id])
     console.log('userId', route.params.profile.id);
     const items = ['Foto premium', 'Foto lebih berkualitas', 'Foto lebih HD']
     const Profile = () => {
@@ -27,7 +40,7 @@ const ViewMember = ({route, navigation}) => {
             return (
                 <View>
                     <Image
-                    source={{ uri: `data:image/png;base64,${route.params.profile.FotoProfil}` }}
+                    source={{ uri: (route.params.profile.FotoProfil).startsWith('https://') ? route.params.profile.FotoProfil : `data:image/*;base64,${route.params.profile.FotoProfil}` }}
                     style={styles.profileImage}
                     />
                 </View>
@@ -70,7 +83,7 @@ const ViewMember = ({route, navigation}) => {
             <View center>
                 <Profile />
                 <Text marginT-20 style={[assets.fonts.boldReal, {fontSize: 18}]}>Langganan {route.params.profile.Username}</Text>
-                <Text marginB-10 style={[assets.fonts.default]} color={'grey'}>Rp {(route.params.profile.HargaMember).toLocaleString()} per bulan | Habis setelah 30 hari</Text>
+                <Text marginB-10 style={[assets.fonts.default]} color={'grey'}>Rp {(HargaMember).toLocaleString()} per bulan | Habis setelah 30 hari</Text>
                 <Text marginV-20 style={[assets.fonts.default]}>Baru baru ini membagikan foto premium</Text>
             </View>
             <View marginH-25>

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const addAlbum = async (data) => {
   try {
@@ -9,7 +10,7 @@ export const addAlbum = async (data) => {
     console.log(jwtToken);
     
     const res = await axios.post(
-      `https://picsea-1-k3867505.deta.app/album-tambah`, 
+      `${config.Base_url}/album-tambah`, 
       data,
       {
         headers: {

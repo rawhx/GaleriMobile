@@ -1,80 +1,64 @@
-import React from 'react';
-import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-import { StyleSheet, View, TextInput, Image, Text, TouchableOpacity } from 'react-native';
-import BottomSheet from '@gorhom/bottom-sheet';
-import Webview from './components/Webview';
+import React, { useCallback, useMemo, useRef } from "react";
+import { Text, StyleSheet } from "react-native";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { Button, View } from "react-native-ui-lib";
 
-function Test() {
-  const [isOpen, setOpen] = React.useState(false);
-  const [uri, setUri] = React.useState('');
+const App = () => {
+	// ref
+	const bottomSheetRef = useRef<BottomSheet>(null);
 
-  return (
-    <View style={styles.container}>
-      <Image source={require('./images/midtrans-logo.png')} style={styles.image} />
-      <Text style={styles.title}>SNAP on React Native Webview</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setUri}
-        value={null}
-        placeholder="Put your SNAP link (optional)"
-        keyboardType="default"
-      />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setOpen(!isOpen)}
-      >
-        <Text style={styles.button__text}>Open SNAP</Text>
-      </TouchableOpacity>
-      {
-        isOpen && (
-          <BottomSheet
-            snapPoints={['95%']}
-            enablePanDownToClose={true}
-            onClose={() => setOpen(false)}
-          >
-            <Webview uri={uri} />
-          </BottomSheet>
-        )
-      }
-    </View>
-  );
+	// variables
+	const snapPoints = useMemo(() => ["1%", "50%"], []);
+
+	// callbacks
+	const handleSheetChanges = useCallback((index: number) => {
+		console.log("handleSheetChanges", index);
+	}, []);
+
+    const handleSnapPress = useCallback((index) => {
+        bottomSheetRef.current?.snapToIndex(index);
+      }, []);
+
+	// renders
+	const renderBackdrop = useCallback(
+		(props) => (
+			<BottomSheetBackdrop
+				{...props}
+				// disappearsOnIndex={0}
+				appearsOnIndex={1}
+			/>
+		),
+		[]
+	);
+	return (
+      
+		<View style={styles.container}>
+			<Button label="Snap To 50%" onPress={() => handleSnapPress(1)} />
+			<BottomSheet
+				ref={bottomSheetRef}
+				index={1}
+				snapPoints={snapPoints}
+				backdropComponent={renderBackdrop}
+			>
+				<View style={styles.contentContainer}>
+					<Text>Awesome 🎉</Text>
+				</View>
+			</BottomSheet>
+		</View>
+    
+	);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 100,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  image: {
-    height: 50,
-    width: 200,
-    resizeMode: 'contain',
-  },
-  title: {
-    fontSize: 18,
-    margin: 12,
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    width: 300,
-    borderColor: '#EAEAEA',
-  },
-  button: {
-    width: 150,
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-    backgroundColor: '#355f86',
-  },
-  button__text: {
-    color: '#FFFFFF'
-  },
+	container: {
+		flex: 1,
+		padding: 24,
+		backgroundColor: "white",
+	},
+	contentContainer: {
+		flex: 1,
+		alignItems: "center",
+	},
 });
 
-export default gestureHandlerRootHOC(Test);
+export default App;

@@ -1,11 +1,12 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import config from '../../config';
 
 export const reportUser = async (data) => {
 //   try {
     const jwtToken = await AsyncStorage.getItem('cache')
     const res = await axios.post(
-        `https://picsea-1-k3867505.deta.app/report-akun`, data,
+        `${config.Base_url}/report-akun`, data,
         {
           headers: {
             Authorization: `Bearer ${jwtToken}`,

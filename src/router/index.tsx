@@ -22,6 +22,7 @@ import ViewFavorite from '../pages/favorite';
 import ViewMember from '../pages/member';
 import Pembayaran from '../pages/member/pembayaran';
 import HistoryTransaksi from '../pages/historytransaksi';
+import { UserToken } from '../context/GlobalState';
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -29,6 +30,7 @@ const Tab = createBottomTabNavigator()
 const Tabs = () => {
     const [getDataDetail, setGetDataDetail] = useState({})
     const [jwt, setjwt] = useState()
+    const [bottomNavVisible, setBottomNavVisible] = useState(true);
     
     useEffect(() => {
         const getDetailRoute = async () => {
@@ -61,7 +63,7 @@ const Tabs = () => {
             return (
                 <View>
                     <Image
-                    source={{ uri: `data:image/png;base64,${getDataDetail.profile}` }}
+                    source={{ uri: getDataDetail.profile.startsWith('https://') ? getDataDetail.profile : `data:image/png;base64,${getDataDetail.profile}` }}
                     style={{
                         width: 20,
                         height: 20,
@@ -77,7 +79,7 @@ const Tabs = () => {
         <Tab.Navigator initialRouteName='Home'
         screenOptions={{
             headerShown: false,
-            tabBarStyle: style.tabBar,
+            tabBarStyle: [style.tabBar, { display: bottomNavVisible ? 'flex' : 'none' }],
         }}>
             <Tab.Screen name="Home" component={TabsHome} 
             options={{
@@ -252,36 +254,39 @@ const TabsProfile = () => {
 }
 
 const Router = () => {
+    const [Token, setToken] = useState()
     return (
-        <NavigationContainer>
-            <StatusBar
-                backgroundColor={'#EFF2F7'}
-                barStyle={"dark-content"}
-            />
-            <Stack.Navigator 
-            // initialRouteName='SplashScreen'
-            screenOptions={{
-                headerShown: false
-            }}>
-                {/* <Stack.Screen name="SplashScreen" component={Test}/> */}
-                {/* <Stack.Screen name="SplashScreen" component={ProfileLain}/> */}
-                <Stack.Screen name="SplashScreen" component={SplashScreen}/>
-                <Stack.Screen name="Welcome" component={Welcome}/>
-                <Stack.Screen name="Login" component={Login}/>
-                <Stack.Screen name="Register" component={Register}/>
-                
-                <Stack.Screen name="Tabs" component={Tabs}/>
+        <UserToken.Provider value={[Token, setToken]}>
+            <NavigationContainer>
+                <StatusBar
+                    backgroundColor={'#EFF2F7'}
+                    barStyle={"dark-content"}
+                />
+                <Stack.Navigator 
+                // initialRouteName='SplashScreen'
+                screenOptions={{
+                    headerShown: false
+                }}>
+                    {/* <Stack.Screen name="SplashScreen" component={Test}/> */}
+                    {/* <Stack.Screen name="SplashScreen" component={ProfileLain}/> */}
+                    <Stack.Screen name="SplashScreen" component={SplashScreen}/>
+                    <Stack.Screen name="Welcome" component={Welcome}/>
+                    <Stack.Screen name="Login" component={Login}/>
+                    <Stack.Screen name="Register" component={Register}/>
+                    
+                    <Stack.Screen name="Tabs" component={Tabs}/>
 
-                <Stack.Screen name="DetailImg" component={DetailPencarian}/>
+                    <Stack.Screen name="DetailImg" component={DetailPencarian}/>
 
-                <Stack.Screen name="DetailAlbum" component={DetailAlbum}/>
-                <Stack.Screen name="EditProfile" component={EditProfile}/>
-                <Stack.Screen name="ViewFavorite" component={ViewFavorite}/>
-                <Stack.Screen name="Member" component={ViewMember}/>
-                <Stack.Screen name="Pembayaran" component={Pembayaran}/>
-                <Stack.Screen name="HistoryTransaksi" component={HistoryTransaksi}/>
-            </Stack.Navigator>
-        </NavigationContainer>
+                    <Stack.Screen name="DetailAlbum" component={DetailAlbum}/>
+                    <Stack.Screen name="EditProfile" component={EditProfile}/>
+                    <Stack.Screen name="ViewFavorite" component={ViewFavorite}/>
+                    <Stack.Screen name="Member" component={ViewMember}/>
+                    <Stack.Screen name="Pembayaran" component={Pembayaran}/>
+                    <Stack.Screen name="HistoryTransaksi" component={HistoryTransaksi}/>
+                </Stack.Navigator>
+            </NavigationContainer>
+        </UserToken.Provider>
     )
 }
 

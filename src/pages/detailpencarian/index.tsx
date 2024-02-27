@@ -12,6 +12,7 @@ import { StyleSheet, TextInput } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNFetchBlob from 'rn-fetch-blob';
+import config from "../../../config";
 
 const DetailPencarian = ({route, navigation}) => {
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
@@ -19,13 +20,28 @@ const DetailPencarian = ({route, navigation}) => {
     const bottomSheetRefReport = useRef<BottomSheetMethods>(null);
     const pressHandlerKomentar = useCallback(() => {
         bottomSheetRefKomentar.current?.expand();
+        navigation.getParent()?.setOptions({
+            tabBarStyle: {
+              display: "none"
+            }
+        });
     }, [])
     const pressHandlerReport = useCallback(() => {
         bottomSheetRef.current?.close();
         bottomSheetRefReport.current?.expand();
+        navigation.getParent()?.setOptions({
+            tabBarStyle: {
+              display: "none"
+            }
+        });
     }, [])
     const pressHandler = useCallback(() => {
         bottomSheetRef.current?.expand();
+        navigation.getParent()?.setOptions({
+            tabBarStyle: {
+              display: "none"
+            }
+        });
     }, [])
 
     const [load, setLoad] = useState(true)
@@ -42,7 +58,7 @@ const DetailPencarian = ({route, navigation}) => {
     const [reportfoto, setReportFoto] = useState('')
     const [modal, setModal] = useState(false)
     const [pesan, setPesan] = useState('ini pesan')
-    const [heightbottomreport, setHeightBottomReport] = useState('56%')
+    const [heightbottomreport, setHeightBottomReport] = useState('35%')
 
     const kirimPesan = async () => {
         if (addKomentar !== '') {
@@ -61,30 +77,50 @@ const DetailPencarian = ({route, navigation}) => {
         }
     }
 
-    const downloadImage = (base64Data, fileName) => {
+    const downloadImage = async (base64Data, fileName) => {
+        const { config, fs } = RNFetchBlob;
         const pathToSave = `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}.jpeg`;
-        RNFetchBlob.fs.writeFile(pathToSave, base64Data, 'base64')
-          .then( async () => {
-            await setPesan('Unduh Foto Berhasil!')
-            await setModal(true)
-            setTimeout(()=>{
-                setModal(false)
-            }, 3000)
-          })
-          .catch(error => {
-            
-            console.error('Error:', error);
-          });
+      
+        try {
+          // Jika base64Data bukan URL
+          if (!base64Data.startsWith('https://')) { 
+            await fs.writeFile(pathToSave, base64Data, 'base64');
+          } else {
+            // Jika base64Data adalah URL
+            const response = await config({
+              fileCache: true,
+              appendExt: 'jpg',
+              path: pathToSave,
+            }).fetch('GET', base64Data);
+      
+            // Pastikan respon adalah 200 (OK)
+            if (response.respInfo.status === 200) {
+              console.log('Unduh Foto Berhasil!');
+            } else {
+              throw new Error('Gagal mengunduh foto');
+            }
+          }
+      
+          // Setelah berhasil
+          await setPesan('Unduh Foto Berhasil!');
+          await setModal(true);
+          setTimeout(() => {
+            setModal(false);
+          }, 3000);
+        } catch (error) {
+          console.error('Error:', error);
+        }
     };
+      
 
     const Grid = () => {    
         const [data, setData] = useState([])
         useEffect(() => {
             const fetchData = async () => {
                 const jwtToken = await AsyncStorage.getItem('cache');
-                let url = `https://picsea-1-k3867505.deta.app/foto-cari/guest?page=1&limit=20&kategori_id=${route.params.kategoriId}`
+                let url = `${config.apiUrl}foto-cari/guest?page=1&limit=20&kategori_id=${route.params.kategoriId}`
                 if (jwtToken) {
-                    url = `https://picsea-1-k3867505.deta.app/foto-cari?membership=true&keduanya=true&page=1&limit=20&kategori_id=${route.params.kategoriId}`
+                    url = `${config.apiUrl}foto-cari?membership=true&keduanya=true&page=1&limit=20&kategori_id=${route.params.kategoriId}`
                 }
                 const response = await axios.get(url, {
                     headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
@@ -155,7 +191,7 @@ const DetailPencarian = ({route, navigation}) => {
                 return (
                     <View>
                         <Image
-                        source={{ uri: `data:image/png;base64,${route.params.DataUser.FotoProfil}` }}
+                        source={{ uri: route.params.DataUser.FotoProfil.startsWith('https://') ? route.params.DataUser.FotoProfil : `data:image/*;base64,${route.params.DataUser.FotoProfil}` }}
                         style={{
                             width: 45,
                             height: 45,
@@ -273,7 +309,7 @@ const DetailPencarian = ({route, navigation}) => {
     
                 <BottomSheet
                     ref={bottomSheetRef}
-                    snapTo={'40%'}
+                    snapTo={'35%'}
                     backgroundColor={'white'}
                     backDropColor={'black'}
                 >
@@ -325,7 +361,7 @@ const DetailPencarian = ({route, navigation}) => {
                                     numberOfLines={4}
                                     style={[{ flex: 1, width: '100%', color: 'black', marginLeft: 10}, assets.fonts.input]}
                                     onFocus={()=>setHeightBottomReport('75%')}
-                                    onBlur={()=>setHeightBottomReport("59%")}
+                                    onBlur={()=>setHeightBottomReport("35%")}
                                 />
                             </View>
                             <View style={{alignItems: 'flex-end'}}>
