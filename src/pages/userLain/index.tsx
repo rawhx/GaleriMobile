@@ -135,7 +135,7 @@ const ProfileLain = ({route, navigation}) => {
         if (active == 'foto') {
             view = <MyFoto route={route.params.tabSearch} follow={follow} data={gambargratis} profile={profile} />
         } else if (active == 'member') {
-            view = <FotoMember profile={profile} data={gambarmember} follow={follow}/>
+            view = <FotoMember route={route.params.tabSearch} profile={profile} data={gambarmember} follow={follow}/>
         } else if (active == 'album') {
 
         }

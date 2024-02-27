@@ -133,14 +133,14 @@ const DetailPencarian = ({ route, navigation }) => {
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch, { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 1).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch, { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership })} />
                         ))
                     }
                 </View>

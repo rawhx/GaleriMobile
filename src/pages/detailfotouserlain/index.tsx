@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome6"
+import Iconfa5 from "react-native-vector-icons/FontAwesome5"
 import { Image, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Like, ModalC, Pin, ViewAddKomentar, container } from "../../components";
 import { GestureHandlerRootView, ScrollView, TextInput } from "react-native-gesture-handler";
@@ -116,7 +117,7 @@ const DetailFotoUserLain = ({route, navigation}) => {
                 return (
                     <View>
                         <Image
-                        source={{ uri: `data:image/png;base64,${route.params.DataUser.FotoProfil}` }}
+                        source={{ uri: route.params.DataUser.FotoProfil.startsWith('https://') ? route.params.DataUser.FotoProfil : `data:image/png;base64,${route.params.DataUser.FotoProfil}` }}
                         style={{
                             width: 45,
                             height: 45,
@@ -222,7 +223,7 @@ const DetailFotoUserLain = ({route, navigation}) => {
                                     {
                                         route.params && route.params.member ? (
                                             <View marginR-5 padding-5 style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5}}>
-                                                <Icon name="crown" size={10} color={"#FFE500"} solid />
+                                                <Iconfa5 name="crown" size={10} color={"#FFE500"} solid />
                                                 <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 9, marginLeft: 5, color: "#FFE500" }}>PICTSEA+</Text>
                                             </View>
                                         ) : null

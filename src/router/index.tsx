@@ -286,6 +286,7 @@ const Router = () => {
                     <Stack.Screen name="Pembayaran" component={Pembayaran}/>
                     <Stack.Screen name="HistoryTransaksi" component={HistoryTransaksi}/>
                     <Stack.Screen name="LikeDetail" component={DetailLike}/>
+                    <Stack.Screen name="DetailFotoAlbum" component={DetailPencarianProfile}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </UserToken.Provider>
