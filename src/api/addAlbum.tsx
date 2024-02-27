@@ -20,7 +20,9 @@ export const addAlbum = async (data) => {
       }
     );
     
-    return res.data.Data
+    console.log(res.data);
+    
+    return res.data
   } catch (error) {
     console.error('error addAlbum:' + error);
     if (error.response) {

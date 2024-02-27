@@ -6,14 +6,14 @@ import { addFoto, cariAlbum, kategoriApi } from "../../api/api"
 import { ImageBackground, Linking, ScrollView, StyleSheet } from "react-native"
 import DocumentPicker from 'react-native-document-picker'
 import RNFS from 'react-native-fs'
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Icon from "react-native-vector-icons/FontAwesome6"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { GestureHandlerRootView, RefreshControl } from "react-native-gesture-handler"
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet"
 import ImageCompressor from 'react-native-image-compressor';
 
-const AddFoto = () => {
+const AddFoto = ({ navigation }) => {
     const [jenisFotoSelect, setJenisFoto] = useState(null)
     const [loading, setLoading] = useState(false)
     const [selectedKategori, setSelectedKategori] = useState('');
@@ -30,6 +30,11 @@ const AddFoto = () => {
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
     const pressHandler = useCallback(() => {
         bottomSheetRef.current?.expand();
+        navigation.getParent()?.setOptions({
+            tabBarStyle: {
+                display: "none"
+            }
+        });
     }, [])
 
     const [formData, setFormData] = useState(new FormData())
@@ -47,49 +52,80 @@ const AddFoto = () => {
         setPreviewData(null)
         setLoading(false)
     }
-    
+
     const getData = async () => {
         const kategori = await kategoriApi()
-        const dataAlbum = await cariAlbum({select: true})
+        const dataAlbum = await cariAlbum({ select: true })
         setVisible(false)
         setKategori(kategori)
         setAlbum(dataAlbum)
-        
+
     }
     useEffect(() => {
         setVisible(true)
         getData()
     }, [])
 
-    const uploadFile = async () => {
-        const pickImg = await DocumentPicker.pick({
-            type: [DocumentPicker.types.images],
-        });
+    // const uploadFile = async () => {
+    //     const pickImg = await DocumentPicker.pick({
+    //         type: [DocumentPicker.types.images],
+    //     });
 
-        if (pickImg) {
-            const fileUri = pickImg[0].uri
-            handleInputChange('foto', {
-                uri: fileUri,
-                name: pickImg[0].name,
-                type: pickImg[0].type
-            })
-            const data = await RNFS.readFile(fileUri, 'base64')
-            await setPreviewData(data)
-            bottomSheetRef.current?.close();
-        } else {
-            if (DocumentPicker.isCancel(pickImg)) {
-                console.log('Pemilihan dibatalkan');
+    //     if (pickImg) {
+    //         const fileUri = pickImg[0].uri
+    //         handleInputChange('foto', {
+    //             uri: fileUri,
+    //             name: pickImg[0].name,
+    //             type: pickImg[0].type
+    //         })
+    //         const data = await RNFS.readFile(fileUri, 'base64')
+    //         await setPreviewData(data)
+    //         bottomSheetRef.current?.close();
+    //     } else {
+    //         if (DocumentPicker.isCancel(pickImg)) {
+    //             console.log('Pemilihan dibatalkan');
+    //         } else {
+    //             console.error('Error picking image:', pickImg);
+    //         }
+    //     }
+    // }
+
+    const uploadFile = async () => {
+        try {
+            const pickImg = await DocumentPicker.pick({
+                type: [DocumentPicker.types.images],
+            });
+
+            if (pickImg) {
+                const fileUri = pickImg[0].uri;
+                handleInputChange('foto', {
+                    uri: fileUri,
+                    name: pickImg[0].name,
+                    type: pickImg[0].type
+                });
+
+                const data = await RNFS.readFile(fileUri, 'base64');
+                await setPreviewData(data);
+                bottomSheetRef.current?.close();
             } else {
-                console.error('Error picking image:', pickImg);
+                if (DocumentPicker.isCancel(pickImg)) {
+                    console.log('Pemilihan dibatalkan');
+                } else {
+                    console.error('Error picking image:', pickImg);
+                }
             }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            // Lakukan penanganan kesalahan tambahan di sini jika diperlukan
         }
-    }
+    };
+
 
     const uploadCamera = async (isCamera: boolean) => {
         const options = {
             mediaType: 'photo',
         };
-      
+
         try {
             const response = await launchCamera(options);
             const fileUri = response.assets[0].uri
@@ -107,8 +143,8 @@ const AddFoto = () => {
     }
 
     return (
-        <GestureHandlerRootView style={{flex: 1}}>
-            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{display: visible ? 'block' : 'none'}}/>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
             <View style={container.defaultTab}>
                 <ScrollView
                     refreshControl={
@@ -116,16 +152,16 @@ const AddFoto = () => {
                     }
                 >
                     <View center marginT-20 paddingH-15>
-                        <Text style={[assets.fonts.judul, {fontSize: 20}]}>Apa Postingan Barumu?</Text>
-                        <Text color="grey" style={[assets.fonts.default, {textAlign: 'center', fontSize: 10}]}>
-                        Jika ingin mengunggah foto layanan keanggotaan, tunggu persetujuan admin setelah mengunggah foto ke layanan keanggotaan. Cek email secara rutin untuk konfirmasi. Jika tidak ada konfirmasi lebih lanjut, hubungi admin melalui informasi kontak di
-                            <Text onPress={()=>{ 
+                        <Text style={[assets.fonts.judul, { fontSize: 20 }]}>Apa Postingan Barumu?</Text>
+                        <Text color="grey" style={[assets.fonts.default, { textAlign: 'center', fontSize: 10 }]}>
+                            Jika ingin mengunggah foto layanan keanggotaan, tunggu persetujuan admin setelah mengunggah foto ke layanan keanggotaan. Cek email secara rutin untuk konfirmasi. Jika tidak ada konfirmasi lebih lanjut, hubungi admin melalui informasi kontak di
+                            <Text onPress={() => {
                                 // Linking.openURL('https://wa.me/6289607810680')
                                 Linking.openURL('https://example.com')
-                            }} style={[assets.fonts.default, {color: 'blue', fontSize: 10, margin: 0}]}> Website Tentang Kami.</Text>
+                            }} style={[assets.fonts.default, { color: 'blue', fontSize: 10, margin: 0 }]}> Website Tentang Kami.</Text>
                         </Text>
 
-                        <View style={assets.styleDefault.garis2}/>
+                        <View style={assets.styleDefault.garis2} />
                     </View>
                     <View paddingH-15>
                         <View marginV-10>
@@ -138,7 +174,7 @@ const AddFoto = () => {
                                     borderRadius: 10,
                                     paddingHorizontal: 15,
                                 }]}
-                                onChangeText={txt=>{
+                                onChangeText={txt => {
                                     setJudul(txt)
                                     // formData.append('judul_foto', txt)
                                     handleInputChange('judul_foto', txt)
@@ -149,16 +185,16 @@ const AddFoto = () => {
                             {
                                 previewData ? (
                                     <ImageBg foto={previewData}>
-                                        <TouchableOpacity onPress={()=>pressHandler()} style={Style.overlay}>
+                                        <TouchableOpacity onPress={() => pressHandler()} style={Style.overlay}>
                                             <View style={{
                                                 backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                                height: 35, 
-                                                width: 35, 
+                                                height: 35,
+                                                width: 35,
                                                 borderRadius: 35,
                                                 justifyContent: 'center',
                                                 alignItems: 'center',
                                             }}>
-                                                <Icon name="pen-to-square" size={15} color="white" solid style={{elevation: 5}} />
+                                                <Icon name="pen-to-square" size={15} color="white" solid style={{ elevation: 5 }} />
                                             </View>
                                         </TouchableOpacity>
                                     </ImageBg>
@@ -170,15 +206,15 @@ const AddFoto = () => {
                                         borderRadius: 10
                                     }}>
                                         <Image source={assets.images.downloadIcon} style={{
-                                            width: 50, 
+                                            width: 50,
                                             resizeMode: 'contain',
-                                        }}/>
-                                        <Text marginT-10 style={[assets.fonts.bold, {fontSize: 15}]}>Unggah foto disini</Text>
+                                        }} />
+                                        <Text marginT-10 style={[assets.fonts.bold, { fontSize: 15 }]}>Unggah foto disini</Text>
                                         <ButtonC
                                             label="Unggah Foto"
                                             backgroundColor={assets.colors.button}
                                             borderRadius={10}
-                                            onPress={()=>pressHandler()}
+                                            onPress={() => pressHandler()}
                                         />
                                     </View>
                                 )
@@ -194,8 +230,8 @@ const AddFoto = () => {
                                     paddingHorizontal: 15,
                                 }]}
                                 value={deskripsi}
-                                multiline={true} 
-                                onChangeText={txt=>{
+                                multiline={true}
+                                onChangeText={txt => {
                                     setDeskripsi(txt)
                                     handleInputChange('deskripsi_foto', txt)
                                 }}
@@ -207,7 +243,7 @@ const AddFoto = () => {
                                 dataSelected={selectedKategori}
                                 dataSelect={apiKategori}
                                 backgroundColor='#F5F5F5'
-                                val={(val, label)=>{
+                                val={(val, label) => {
                                     console.log('kategori', val, label)
                                     setSelectedKategori(label)
                                     handleInputChange('kategori_id', val)
@@ -220,7 +256,7 @@ const AddFoto = () => {
                                 dataSelected={selectedAlbum}
                                 dataSelect={apiAlbum}
                                 backgroundColor='#F5F5F5'
-                                val={(val, label)=>{
+                                val={(val, label) => {
                                     console.log('album_id', val, label);
                                     setSelectedAlbum(label)
                                     handleInputChange('album_id', val)
@@ -229,15 +265,15 @@ const AddFoto = () => {
                         </View>
                         <View marginV-10>
                             <Text style={assets.fonts.bold}>Jenis Foto</Text>
-                            <View style={{flexDirection: 'row'}}>
+                            <View style={{ flexDirection: 'row' }}>
                                 <View marginR-10>
                                     <ButtonC
                                         label="Gratis"
-                                        labelStyle={{color: jenisFotoSelect == 'gratis' ? 'white' : 'black'}}
+                                        labelStyle={{ color: jenisFotoSelect == 'gratis' ? 'white' : 'black' }}
                                         borderRadius={5}
-                                        backgroundColor={jenisFotoSelect == 'gratis' ? assets.colors.button : 'white' }
-                                        style={{borderWidth: 1, width: 130}}
-                                        onPress={()=>{
+                                        backgroundColor={jenisFotoSelect == 'gratis' ? assets.colors.button : 'white'}
+                                        style={{ borderWidth: 1, width: 130 }}
+                                        onPress={() => {
                                             setJenisFoto('gratis')
                                             // handleFoto(false)
                                         }}
@@ -246,11 +282,11 @@ const AddFoto = () => {
                                 <View>
                                     <ButtonC
                                         label="Membership"
-                                        labelStyle={{color: jenisFotoSelect == 'member' ? 'white' : 'black'}}
+                                        labelStyle={{ color: jenisFotoSelect == 'member' ? 'white' : 'black' }}
                                         borderRadius={5}
                                         backgroundColor={jenisFotoSelect == 'member' ? assets.colors.button : 'white'}
-                                        style={{borderWidth: 1, width: 130}}
-                                        onPress={()=>{
+                                        style={{ borderWidth: 1, width: 130 }}
+                                        onPress={() => {
                                             setJenisFoto('member')
                                             // handleFoto(true)
                                         }}
@@ -261,12 +297,12 @@ const AddFoto = () => {
                                 label="Unggah"
                                 borderRadius={5}
                                 backgroundColor={assets.colors.button}
-                                style={{borderWidth: 1}}
-                                onPress={async ()=>{
-                                    handleInputChange('membership', jenisFotoSelect === 'member'? true : false)
+                                style={{ borderWidth: 1 }}
+                                onPress={async () => {
+                                    handleInputChange('membership', jenisFotoSelect === 'member' ? true : false)
                                     setVisible(true)
-                                    let oprasi = await addFoto(formData).then((res)=>{                                        
-                                        if(!res.IsError) {
+                                    let oprasi = await addFoto(formData).then((res) => {
+                                        if (!res.IsError) {
                                             Refresh()
                                             setError(false)
                                             setModal(true)
@@ -276,10 +312,10 @@ const AddFoto = () => {
                                                 setPesanModal('Foto berhasil ditambahkan')
                                             }
                                             setVisible(false)
-                                            return 
-                                        }  
+                                            return
+                                        }
                                         setVisible(false)
-                                    }).catch((err)=>{
+                                    }).catch((err) => {
                                         setError(true)
                                         setModal(true)
                                         setPesanModal('Data tidak disimpan')
@@ -294,23 +330,23 @@ const AddFoto = () => {
 
             <BottomSheet
                 ref={bottomSheetRef}
-                snapTo={'35%'}
+                snapTo={'36%'}
                 backgroundColor={'white'}
                 backDropColor={'black'}
             >
-                <Text style={[assets.fonts.bold, {textAlign: 'center', fontSize: 18}]}>Buat Kreasimu Sekarang</Text>
+                <Text style={[assets.fonts.bold, { textAlign: 'center', fontSize: 18 }]}>Buat Kreasimu Sekarang</Text>
                 <View paddingH-25>
-                    <View style={assets.styleDefault.garis2}/>
+                    <View style={assets.styleDefault.garis2} />
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                    <TouchableOpacity onPress={()=>uploadFile()} style={{alignItems: 'center'}}>
-                        <View marginH-20 style={{backgroundColor: assets.colors.button, height: 45, width: 45, justifyContent: 'center', borderRadius: 10, alignItems: 'center'}}>
-                            <Icon name="file-image"  color='white' size={20} solid />
+                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => uploadFile()} style={{ alignItems: 'center' }}>
+                        <View marginH-20 style={{ backgroundColor: assets.colors.button, height: 45, width: 45, justifyContent: 'center', borderRadius: 10, alignItems: 'center' }}>
+                            <Icon name="file-image" color='white' size={20} solid />
                         </View>
                         <Text style={[assets.fonts.bold]} >Galeri</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>uploadCamera(true)} style={{alignItems: 'center'}}>
-                        <View marginH-20 style={{backgroundColor: assets.colors.button, height: 45, width: 45, justifyContent: 'center', borderRadius: 10, alignItems: 'center'}}>
+                    <TouchableOpacity onPress={() => uploadCamera(true)} style={{ alignItems: 'center' }}>
+                        <View marginH-20 style={{ backgroundColor: assets.colors.button, height: 45, width: 45, justifyContent: 'center', borderRadius: 10, alignItems: 'center' }}>
                             <Icon name="camera" size={20} color='white' solid />
                         </View>
                         <Text style={[assets.fonts.bold]} >Kamera</Text>
@@ -323,7 +359,7 @@ const AddFoto = () => {
                 setModal={setModal}
             >
                 {
-                   !error ? (
+                    !error ? (
                         <>
                             <View style={{
                                 backgroundColor: 'green',
@@ -337,8 +373,8 @@ const AddFoto = () => {
                             }}>
                                 <Icon name="check" size={25} color="white" solid />
                             </View>
-                            <Text style={[assets.fonts.bold, {fontSize: 15, textAlign: 'center'}]}>Success!</Text>
-                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium'}]}>{pesanModal}</Text>
+                            <Text style={[assets.fonts.bold, { fontSize: 15, textAlign: 'center' }]}>Berhasil!</Text>
+                            <Text style={[{ fontSize: 13, fontFamily: 'Poppins-Medium' }]}>{pesanModal}</Text>
                         </>
                     ) : (
                         <>
@@ -354,8 +390,8 @@ const AddFoto = () => {
                             }}>
                                 <Icon name="xmark" size={25} color="white" solid />
                             </View>
-                            <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal mengupload foto!</Text>
-                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{pesanModal}</Text>
+                            <Text style={[assets.fonts.bold, { fontSize: 15 }]}>Gagal mengupload foto!</Text>
+                            <Text style={[{ fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center' }]}>{pesanModal}</Text>
                         </>
                     )
                 }

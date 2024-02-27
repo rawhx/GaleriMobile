@@ -23,6 +23,7 @@ import ViewMember from '../pages/member';
 import Pembayaran from '../pages/member/pembayaran';
 import HistoryTransaksi from '../pages/historytransaksi';
 import { UserToken } from '../context/GlobalState';
+import DetailLike from '../pages/detaillike';
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -284,6 +285,7 @@ const Router = () => {
                     <Stack.Screen name="Member" component={ViewMember}/>
                     <Stack.Screen name="Pembayaran" component={Pembayaran}/>
                     <Stack.Screen name="HistoryTransaksi" component={HistoryTransaksi}/>
+                    <Stack.Screen name="LikeDetail" component={DetailLike}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </UserToken.Provider>

@@ -50,7 +50,7 @@ const Album = props => {
                                         }}  
                                         style={style.images} />
                                     ) : (
-                                        <View style={[style.images, {backgroundColor, borderRadius: 10}]}/>
+                                        <View style={[style.images, {backgroundColor: getRandomColor(), borderRadius: 10}]}/>
                                     )}
                                     <View paddingH-15 paddingT-5>
                                         {/* Gunakan NamaAlbum dari item */}
@@ -70,7 +70,7 @@ const Album = props => {
                                         {data[index + 1].Sampul !== ' ' ? (
                                             <Image source={{uri: `data:image/png;base64,${data[index + 1].Sampul}`}} style={style.images} />
                                         ) : (
-                                            <View style={style.images}/>
+                                            <View style={[style.images, {backgroundColor: getRandomColor(), borderRadius: 10}]}/>
                                         )}
                                         <View paddingH-15 paddingT-5>
                                             {/* Gunakan NamaAlbum dari item */}

@@ -16,8 +16,10 @@ const Register = ({navigation}) => {
     const [konfirmasi_password, setConfirmPassword] = useState('')
     const [modal, setModal] = useState(false)
     const [errormsg, setErrorMsg] = useState('')
+    const [visible, setVisible] = useState(false)
 
     const submitForm = async () => {
+        setVisible(true)
         if (password != konfirmasi_password) {
             setModal(true)
             setErrorMsg('Kata sandi tidak sama')
@@ -27,6 +29,7 @@ const Register = ({navigation}) => {
         let url = `https://picsea-1-k3867505.deta.app/register?email=${email}&username=${username}&nama_lengkap=${nama_lengkap}&alamat=${alamat}&password=${password}&konfirmasi_password=${konfirmasi_password}`
         
         const response = await axios.post(url).then((res)=>{
+            setVisible(false)
             if (res.data.IsError) {
                 setModal(true)
                 setErrorMsg(res.data.ErrMsg)
@@ -53,11 +56,12 @@ const Register = ({navigation}) => {
             console.log(err.response.status, err.response.data);
             console.log('====================================');
         })
-
+        setVisible(false)
     }
 
     return (
         <View style={container.default}>
+            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
             <TouchableOpacity
                 onPress={() => navigation.navigate('Tabs')}
                 style={{

@@ -82,7 +82,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
       'worklet';
       topAnimation.value = withTiming(closeHeight);
       navigation.getParent()?.setOptions({
-        tabBarStyle: styleDefault.tabBar
+        tabBarStyle: styleDefault.tabBar,
       });
     }, [closeHeight, topAnimation]);
 
@@ -93,6 +93,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
         close,
       }),
       [expand, close],
+      
     );
 
     const animationStyle = useAnimatedStyle(() => {

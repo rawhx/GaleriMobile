@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Checkbox, Colors, Text, TouchableOpacity, View } from "react-native-ui-lib"
+import { Checkbox, Colors, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import style from "./style"
 import { ButtonC, Input, ModalC, container } from "../../components"
 import Icon from "react-native-vector-icons/FontAwesome6"
@@ -14,6 +14,7 @@ const Login = ({route, navigation}) => {
     const [modal, setModal] = useState(false)
     const [verifikasi, setVerifikasi] = useState(false)
     const [errormsg, setErrorMsg] = useState('')
+    const [visible, setVisible] = useState(false)
 
     const fetchData = async () => {
         await setVerifikasi(route.params?.verifikasi)
@@ -26,6 +27,7 @@ const Login = ({route, navigation}) => {
 
     return (
         <View style={container.default}>
+            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
             <TouchableOpacity
                 onPress={() => navigation.navigate('Tabs')}
                 style={{
@@ -80,21 +82,25 @@ const Login = ({route, navigation}) => {
                     blokir={true}
                     label="Masuk"
                     backgroundColor={assets.colors.button} 
-                    onPress={()=>LoginApi({ email, password}, navigation).then((res)=>{
-                        if (res.ErrNum === 404) {
+                    onPress={()=>{
+                        setVisible(true)
+                        LoginApi({ email, password}, navigation).then((res)=>{
+                            setVisible(false)
+                            if (res.ErrNum === 404) {
+                                setModal(true)
+                                setErrorMsg(res.ErrMsg)
+                            } else if (res.IsError) {
+                                setModal(true)
+                                setErrorMsg(res.ErrMsg)
+                            } else if (!res.IsError) { 
+                                setToken(res.Data)
+                                navigation.replace("Tabs")
+                            }
+                        }).catch((err)=>{
                             setModal(true)
-                            setErrorMsg(res.ErrMsg)
-                        } else if (res.IsError) {
-                            setModal(true)
-                            setErrorMsg(res.ErrMsg)
-                        } else if (!res.IsError) { 
-                            setToken(res.Data)
-                            navigation.replace("Tabs")
-                        }
-                    }).catch((err)=>{
-                        setModal(true)
-                        setErrorMsg(err.response.data)
-                    })}
+                            setErrorMsg(err.response.data)
+                        })}
+                    }
                     // onPress={()=>HandleLogin()}
                 />
                 <View center marginT-20 style={{display: 'flex', flexDirection: 'row'}}>

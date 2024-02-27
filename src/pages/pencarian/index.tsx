@@ -43,7 +43,11 @@ const Search = ({route, navigation}) => {
                 label: ''
             },
         });
-        setSearch(text)
+        if (!text) {
+            setSearch('')
+        } else {
+            setSearch(text)
+        }
         fetchData()
     }
 

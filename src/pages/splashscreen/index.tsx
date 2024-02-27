@@ -3,9 +3,10 @@ import { Image, Text, View } from "react-native-ui-lib";
 import { assets } from "../../assets";
 import { container } from "../../components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserToken } from "../../context/GlobalState";
 
 const SplashScreen = ({navigation}) => {
-
+    const [Token, setToken] = useContext(UserToken)
     useEffect(()=>{
         setTimeout(()=>{
             HandleItem()
@@ -18,6 +19,7 @@ const SplashScreen = ({navigation}) => {
         console.log('====================================');
         console.log(dataToken);
         console.log('====================================');
+        setToken(dataToken)
         if (!dataToken) {
             navigation.navigate("Welcome")
         } else {

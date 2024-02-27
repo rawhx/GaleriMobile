@@ -330,9 +330,22 @@ const Profile = ({ route, navigation }) => {
                             backgroundColor={assets.colors.button}
                             style={{ elevation: 0 }}
                             onPress={async () => {
-                                await addAlbum(formData)
-                                bottomSheetRefAlbum.current?.close();
-                                setFormData({})
+                                await setVisible(true)
+                                await addAlbum(formData).then(async (res) => {
+                                    await setVisible(false)
+                                    if (res.IsError) {
+                                        setPesan(res.ErrMsg)
+                                        setModalNotif(true)
+                                        setTimeout(()=>{
+                                            setModalNotif(false)
+                                        }, 2000)
+                                        return
+                                    } else {
+                                        bottomSheetRefAlbum.current?.close();
+                                        await Refresh()
+                                        setFormData({})
+                                    }
+                                })
                             }}
                         />
                     </View>

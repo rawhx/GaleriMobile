@@ -1,64 +1,52 @@
-import React, { useCallback, useMemo, useRef } from "react";
-import { Text, StyleSheet } from "react-native";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { Button, View } from "react-native-ui-lib";
+import React from 'react';
+import {View, StyleSheet, ToastAndroid, Button, StatusBar} from 'react-native';
 
-const App = () => {
-	// ref
-	const bottomSheetRef = useRef<BottomSheet>(null);
+const Test = () => {
+  const showToast = () => {
+    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
+  };
 
-	// variables
-	const snapPoints = useMemo(() => ["1%", "50%"], []);
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      'All Your Base Are Belong To Us',
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+    );
+  };
 
-	// callbacks
-	const handleSheetChanges = useCallback((index: number) => {
-		console.log("handleSheetChanges", index);
-	}, []);
+  const showToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      'A wild toast appeared!',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
 
-    const handleSnapPress = useCallback((index) => {
-        bottomSheetRef.current?.snapToIndex(index);
-      }, []);
-
-	// renders
-	const renderBackdrop = useCallback(
-		(props) => (
-			<BottomSheetBackdrop
-				{...props}
-				// disappearsOnIndex={0}
-				appearsOnIndex={1}
-			/>
-		),
-		[]
-	);
-	return (
-      
-		<View style={styles.container}>
-			<Button label="Snap To 50%" onPress={() => handleSnapPress(1)} />
-			<BottomSheet
-				ref={bottomSheetRef}
-				index={1}
-				snapPoints={snapPoints}
-				backdropComponent={renderBackdrop}
-			>
-				<View style={styles.contentContainer}>
-					<Text>Awesome 🎉</Text>
-				</View>
-			</BottomSheet>
-		</View>
-    
-	);
+  return (
+    <View style={styles.container}>
+      <Button title="Toggle Toast" onPress={() => showToast()} />
+      <Button
+        title="Toggle Toast With Gravity"
+        onPress={() => showToastWithGravity()}
+      />
+      <Button
+        title="Toggle Toast With Gravity & Offset"
+        onPress={() => showToastWithGravityAndOffset()}
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 24,
-		backgroundColor: "white",
-	},
-	contentContainer: {
-		flex: 1,
-		alignItems: "center",
-	},
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingTop: StatusBar.currentHeight,
+    backgroundColor: '#888888',
+    padding: 8,
+  },
 });
 
-export default App;
+export default Test
