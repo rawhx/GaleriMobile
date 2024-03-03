@@ -1,40 +1,31 @@
-import React from 'react';
-import {View, StyleSheet, ToastAndroid, Button, StatusBar} from 'react-native';
+import React, {useEffect} from 'react';
+import {Text, View, StyleSheet, BackHandler, Alert} from 'react-native';
 
 const Test = () => {
-  const showToast = () => {
-    ToastAndroid.show('A pikachu appeared nearby !', ToastAndroid.SHORT);
-  };
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {text: 'YES', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
 
-  const showToastWithGravity = () => {
-    ToastAndroid.showWithGravity(
-      'All Your Base Are Belong To Us',
-      ToastAndroid.SHORT,
-      ToastAndroid.CENTER,
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
     );
-  };
 
-  const showToastWithGravityAndOffset = () => {
-    ToastAndroid.showWithGravityAndOffset(
-      'A wild toast appeared!',
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
-  };
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Button title="Toggle Toast" onPress={() => showToast()} />
-      <Button
-        title="Toggle Toast With Gravity"
-        onPress={() => showToastWithGravity()}
-      />
-      <Button
-        title="Toggle Toast With Gravity & Offset"
-        onPress={() => showToastWithGravityAndOffset()}
-      />
+      <Text style={styles.text}>Click Back button!</Text>
     </View>
   );
 };
@@ -42,11 +33,13 @@ const Test = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: StatusBar.currentHeight,
-    backgroundColor: '#888888',
-    padding: 8,
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
-export default Test
+export default Test;

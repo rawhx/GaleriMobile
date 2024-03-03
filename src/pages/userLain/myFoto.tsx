@@ -21,7 +21,7 @@ const MyFoto = props => {
                     <React.Fragment key={item.id}>
                         {/* Check if the index is divisible by 3 */}
                         {index % 3 === 0 && (
-                            <View style={{ flexDirection: 'row', marginBottom: 3, justifyContent: 'space-between' }}>
+                            <View style={{ flexDirection: 'row', marginBottom: 3, justifyContent: dataFoto.length - index >= 3 ? 'space-between' : 'flex-start' }}>
                                 {/* Item 1 */}
                                 <TouchableOpacity style={{ width: '33%', aspectRatio: 1 }} onPress={() => navigation.navigate(props.route ? 'SearchDetailFotoUserLain' : 'DetailFotoUserLain', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: props.profile, follow: props.follow })}>
                                     <Image source={{ uri: item.Foto.startsWith('https://') ? item.Foto : `data:image/*;base64,${item.Foto}` }} style={{ flex: 1 }} />
@@ -30,7 +30,7 @@ const MyFoto = props => {
                                 {/* Check if the next items exist */}
                                 {index + 1 < dataFoto.length && (
                                     // Item 2
-                                    <TouchableOpacity style={{ width: '33%', aspectRatio: 1 }}
+                                    <TouchableOpacity style={{ width: '33%', aspectRatio: 1, marginHorizontal: 2 }}
                                         onPress={() => navigation.navigate(props.route ? 'SearchDetailFotoUserLain' : 'DetailFotoUserLain', { id: dataFoto[index + 1], foto: dataFoto[index + 1].Foto, title: dataFoto[index + 1].JudulFoto, userId: dataFoto[index + 1].UserID, deskripsi: dataFoto[index + 1].DeskripsiFoto, kategoriId: dataFoto[index + 1].KategoriID, favorite: dataFoto[index + 1].Favorit, DataUser: props.profile, follow: props.follow })}>
                                         <Image source={{ uri: (dataFoto[index + 1].Foto).startsWith('https://') ? dataFoto[index + 1].Foto :  `data:image/*;base64,${dataFoto[index + 1].Foto}` }} style={{ flex: 1 }} />
                                     </TouchableOpacity>

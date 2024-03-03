@@ -15,15 +15,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { countPostingan, getFollowApi, getFotoProfile, getImgAkun, reportUser, userCari } from '../../api/api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import FotoMember from './fotoMeber'
+import { useIsFocused } from '@react-navigation/native'
 
-const ProfileLain = ({route, navigation}) => {
+const ProfileLain = ({ route, navigation }) => {
     const [active, setActive] = useState('foto')
     const [visible, setVisible] = useState(false)
     const [follow, setFollow] = useState(route.params.follow)
     const [name, setName] = useState('')
     const [gambargratis, setGambarGratis] = useState('')
     const [gambarmember, setGambarMember] = useState('')
-    const [heighReport, setHeightBottomReport] = useState('59%')
+    const [heighReport, setHeightBottomReport] = useState('55%')
     const [profile, setProfile] = useState('')
     const [reportUserPesan, setReportUserPesan] = useState('')
     const [modal, setModal] = useState(false)
@@ -38,17 +39,15 @@ const ProfileLain = ({route, navigation}) => {
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
 
     const fetchData = async () => {
-        const profile = await userCari({id: route.params.userId});
-        console.log('====================================');
-        console.log(profile.Membership);
-        console.log('====================================');
-        setProfile(profile)
+        const profile = await userCari({ id: route.params.userId });
+        await setProfile(profile)
+        await setFollow(profile.Follow === true ? 'Diikuti' : 'Ikuti')
         setName(profile.NamaLengkap)
         setCount({
             postingan: profile.jmlhFoto,
             pengikut: profile.jmlhFollowers,
             member: profile.jmlhMembership
-        }) 
+        })
         const datagambarGratis = await getImgAkun(false, route.params.userId)
         const datagambarMember = await getImgAkun(true, route.params.userId)
         setGambarGratis(datagambarGratis)
@@ -70,10 +69,17 @@ const ProfileLain = ({route, navigation}) => {
         setLoading(false)
     }
 
+    const isFocused = useIsFocused()
+
     useEffect(() => {
-        setVisible(true)
-        fetchData();
-    }, []);
+        if (isFocused) {
+            console.log('Screen is in focus detail user');
+            setVisible(true)
+            fetchData();
+        } else {
+            console.log('Screen is in not focus detail user');
+        }
+    }, [isFocused]);
 
     const pressHandler = useCallback(() => {
         bottomSheetRef.current?.expand();
@@ -90,8 +96,8 @@ const ProfileLain = ({route, navigation}) => {
             return (
                 <View>
                     <Image
-                    source={{ uri: (route.params.fotoProfile).startsWith('https://') ? route.params.fotoProfile : `data:image/*;base64,${route.params.fotoProfile}` }}
-                    style={styles.profileImage}
+                        source={{ uri: (route.params.fotoProfile).startsWith('https://') ? route.params.fotoProfile : `data:image/*;base64,${route.params.fotoProfile}` }}
+                        style={styles.profileImage}
                     />
                 </View>
             )
@@ -101,10 +107,10 @@ const ProfileLain = ({route, navigation}) => {
     const Header = () => {
         return (
             <View style={style.overlay}>
-                <View style={[{flexDirection: 'row', justifyContent: 'space-between'}]}>
+                <View style={[{ flexDirection: 'row', justifyContent: 'space-between' }]}>
                     <View>
                         <TouchableOpacity
-                            onPress={()=>{
+                            onPress={() => {
                                 navigation.setParams({ follow: follow === 'Diikuti' ? true : false });
                                 navigation.goBack()
                             }}
@@ -112,14 +118,14 @@ const ProfileLain = ({route, navigation}) => {
                             <Icon name="arrow-left" size={20} color={"white"} />
                         </TouchableOpacity>
                     </View>
-                    <Text color='white' style={[{fontSize: 16.5, fontFamily: 'Poppins-Bold'}]} >{route.params.username}</Text>
+                    <Text color='white' style={[{ fontSize: 16.5, fontFamily: 'Poppins-Bold' }]} >{route.params.username}</Text>
                     <TouchableOpacity
                         onPress={() => pressHandler()}
                     >
                         <Icon name="user-slash" size={20} color={"white"} />
                     </TouchableOpacity>
                 </View>
-                <View style={{justifyContent: 'center'}}>
+                <View style={{ justifyContent: 'center' }}>
                     <View style={style.profile}>
                         {Profile()}
                     </View>
@@ -131,78 +137,87 @@ const ProfileLain = ({route, navigation}) => {
     }
 
     const ViewActive = () => {
-        let view 
+        let view
         if (active == 'foto') {
             view = <MyFoto route={route.params.tabSearch} follow={follow} data={gambargratis} profile={profile} />
         } else if (active == 'member') {
-            view = <FotoMember route={route.params.tabSearch} profile={profile} data={gambarmember} follow={follow}/>
+            view = <FotoMember route={route.params.tabSearch} profile={profile} data={gambarmember} follow={follow} />
         } else if (active == 'album') {
 
         }
         return view
     }
-    
+
     return (
-        <GestureHandlerRootView style={[{flex: 1, backgroundColor: 'white'}]}>
-            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{display: visible ? 'block' : 'none'}}/>
+        <GestureHandlerRootView style={[{ flex: 1, backgroundColor: 'white' }]}>
+            <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
             <SafeAreaView>
                 <ScrollView
                     refreshControl={
                         <RefreshControl refreshing={loading} onRefresh={Refresh} />
                     }
                 >
-                    <HalfCircle view={<Header/>} />
-                    <View style={{marginTop: 55}}>
+                    <HalfCircle view={<Header />} />
+                    <View style={{ marginTop: 55 }}>
                         <View>
-                            <Text style={[{textAlign: 'center', fontFamily: 'Poppins-SemiBold', fontSize: 20}]}>
+                            <Text style={[{ textAlign: 'center', fontFamily: 'Poppins-SemiBold', fontSize: 20 }]}>
                                 {name.length > 15 ? name.slice(0, 15) + '...' : name}
                             </Text>
-                            <View marginT-10 style={[{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}]}>
-                                <View style={[{paddingHorizontal: 5}]}>
-                                    <Text style={{textAlign: 'center', fontFamily: 'Poppins-Bold', fontSize: 20}}>{count.postingan}</Text>
-                                    <Text style={[{textAlign: 'center'}, assets.fonts.default]}>Postingan</Text>
+                            <View marginT-10 style={[{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]}>
+                                <View style={[{ paddingHorizontal: 5 }]}>
+                                    <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Bold', fontSize: 20 }}>{count.postingan}</Text>
+                                    <Text style={[{ textAlign: 'center' }, assets.fonts.default]}>Postingan</Text>
                                 </View>
                                 <View style={style.garis}></View>
-                                <View style={{paddingHorizontal: 5}}>
-                                    <Text style={{textAlign: 'center', fontFamily: 'Poppins-Bold', fontSize: 20}}>{count.pengikut}</Text>
-                                    <Text style={[{textAlign: 'center'}, assets.fonts.default]}>Pengikut</Text>
+                                <View style={{ paddingHorizontal: 5 }}>
+                                    <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Bold', fontSize: 20 }}>{count.pengikut}</Text>
+                                    <Text style={[{ textAlign: 'center' }, assets.fonts.default]}>Pengikut</Text>
                                 </View>
                                 <View style={style.garis}></View>
-                                <View style={{paddingHorizontal: 5}}>
-                                    <Text style={{textAlign: 'center', fontFamily: 'Poppins-Bold', fontSize: 20}}>{count.member}</Text>
-                                    <Text style={[{textAlign: 'center'}, assets.fonts.default]}>Member</Text>
+                                <View style={{ paddingHorizontal: 5 }}>
+                                    <Text style={{ textAlign: 'center', fontFamily: 'Poppins-Bold', fontSize: 20 }}>{count.member}</Text>
+                                    <Text style={[{ textAlign: 'center' }, assets.fonts.default]}>Member</Text>
                                 </View>
                             </View>
-                            <View center marginV-5>
-                                <ButtonC
-                                    onPress={()=>dataFollow()}
-                                    style={{width: 100, borderWidth: follow === 'Diikuti' ? 1 : 0}}
-                                    label={follow}
-                                    borderRadius={10}
-                                    labelStyle={{color: follow !== 'Diikuti' ? 'white' : 'black'}}
-                                    backgroundColor={follow !== 'Diikuti' ? assets.colors.button : 'white'}
-                                />
+                            <View center marginV-5 style={{ flexDirection: 'row' }}>
+                                <View marginH-5>
+                                    <ButtonC
+                                        onPress={() => dataFollow()}
+                                        style={{ width: 100, borderWidth: follow === 'Diikuti' ? 1 : 0 }}
+                                        label={follow}
+                                        borderRadius={10}
+                                        labelStyle={{ color: follow !== 'Diikuti' ? 'white' : 'black' }}
+                                        backgroundColor={follow !== 'Diikuti' ? assets.colors.button : 'white'}
+                                    />
+                                </View>
+                                <View marginH-5>
+                                    {profile && profile.Membership.Status ? (
+                                        <View paddingV-9 paddingH-10 style={{ borderRadius: 10, backgroundColor: 'rgb(115, 115, 115)' }}>
+                                            <Text style={[assets.fonts.boldReal, { textAlign: 'center', color: 'white' }]}>Berlangganan</Text>
+                                        </View>
+                                    ) : null}
+                                </View>
                             </View>
                         </View>
                         <View>
-                            <View marginV-20 paddingH-25 style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                                <View style={active == 'foto' ? style.active : null}>
+                            <View marginT-20 marginB-10 paddingH-25 style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                <View style={[active == 'foto' ? style.active : null, { width: 40, alignItems: 'center' }]}>
                                     <TouchableOpacity
-                                        onPress={()=>setActive('foto')}
+                                        onPress={() => setActive('foto')}
                                     >
                                         <Ionicons name="grid" size={20} color={"black"} />
                                     </TouchableOpacity>
                                 </View>
-                                <View style={active == 'member' ? style.active : null}>
+                                <View style={[active == 'member' ? style.active : null, { width: 40, alignItems: 'center' }]}>
                                     <TouchableOpacity
-                                        onPress={()=>setActive('member')}
+                                        onPress={() => setActive('member')}
                                     >
                                         <Iconfa5 name="crown" size={20} color={"black"} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
                             <View>
-                                <ViewActive/>
+                                <ViewActive />
                             </View>
                         </View>
                     </View>
@@ -214,41 +229,41 @@ const ProfileLain = ({route, navigation}) => {
                     backgroundColor={'white'}
                     backDropColor={'black'}
                 >
-                    <Text color="black" style={[assets.fonts.bold, {textAlign: 'center', fontSize: 18}]}>Laporkan User</Text>
+                    <Text color="black" style={[assets.fonts.bold, { textAlign: 'center', fontSize: 18 }]}>Laporkan User</Text>
                     <View paddingH-25>
-                        <View style={assets.styleDefault.garis2}/>
+                        <View style={assets.styleDefault.garis2} />
                     </View>
                     <View marginH-30>
-                        <Text style={[assets.fonts.bold, {fontSize: 15}]}>Alasan : </Text>
-                        <View paddingV-5 style={{flexDirection: 'row', alignItems: 'center'}}>
-                            <Icon color={'grey'} name="circle-plus" size={20} solid/>
+                        <Text style={[assets.fonts.bold, { fontSize: 15 }]}>Alasan : </Text>
+                        <View paddingV-5 style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon color={'grey'} name="circle-plus" size={20} solid />
                             <TextInput
                                 value={reportUserPesan}
                                 placeholder="tambahkan alasan mengapa anda ingin melaporkan user ini"
                                 onChangeText={(txt) => setReportUserPesan(txt)}
                                 placeholderTextColor={'grey'}
-                                multiline={true} 
+                                multiline={true}
                                 numberOfLines={4}
-                                style={[{ flex: 1, width: '100%', color: 'black', marginLeft: 10}, assets.fonts.input]}
-                                onFocus={()=>setHeightBottomReport('75%')}
-                                onBlur={()=>setHeightBottomReport("55%")}
+                                style={[{ flex: 1, width: '100%', color: 'black', marginLeft: 10 }, assets.fonts.input]}
+                                onFocus={() => setHeightBottomReport('75%')}
+                                onBlur={() => setHeightBottomReport("55%")}
                             />
                         </View>
-                        <View style={{alignItems: 'flex-end'}}>
+                        <View style={{ alignItems: 'flex-end' }}>
                             <ButtonC
                                 label='Laporkan User'
                                 borderRadius={10}
                                 backgroundColor={assets.colors.button}
-                                style={{elevation: 0}}
-                                onPress={async ()=>{
+                                style={{ elevation: 0 }}
+                                onPress={async () => {
                                     await reportUser({
                                         user_id: route.params.userId,
                                         alasan: reportUserPesan
-                                    }).then(async (res)=>{
+                                    }).then(async (res) => {
                                         await setReportUserPesan('')
                                         await setModal(true)
                                         setPesan('Berhasil report user')
-                                        setTimeout(()=>{
+                                        setTimeout(() => {
                                             setModal(false)
                                         }, 3000)
                                     })
@@ -275,7 +290,7 @@ const ProfileLain = ({route, navigation}) => {
                 }}
             >
                 <>
-                    <Text marginB-5 style={[assets.fonts.bold, {fontSize: 13, textAlign: 'center'}]}>{pesan}</Text>
+                    <Text marginB-5 style={[assets.fonts.bold, { fontSize: 13, textAlign: 'center' }]}>{pesan}</Text>
                 </>
             </ModalC>
         </GestureHandlerRootView>
@@ -313,21 +328,23 @@ const style = StyleSheet.create({
     },
     active: {
         paddingBottom: 5,
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
+        borderRadius: 1
         // paddingHorizontal: 5
     }
 })
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     profileImage: {
-      width: 108,
-      height: 108,
-      borderRadius: 60,  // Setengah dari lebar/tinggi untuk membuat lingkaran
+        width: 108,
+        height: 108,
+        backgroundColor: 'rgba(240, 240, 240, 1)',
+        borderRadius: 60,  // Setengah dari lebar/tinggi untuk membuat lingkaran
     },
 });
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react"
 import { Colors, Image, TouchableOpacity, View } from "react-native-ui-lib"
 import Icon from "react-native-vector-icons/FontAwesome6"
-import { StyleSheet, TextInput } from "react-native"
+import { StyleSheet, TextInput, ToastAndroid } from "react-native"
 import { assets } from "../../assets"
 import { getProfile } from "../../api/api"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const style = StyleSheet.create({
     formGroup: {
@@ -28,7 +29,12 @@ const style = StyleSheet.create({
 
 const InputKomentar = (props) => {
     const [getProfilee, setProfile] = useState(' ')
-
+    const [Token, setToken] = useState()
+   
+    const token = async () => {
+        const jwtToken = await AsyncStorage.getItem('cache')
+        setToken(jwtToken)
+    }
     
     const getDetail = async () => {
         const user = await getProfile()
@@ -36,7 +42,9 @@ const InputKomentar = (props) => {
             setProfile(user.FotoProfil)
         }
     } 
+
     useEffect(() => {
+        token()
         getDetail();
     }, []);
 
@@ -67,7 +75,7 @@ const InputKomentar = (props) => {
                         style={[{ flex: 1, width: '100%', color: 'black' }, assets.fonts.input]}
                     />
                     <TouchableOpacity
-                        onPress={props.onPress}
+                        onPress={Token ? props.onPress : ()=>{ ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT)}}
                     >
                         <Icon name="paper-plane" color={Colors.grey30} size={20} />
                     </TouchableOpacity>

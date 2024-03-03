@@ -5,6 +5,7 @@ import config from '../../config';
 export const cariAlbum = async (data = { select: false }) => {
   try {
     const jwtToken = await AsyncStorage.getItem('cache')
+    console.log(jwtToken);
     const res = await axios.get(
         `${config.Base_url}/album-cari?page=1&limit=10`, 
         {
@@ -14,7 +15,7 @@ export const cariAlbum = async (data = { select: false }) => {
         }
     );
 
-    if (res.data.ErrMsg != 404) {
+    if (res.data.ErrNum != 404) {
       if (data.select) {
         const formattedData = res.data.Data.map(item => ({
           label: item.NamaAlbum,

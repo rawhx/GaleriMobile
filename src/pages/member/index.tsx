@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import WebView from "react-native-webview"
 import axios from "axios"
 import { getUserCari } from "../../api/api"
+import config from "../../../config"
 
 const ViewMember = ({route, navigation}) => {
     const [snapToken, setSnap] = useState('')
@@ -54,8 +55,9 @@ const ViewMember = ({route, navigation}) => {
         setVisible(true)
         
         const res = await axios.post(
-            `https://picsea-1-k3867505.deta.app/snap-token`, {
-                user_id: id
+            `https://picsea-1-k3867505.deta.app/membership-tambah`, {
+                user_id: id,
+                key: config.API_KEY
             },
             {
                 headers: {
@@ -101,10 +103,13 @@ const ViewMember = ({route, navigation}) => {
                 <View marginB-10 style={{borderTopWidth: 1}} >
                     <ButtonC
                         onPress={async ()=>{
+                            console.log(123)
+                            // await navigation.navigate('Pembayaran')
                             const  res = await getSnap(route.params.profile.id).then(async (res)=>{
                                 await setSnap(res.Token)
                                 setVisible(false)
-                                await navigation.navigate('Pembayaran', {snap: snapToken, idTransaksi: res.ID, userId: route.params.profile.id})
+
+                                await navigation.navigate('Pembayaran', {snap: res.Token, idTransaksi: res.ID, userId: route.params.profile.id})
                             }).catch((err)=>{
                                 setVisible(false)
                                 setModal(true)

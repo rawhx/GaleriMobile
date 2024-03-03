@@ -1,6 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../../config';
+import { banned } from './banned';
 
 export const getProfile = async () => {
   try {
@@ -16,6 +17,9 @@ export const getProfile = async () => {
           },
         }
       )
+      if (response.data.ErrNum === 403) {
+        await banned()
+      }
       return response.data.Data[0];
     }
   } catch (error) {

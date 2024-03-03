@@ -4,6 +4,7 @@ import WebView from "react-native-webview";
 import { assets } from "../../assets";
 import { container } from "../../components";
 import { membershipAdd } from "../../api/membershipAdd";
+import config from "../../../config";
 
 const Pembayaran = ({route, navigation}) => {
     console.log('token', route.params.snap);
@@ -13,8 +14,9 @@ const Pembayaran = ({route, navigation}) => {
     let logShown = false;
 
     useEffect(()=>{
-        !route.params.snap ? navigation.goBack() : null
-    })
+        !route.params.snap ? console.log('back?') : null
+        // !route.params.snap ? navigation.goBack() : null
+    }, [])
     
     return (
         <View style={[container.defaultTab, {flex: 1}]}>
@@ -39,30 +41,9 @@ const Pembayaran = ({route, navigation}) => {
                     console.log('====================================');
                     if (navState.url.includes('success') && !logShown) {
                         logShown = true;
-                        await membershipAdd({
-                            user_id: route.params.userId,
-                            no_transaksi: route.params.idTransaksi,
-                        }).then((res)=>{
-                            console.log('====================================');
-                            console.log('res AddMember', res);
-                            console.log('====================================');
-                            setTimeout(()=>{
-                                navigation.navigate('Home')
-                                // navigation.goBack()
-                                // navigation.goBack()
-                            }, 5000)
-                        }).catch((error)=>{
-                            if (error.response) {
-                                console.error('Error membership add Response Data:', error.response.data);
-                                console.error('Error membership add Response Status:', error.response.status);
-                              } else if (error.request) {
-                                console.error('Error membership add Request:', error.request);
-                              } else {
-                                console.error('Error membership add Message:', error.message);
-                              }
-                            throw error;
-                        })
-
+                        setTimeout(()=>{
+                            navigation.pop(2)
+                        }, 2500)
                     }
                 }}
             />

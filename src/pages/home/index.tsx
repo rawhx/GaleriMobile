@@ -8,11 +8,13 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import config from '../../../config'
+import { banned } from '../../api/banned'
 
 const Home = ({ route, navigation }) => {
     const [loading, setLoading] = useState(false)
     const [search, setSearch] = useState('')
     const [data, setData] = useState([]);
+    const [datapopuler, setDataPopuler] = useState([]);
     const [page, setPage] = useState(2);
     const fetchData = async () => {
         const jwtToken = await AsyncStorage.getItem('cache')
@@ -22,9 +24,9 @@ const Home = ({ route, navigation }) => {
         }
         const response = await axios.get(url, {
             headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
-        });
+        })
 
-        setData(response.data.Data);
+        setDataPopuler(response.data.Data);
     };
 
     const lastBackPressed = useRef(0);
@@ -44,14 +46,15 @@ const Home = ({ route, navigation }) => {
             <View style={{ flexDirection: 'row' }} marginT-10>
                 <View style={{ flex: 1 }}>
                     {
-                        data.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow })} />
+                        datapopuler.filter((item, index) => index % 2 == 0).map((item) => (
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id}
+                                onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
-                        data.filter((item, index) => index % 2 == 1).map((item) => (
+                        datapopuler.filter((item, index) => index % 2 == 1).map((item) => (
                             <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow })} />
                         ))
                     }
@@ -82,14 +85,14 @@ const Home = ({ route, navigation }) => {
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 1).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('TabSearchDetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
                         ))
                     }
                 </View>

@@ -19,6 +19,7 @@ import Album from './album'
 import EditProfile from '../editprofile'
 import styleDefault from '../../assets/styles'
 import { UserToken } from '../../context/GlobalState'
+import { useIsFocused } from '@react-navigation/native'
 
 const Profile = ({ route, navigation }) => {
     const [Token, setToken] = useContext(UserToken)
@@ -66,11 +67,9 @@ const Profile = ({ route, navigation }) => {
 
     const fetchData = async () => {
         const profile = await getProfile()
-        setHargaMember(parseFloat(profile.HargaMember))
         setDataProfile(profile)
         setUsername(profile.Username)
         setName(profile.NamaLengkap)
-        setPendapatan(profile.Pendapatan)
         if (profile.FotoProfil) {
             setProfile(profile.FotoProfil)
         }
@@ -79,21 +78,37 @@ const Profile = ({ route, navigation }) => {
             pengikut: profile.jmlhFollowers,
             member: profile.jmlhMembership
         })
+        setHargaMember(parseFloat(profile.HargaMember))
+        setPendapatan(profile.Pendapatan)
         const datagambarGratis = await getFotoProfile()
         const datagambarMember = await getFotoProfile(true)
-        const dataAlbum = await cariAlbum({ select: false })
-        setAlbum(dataAlbum)
+        await fetchAlbum()
         setGambarGratis(datagambarGratis)
         setGambarMember(datagambarMember)
-        // if (profile) {
-        // }
         setVisible(false)
     };
 
+    const fetchAlbum = async () => {
+        const dataAlbum = await cariAlbum({ select: false })
+        setAlbum(dataAlbum)
+    }
+
+    const isFocused = useIsFocused()
+
     useEffect(() => {
-        setVisible(true)
-        fetchData();
-    }, [route.params?.id]);
+        if (route.params?.album) {
+            fetchAlbum()
+        }
+        if (isFocused) {
+            console.log('params', route.params);
+            console.log('Screen is in focus');
+            setVisible(true)
+            fetchData();
+        } else {
+            console.log('Screen is not in focus');
+            // tambahkan kode untuk membersihkan efek samping saat layar tidak difokuskan
+        }
+    }, [route.params?.id, route.params?.album]);
 
     const Refresh = async () => {
         await fetchData()
@@ -204,22 +219,22 @@ const Profile = ({ route, navigation }) => {
                                 </View> */}
                             </View>
                             <View>
-                                <View marginV-20 paddingH-25 style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                                    <View style={active == 'foto' ? style.active : null}>
+                                <View marginT-20 marginB-10 paddingH-25 style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                    <View style={[active == 'foto' ? style.active : null, { width: 40, alignItems: 'center' }]}>
                                         <TouchableOpacity
                                             onPress={() => setActive('foto')}
                                         >
                                             <Ionicons name="grid" size={20} color={"black"} />
                                         </TouchableOpacity>
                                     </View>
-                                    <View style={active == 'member' ? style.active : null}>
+                                    <View style={[active == 'member' ? style.active : null, { width: 40, alignItems: 'center' }]}>
                                         <TouchableOpacity
                                             onPress={() => setActive('member')}
                                         >
                                             <Iconfa5 name="crown" size={20} color={"black"} />
                                         </TouchableOpacity>
                                     </View>
-                                    <View style={active == 'album' ? style.active : null}>
+                                    <View style={[active == 'album' ? style.active : null, { width: 40, alignItems: 'center' }]}>
                                         <TouchableOpacity
                                             onPress={() => setActive('album')}
                                         >
@@ -336,7 +351,7 @@ const Profile = ({ route, navigation }) => {
                                     if (res.IsError) {
                                         setPesan(res.ErrMsg)
                                         setModalNotif(true)
-                                        setTimeout(()=>{
+                                        setTimeout(() => {
                                             setModalNotif(false)
                                         }, 2000)
                                         return
@@ -345,6 +360,13 @@ const Profile = ({ route, navigation }) => {
                                         await Refresh()
                                         setFormData({})
                                     }
+                                }).catch((err) => {
+                                    setVisible(false)
+                                    setPesan('Tidak dapat menyimpan album')
+                                    setModalNotif(true)
+                                    setTimeout(() => {
+                                        setModalNotif(false)
+                                    }, 2000)
                                 })
                             }}
                         />
@@ -589,25 +611,6 @@ const Profile = ({ route, navigation }) => {
                         <Text style={[assets.fonts.bold, { fontSize: 15, textAlign: 'center' }]}>Berhasil!</Text>
                         <Text style={[{ fontSize: 13, fontFamily: 'Poppins-Medium' }]}>{pesan}</Text>
                     </>
-                    //    verifikasi ? (
-                    //     ) : (
-                    //         <>
-                    //             <View style={{
-                    //                 backgroundColor: '#C51313',
-                    //                 borderRadius: 100,
-                    //                 padding: 10,
-                    //                 width: 50, // Sesuaikan ukuran sesuai kebutuhan
-                    //                 height: 50, // Sesuaikan ukuran sesuai kebutuhan
-                    //                 alignItems: 'center',
-                    //                 justifyContent: 'center',
-                    //                 marginBottom: 20
-                    //             }}>
-                    //                 <Icon name="xmark" size={25} color="white" solid />
-                    //             </View>
-                    //             <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal masuk ke aplikasi!</Text>
-                    //             <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{errormsg}</Text>
-                    //         </>
-                    //     )
                 }
             </ModalC>
         </GestureHandlerRootView>
@@ -645,7 +648,8 @@ const style = StyleSheet.create({
     },
     active: {
         paddingBottom: 5,
-        borderBottomWidth: 1,
+        borderBottomWidth: 2,
+        borderRadius: 1
         // paddingHorizontal: 5
     }
 })
@@ -659,7 +663,9 @@ const styles = StyleSheet.create({
     profileImage: {
         width: 108,
         height: 108,
+        backgroundColor: 'rgba(240, 240, 240, 1)',
         borderRadius: 60,  // Setengah dari lebar/tinggi untuk membuat lingkaran
+        resizeMode: 'cover'
     },
 });
 

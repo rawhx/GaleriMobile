@@ -2,29 +2,26 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import config from '../../config';
 
-export const deleteFoto = async (data) => {
+export const deleteAlbum = async (data) => {
     console.log(data);
-    
+
     // try {
     const jwtToken = await AsyncStorage.getItem('cache')
     console.log('====================================');
-    console.log('prosess hapus Foto');
+    console.log('prosess hapus album');
     console.log('====================================');
     const res = await axios.delete(
-        `${config.Base_url}/foto-hapus`,
+        `${config.Base_url}/album-hapus`,
         {
             headers: {
                 'Authorization': `Bearer ${jwtToken}`,
                 'Content-Type': `application/x-www-form-urlencoded`
             },
-            data: {
-                foto_id: data.id
-            },
+            data: data,
         }
     );
-    console.log('data', res.data);
     console.log('====================================');
-    console.log('berhasil hapus foto');
+    console.log('res hapus album', res.data);
     console.log('====================================');
 
     // if (res.data.IsError == false) {

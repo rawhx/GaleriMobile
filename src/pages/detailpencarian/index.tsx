@@ -3,16 +3,17 @@ import Icon from "react-native-vector-icons/FontAwesome6"
 import Icon5 from "react-native-vector-icons/FontAwesome5"
 import { Image, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Like, ModalC, Pin, ViewAddKomentar, container } from "../../components";
-import { GestureHandlerRootView, ScrollView } from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { assets } from "../../assets";
 import BottomSheetKomentar from "../../components/bottomsheet/bottomsheetKomentar";
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet";
-import { getFollowApi, getFollowCariApi, getKomentarApi, getUserCari, postKomentar, postLike, reportFoto } from "../../api/api";
-import { StyleSheet, TextInput } from "react-native";
+import { fotoCari, getFollowApi, getFollowCariApi, getKomentarApi, getUserCari, postKomentar, postLike, reportFoto } from "../../api/api";
+import { RefreshControl, ScrollView, StyleSheet, TextInput } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNFetchBlob from 'rn-fetch-blob';
 import config from "../../../config";
+import { useIsFocused } from "@react-navigation/native";
 
 const DetailPencarian = ({ route, navigation }) => {
     const bottomSheetRef = useRef<BottomSheetMethods>(null);
@@ -44,6 +45,7 @@ const DetailPencarian = ({ route, navigation }) => {
         });
     }, [])
 
+    const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState(true)
     const [like, setLike] = useState(route.params.favorite)
     const [follow, setFollow] = useState('Ikuti')
@@ -58,7 +60,7 @@ const DetailPencarian = ({ route, navigation }) => {
     const [reportfoto, setReportFoto] = useState('')
     const [modal, setModal] = useState(false)
     const [pesan, setPesan] = useState('ini pesan')
-    const [heightbottomreport, setHeightBottomReport] = useState('35%')
+    const [heightbottomreport, setHeightBottomReport] = useState('55%')
 
     const kirimPesan = async () => {
         if (addKomentar !== '') {
@@ -105,10 +107,14 @@ const DetailPencarian = ({ route, navigation }) => {
                 setModal(false);
             }, 3000);
         } catch (error) {
+            await setPesan('Gagal unduh foto, cek izin akses aplikasi!');
+            await setModal(true);
+            setTimeout(() => {
+                setModal(false);
+            }, 3000);
             console.error('Error:', error);
         }
     };
-
 
     const Grid = () => {
         const [data, setData] = useState([])
@@ -133,14 +139,14 @@ const DetailPencarian = ({ route, navigation }) => {
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch, { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.push(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership, sendiri: item.Sendiri, follow: item.Follow })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 1).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate(route.params.tabSearch, { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.push(route.params.tabSearch ? 'TabSearchDetailFoto' : 'DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, tabSearch: route.params.tabSearch, member: item.Membership, sendiri: item.Sendiri, follow: item.Follow })} />
                         ))
                     }
                 </View>
@@ -151,6 +157,8 @@ const DetailPencarian = ({ route, navigation }) => {
     const fetchKomen = async () => {
         const user = await getUserCari({ id: route.params.userId })
         const komentarAwal = await getKomentarApi({ fotoId: route.params.id, limit: 2 })
+        console.log('komentar awal', komentarAwal);
+
         setGetDataDetail({
             username: user.Username,
             profile: user.FotoProfil,
@@ -160,9 +168,15 @@ const DetailPencarian = ({ route, navigation }) => {
 
     const fetchData = async () => {
         await setLoad(true)
-        await fetchKomen()
         await setLike(route.params.favorite)
         await setFollow(route.params.follow === true ? 'Diikuti' : 'Ikuti')
+        await fetchKomen()
+        await fotoCari({ foto_id: route.params.id }).then((res) => {
+            setLike(res[0].Favorit)
+            setFollow(res[0].Follow === true ? 'Diikuti' : 'Ikuti')
+        }).catch((err) => {
+            console.log('foto cari', err);
+        })
         await setLoad(false)
     };
 
@@ -173,10 +187,21 @@ const DetailPencarian = ({ route, navigation }) => {
         })
     }
 
+    const isFocused = useIsFocused()
+
     useEffect(() => {
+        if (isFocused) {
+            setKomentarList([])
+            fetchData()
+        }
+    }, [route.params.id, route.params.favorite, route.params.follow, isFocused]);
+
+    const Refresh = async () => {
         setKomentarList([])
-        fetchData()
-    }, [route.params.id, route.params.favorite, route.params.follow]);
+        await fetchData()
+        setLoading(false)
+        console.log('fresh');
+    }
 
     // if (!load) {
     const ProfileUser = () => {
@@ -227,7 +252,11 @@ const DetailPencarian = ({ route, navigation }) => {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: load ? 'block' : 'none' }} />
             <View style={container.defaultTab}>
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl refreshing={loading} onRefresh={Refresh} />
+                    }
+                >
                     <View key="Foto">
                         <ImageBg foto={route.params.foto}>
                             <Header nav="detailGambar" onPress={() => navigation.goBack()} onPressBottomSheet={() => pressHandler()} />
@@ -253,7 +282,7 @@ const DetailPencarian = ({ route, navigation }) => {
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     {
                                         route.params && route.params.member ? (
-                                            <View marginR-5 padding-5 style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5 }}>
+                                            <View marginR-5 padding-5 style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5 }}>
                                                 <Icon5 name="crown" size={10} color={"#FFE500"} solid />
                                                 <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 9, marginLeft: 5, color: "#FFE500" }}>PICTSEA+</Text>
                                             </View>
@@ -300,7 +329,6 @@ const DetailPencarian = ({ route, navigation }) => {
                     </View>
                     <View key="fotoLainnya" marginV-20 marginH-20>
                         <Text style={[style.text, { textAlign: 'left' }]}>Lainnya untuk dijelajahi</Text>
-                        {/* { Grid() } */}
                         <Grid />
                     </View>
                 </ScrollView>
@@ -360,7 +388,7 @@ const DetailPencarian = ({ route, navigation }) => {
                                 numberOfLines={4}
                                 style={[{ flex: 1, width: '100%', color: 'black', marginLeft: 10 }, assets.fonts.input]}
                                 onFocus={() => setHeightBottomReport('75%')}
-                                onBlur={() => setHeightBottomReport("35%")}
+                                onBlur={() => setHeightBottomReport("55%")}
                             />
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>

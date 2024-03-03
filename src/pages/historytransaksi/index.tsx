@@ -3,9 +3,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { container } from "../../components";
 import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import Icon from "react-native-vector-icons/FontAwesome6"
-import { ScrollView } from "react-native-gesture-handler";
 import { assets } from "../../assets";
 import { historyTransaksiApi } from "../../api/api";
+import { ScrollView } from "react-native";
 
 const HistoryTransaksi = ({ navigation }) => {
   const [data, setData] = useState()

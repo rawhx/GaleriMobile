@@ -16,11 +16,7 @@ export const getFotoProfile = async (member = false) => {
     );
 
     console.log(member);
-    console.log('====================================');
-    console.log(res.data);
-    console.log('====================================');
-
-    if (res.data.ErrMsg !== 404) {
+    if (res.data.ErrNum !== 404) {
       return res.data.Data
     }
 

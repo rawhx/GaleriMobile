@@ -7,7 +7,7 @@ import { assets } from "../../assets"
 import { LoginApi } from "../../api/api"
 import { UserToken } from "../../context/GlobalState";
 
-const Login = ({route, navigation}) => {
+const Login = ({ route, navigation }) => {
     const [Token, setToken] = useContext(UserToken)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -21,7 +21,7 @@ const Login = ({route, navigation}) => {
         await setModal(route.params?.verifikasi)
         navigation.setParams({})
     }
-    useEffect(()=>{
+    useEffect(() => {
         fetchData()
     }, [route.params?.verifikasi])
 
@@ -36,18 +36,18 @@ const Login = ({route, navigation}) => {
                     top: 40,
                 }}
             >
-                <Icon name="arrow-left" size={30} color='black'/>
+                <Icon name="arrow-left" size={30} color='black' />
             </TouchableOpacity>
-            
+
             <View center>
                 <Text style={[assets.fonts.judul]}>Selamat Datang!</Text>
                 <Text style={[assets.fonts.default]}>Masuk dengan akun anda terlebih dahulu.</Text>
             </View>
-            <View margin-40 style={{justifyContent: 'center'}}>
+            <View margin-40 style={{ justifyContent: 'center' }}>
                 <View marginV-10 style={style.formGroup}>
                     <Icon name="envelope" color={Colors.grey30} solid />
                     <Input
-                        style={[assets.fonts.input, {marginLeft: 10, paddingRight: 30}]}
+                        style={[assets.fonts.input, { marginLeft: 10, paddingRight: 30 }]}
                         placeholder={'Email'}
                         keyboardType="email-address"
                         value={email}
@@ -60,7 +60,7 @@ const Login = ({route, navigation}) => {
                 <View marginV-10 marginB-15 style={style.formGroup}>
                     <Icon name="lock" color={Colors.grey30} />
                     <Input
-                        style={[assets.fonts.input, {marginLeft: 10, paddingRight: 30}]}
+                        style={[assets.fonts.input, { marginLeft: 10, paddingRight: 30 }]}
                         placeholder={'Kata Sandi'}
                         value={password}
                         onChangeText={text => {
@@ -70,41 +70,44 @@ const Login = ({route, navigation}) => {
                         type="password"
                     />
                 </View>
-                <Checkbox
+                {/* <Checkbox
                     label='Ingatkan saya'
                     labelStyle={assets.fonts.default}
                     containerStyle={{}}
-                />
+                /> */}
                 {/* <TouchableOpacity right marginV-5>
                     <Text>Forgot Password?</Text>
                 </TouchableOpacity> */}
-                <ButtonC 
+                <ButtonC
                     blokir={true}
                     label="Masuk"
-                    backgroundColor={assets.colors.button} 
-                    onPress={()=>{
+                    backgroundColor={assets.colors.button}
+                    onPress={() => {
                         setVisible(true)
-                        LoginApi({ email, password}, navigation).then((res)=>{
+                        LoginApi({ email, password }, navigation).then((res) => {
                             setVisible(false)
+
                             if (res.ErrNum === 404) {
                                 setModal(true)
                                 setErrorMsg(res.ErrMsg)
                             } else if (res.IsError) {
                                 setModal(true)
                                 setErrorMsg(res.ErrMsg)
-                            } else if (!res.IsError) { 
+                            } else if (!res.IsError) {
                                 setToken(res.Data)
                                 navigation.replace("Tabs")
                             }
-                        }).catch((err)=>{
+                        }).catch((err) => {
+                            setVisible(false)
                             setModal(true)
                             setErrorMsg(err.response.data)
-                        })}
+                        })
                     }
-                    // onPress={()=>HandleLogin()}
+                    }
+                // onPress={()=>HandleLogin()}
                 />
-                <View center marginT-20 style={{display: 'flex', flexDirection: 'row'}}>
-                    <Text style={{fontFamily: 'Poppins-Regular'}}>Belum punya akun? </Text>
+                <View center marginT-20 style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Text style={{ fontFamily: 'Poppins-Regular' }}>Belum punya akun? </Text>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Register')}
                     >
@@ -117,7 +120,7 @@ const Login = ({route, navigation}) => {
                 setModal={setModal}
             >
                 {
-                   verifikasi ? (
+                    verifikasi ? (
                         <>
                             <View style={{
                                 backgroundColor: 'green',
@@ -131,8 +134,8 @@ const Login = ({route, navigation}) => {
                             }}>
                                 <Icon name="check" size={25} color="white" solid />
                             </View>
-                            <Text style={[assets.fonts.bold, {fontSize: 15, textAlign: 'center'}]}>Berhasil melakukan registrasi akun!</Text>
-                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium'}]}>{route.params?.msg}</Text>
+                            <Text style={[assets.fonts.bold, { fontSize: 15, textAlign: 'center' }]}>Berhasil melakukan registrasi akun!</Text>
+                            <Text style={[{ fontSize: 13, fontFamily: 'Poppins-Medium' }]}>{route.params?.msg}</Text>
                         </>
                     ) : (
                         <>
@@ -148,8 +151,8 @@ const Login = ({route, navigation}) => {
                             }}>
                                 <Icon name="xmark" size={25} color="white" solid />
                             </View>
-                            <Text style={[assets.fonts.bold, {fontSize: 15}]}>Gagal masuk ke aplikasi!</Text>
-                            <Text style={[{fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center'}]}>{errormsg}</Text>
+                            <Text style={[assets.fonts.bold, { fontSize: 15 }]}>Gagal masuk ke aplikasi!</Text>
+                            <Text style={[{ fontSize: 13, fontFamily: 'Poppins-Medium', textAlign: 'center' }]}>{errormsg}</Text>
                         </>
                     )
                 }

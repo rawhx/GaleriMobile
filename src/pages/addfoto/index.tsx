@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { GestureHandlerRootView, RefreshControl } from "react-native-gesture-handler"
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet"
 import ImageCompressor from 'react-native-image-compressor';
+import { useIsFocused } from "@react-navigation/native"
 
 const AddFoto = ({ navigation }) => {
     const [jenisFotoSelect, setJenisFoto] = useState(null)
@@ -61,9 +62,16 @@ const AddFoto = ({ navigation }) => {
         setAlbum(dataAlbum)
 
     }
+    const isFocused = useIsFocused()
+
     useEffect(() => {
-        setVisible(true)
-        getData()
+        if (isFocused) {
+            setVisible(true)
+            getData()
+            console.log('Screen is in focus add foto');
+        } else {
+            console.log('Screen is not focus add foto');
+        }
     }, [])
 
     // const uploadFile = async () => {

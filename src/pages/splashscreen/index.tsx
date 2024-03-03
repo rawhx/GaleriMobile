@@ -4,14 +4,23 @@ import { assets } from "../../assets";
 import { container } from "../../components";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserToken } from "../../context/GlobalState";
+import { useIsFocused } from "@react-navigation/native";
 
-const SplashScreen = ({navigation}) => {
+const SplashScreen = ({ navigation }) => {
+    const isFocused = useIsFocused()
+
     const [Token, setToken] = useContext(UserToken)
-    useEffect(()=>{
-        setTimeout(()=>{
-            HandleItem()
-        }, 2500)
-    })
+    useEffect(() => {
+        if (isFocused) {
+            console.log('Screen is in focus splash');
+            setTimeout(() => {
+                HandleItem()
+            }, 2500)
+        } else {
+            console.log('Screen is not in focus splash');
+            // tambahkan kode untuk membersihkan efek samping saat layar tidak difokuskan
+        }
+    }, [isFocused])
 
     const HandleItem = async () => {
         const dataToken = await AsyncStorage.getItem('cache')

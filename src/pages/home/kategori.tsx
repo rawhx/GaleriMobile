@@ -55,7 +55,10 @@ const Kategori = () => {
                     kategoriData.map((kategori, index) => (
                         <View key={index} style={style.kategori}>
                             <TouchableOpacity
-                                onPress={()=>navigation.navigate('TabSearch', {search: {value: kategori.id, label: kategori.Kategori}})}
+                                onPress={()=>{
+                                    navigation.navigate('search', {search: {value: kategori.id, label: kategori.Kategori}})
+                                    // navigation.navigate('TabSearch', {search: {value: kategori.id, label: kategori.Kategori}})
+                                }}
                             >
                                 <ImageBackground source={{ uri: `data:image/png;base64,${kategori.Sampul}` }} style={style.kategoriImg}>
                                 <View style={style.overlay}>

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Colors, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { Colors, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { ButtonC, Input, ModalC, container } from "../../components";
 import style from "./style";
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { assets } from "../../assets";
 import { Alert } from "react-native";
 import axios from "axios";
+import config from "../../../config";
 
 const Register = ({navigation}) => {
     const [username, setUsername] = useState('')
@@ -26,7 +27,7 @@ const Register = ({navigation}) => {
             return 
         }
         
-        let url = `https://picsea-1-k3867505.deta.app/register?email=${email}&username=${username}&nama_lengkap=${nama_lengkap}&alamat=${alamat}&password=${password}&konfirmasi_password=${konfirmasi_password}`
+        let url = `${config.Base_url}/register?email=${email}&username=${username}&nama_lengkap=${nama_lengkap}&alamat=${alamat}&password=${password}&konfirmasi_password=${konfirmasi_password}`
         
         const response = await axios.post(url).then((res)=>{
             setVisible(false)

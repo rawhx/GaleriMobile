@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ToastAndroid } from "react-native";
 import { Button, View } from "react-native-ui-lib";
 
 const ButtonC = props => {
@@ -24,7 +24,7 @@ const ButtonC = props => {
                 marginV-10 
                 paddingV-10 
                 style={props.style ?? style.default} 
-                onPress={Token? props.onPress : props.blokir ? props.onPress :  null}
+                onPress={Token? props.onPress : props.blokir ? props.onPress :  ()=>{ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT)}}
             />
         </View>
     )

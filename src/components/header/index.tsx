@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { Alert, StyleSheet } from "react-native"
+import { Alert, StyleSheet, ToastAndroid } from "react-native"
 import { Colors, Image, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import Icon from "react-native-vector-icons/FontAwesome6"
 import { ButtonSearch, LoginButton, ModalC } from ".."
@@ -23,7 +23,9 @@ const awal = () => {
                 </View>
                 <View style={Style.section2}>
                     <TouchableOpacity
-                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => {}}>
+                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => {
+                            ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT);
+                        }}>
                         <Icon name="heart" size={20} color="#040326" solid />
                     </TouchableOpacity>
                 </View>
@@ -86,7 +88,9 @@ const profile = () => {
                 </View>
                 <View style={Style.section2}>
                     <TouchableOpacity
-                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { }}>
+                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { 
+                            ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT);
+                        }}>
                         <Icon name="heart" size={20} color="#040326" />
                     </TouchableOpacity>
                 </View>
@@ -108,7 +112,9 @@ const Search = props => {
                     onChangeText={props.onChangeText}
                 />
                 <View marginL-20 style={Style.section2}>
-                    <TouchableOpacity onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { }}>
+                    <TouchableOpacity onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { 
+                         ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT);
+                    }}>
                         <Icon name="heart" size={20} color="#040326" solid />
                     </TouchableOpacity>
                 </View>

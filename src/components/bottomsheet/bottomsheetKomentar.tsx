@@ -1,4 +1,4 @@
-import {Dimensions, KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import { Dimensions, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -15,15 +15,15 @@ import Animated, {
   AnimatedScrollViewProps,
   runOnJS,
 } from 'react-native-reanimated';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import BackDrop from './BackDrop';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from 'react-native-ui-lib';
 import { assets } from '../../assets';
 import { getKomentarApi } from '../../api/getKomentarApi';
 import { DataKomentar, InputKomentar, ViewAddKomentar } from '..';
 import { postKomentar } from '../../api/api';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import styleDefault from '../../assets/styles';
 
 interface Props extends AnimatedScrollViewProps {
@@ -38,9 +38,9 @@ export interface BottomSheetMethods {
 }
 
 const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
-  ({snapTo, children, backgroundColor, fotoId, backDropColor, ...rest}: Props, ref) => {
+  ({ snapTo, children, backgroundColor, fotoId, backDropColor, ...rest }: Props, ref) => {
     const inset = useSafeAreaInsets();
-    const {height} = Dimensions.get('screen');
+    const { height } = Dimensions.get('screen');
     const percentage = parseFloat(snapTo.replace('%', '')) / 100;
     const closeHeight = height;
     const openHeight = height - height * percentage;
@@ -59,21 +59,24 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
     const [komentarList, setKomentarList] = useState([]);
 
     const navigation = useNavigation()
-    
-    useEffect(()=>{
-      const getData = async () => {
-        const komentar = await getKomentarApi({fotoId: fotoId, limit: 20})
-        setKomentar(komentar)
+    const isFocused = useIsFocused()
+
+    useEffect(() => {
+      if (isFocused) {
+        const getData = async () => {
+          const komentar = await getKomentarApi({ fotoId: fotoId, limit: 20 })
+          setKomentar(komentar)
+        }
+        getData()
       }
-      getData()
-    }, [fotoId])
+    }, [isFocused])
 
     const expand = useCallback(() => {
       'worklet';
       topAnimation.value = withTiming(openHeight);
       navigation.getParent()?.setOptions({
         tabBarStyle: {
-            display: "none"
+          display: "none"
         }
       });
     }, [openHeight, topAnimation]);
@@ -93,7 +96,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
         close,
       }),
       [expand, close],
-      
+
     );
 
     const animationStyle = useAnimatedStyle(() => {
@@ -187,8 +190,8 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
     const kirimPesan = async () => {
       if (addKomentar !== '') {
         const res = await postKomentar({
-            foto_id: fotoId,
-            komentar: addKomentar
+          foto_id: fotoId,
+          komentar: addKomentar
         })
         const newKomentarList = [...komentarList];
         newKomentarList.push(addKomentar);
@@ -202,19 +205,19 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
       const komen = dataKomentar.komentar
       if (komen) {
         return (
-            <View>
-                {
-                    komen.map((item) => (
-                        <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.user.Username} profile={item.user.FotoProfil} />
-                    ))
-                }
-            </View>
+          <View>
+            {
+              komen.map((item) => (
+                <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.user.Username} profile={item.user.FotoProfil} />
+              ))
+            }
+          </View>
         )
       } else {
         if (!sendKomen) {
           return (
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontFamily: 'Poppins-Medium', fontSize: 12}}>Tidak ada komentar</Text>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12 }}>Tidak ada komentar</Text>
             </View>
           )
         }
@@ -244,10 +247,10 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
             <View style={styles.lineContainer}>
               <View style={styles.line} />
             </View>
-            <Text style={[assets.fonts.bold, {textAlign: 'center', fontSize: 18}]}>{dataKomentar.count} Komentar</Text>
+            <Text style={[assets.fonts.bold, { textAlign: 'center', fontSize: 18 }]}>{dataKomentar.count} Komentar</Text>
             <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1, marginBottom: 10}}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{ flex: 1, marginBottom: 10 }}
             >
               <View paddingH-25>
                 <View style={assets.styleDefault.garis2} />
@@ -266,7 +269,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
                       isikomentar={komentar}
                     />
                   ))}
-                  <ViewKomentar/>
+                  <ViewKomentar />
                   {children}
                 </Animated.ScrollView>
               </GestureDetector>
@@ -274,7 +277,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
                 <View style={assets.styleDefault.garis2} />
               </View>
               <View paddingH-20>
-                <InputKomentar 
+                <InputKomentar
                   value={addKomentar}
                   onChangeText={text => setAddKomentar(text)}
                   onPress={kirimPesan}

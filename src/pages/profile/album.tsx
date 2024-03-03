@@ -34,7 +34,7 @@ const Album = props => {
                     <React.Fragment key={item.id}>
                         {/* Check if the index is even */}
                         {index % 2 === 0 && (
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                            <View style={{ flexDirection: 'row', justifyContent: data.length - index >= 2 ? 'space-evenly' : 'flex-start' }}>
                                 {/* Item 1 */}
                                 <TouchableOpacity
                                     style={{ marginBottom: 5 }}
@@ -68,7 +68,13 @@ const Album = props => {
                                     >
                                         {/* Gunakan gambar dari item atau dari assets.images.hewanRusa */}
                                         {data[index + 1].Sampul !== ' ' ? (
-                                            <Image source={{uri: `data:image/png;base64,${data[index + 1].Sampul}`}} style={style.images} />
+                                            <Image 
+                                            source={{
+                                                uri: data[index + 1].Sampul.startsWith('https://') 
+                                                  ? data[index + 1].Sampul 
+                                                  : data[index + 1].Sampul ? `data:image/png;base64,${item.Sampul}` : null
+                                            }} 
+                                            style={style.images} />
                                         ) : (
                                             <View style={[style.images, {backgroundColor: getRandomColor(), borderRadius: 10}]}/>
                                         )}
@@ -92,9 +98,10 @@ export default Album
 
 const style = StyleSheet.create({
     images: {
-        width: 170,
+        width: 175,
         height: 150,
         marginHorizontal: 5,
-        borderRadius: 15
+        borderRadius: 15,
+        flex: 1
     }
 })

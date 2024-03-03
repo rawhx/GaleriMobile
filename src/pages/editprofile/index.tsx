@@ -7,6 +7,7 @@ import RNFS from 'react-native-fs'
 import DocumentPicker from 'react-native-document-picker'
 import { Alert, ScrollView, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { updateProfile } from "../../api/updateProfile";
+import ImagePicker from 'react-native-image-crop-picker';
 
 const EditProfile = ({ route, navigation }) => {
     const [username, setUsername] = useState(route.params.data.Username)
@@ -61,16 +62,25 @@ const EditProfile = ({ route, navigation }) => {
         });
 
         if (pickImg) {
-            const fileUri = pickImg[0].uri
-            const data = await RNFS.readFile(fileUri, 'base64')
-            setImg(data)
-            console.log(pickImg);
-
-            handleInputChange('foto_profil', {
-                uri: fileUri,
-                name: pickImg[0].name,
-                type: pickImg[0].type
-            })
+            const fileUri = pickImg[0].uri;
+            ImagePicker.openCropper({
+                path: fileUri,
+                width: 108, // Lebar gambar yang diinginkan setelah dipotong
+                height: 108, // Tinggi gambar yang diinginkan setelah dipotong
+                cropperCircleOverlay: true, // Jika Anda ingin hasilnya berbentuk lingkaran
+                cropping: true,
+                includeBase64: true,
+            }).then(croppedImage => {
+                if (croppedImage) {
+                    const { path, width, height } = croppedImage;
+                    setImg(croppedImage.data);
+                    handleInputChange('foto_profil', {
+                        uri: path,
+                        name: pickImg[0].name,
+                        type: pickImg[0].type,
+                    });
+                }
+            });
         } else {
             if (DocumentPicker.isCancel(pickImg)) {
                 console.log('Pemilihan dibatalkan');
@@ -80,13 +90,40 @@ const EditProfile = ({ route, navigation }) => {
         }
     }
 
+    // const uploadFile = async () => {
+    //     const pickImg = await DocumentPicker.pick({
+    //         type: [DocumentPicker.types.images],
+    //     });
+
+    //     if (pickImg) {
+    //         const fileUri = pickImg[0].uri
+    //         const data = await RNFS.readFile(fileUri, 'base64')
+    //         setImg(data)
+    //         handleInputChange('foto_profil', {
+    //             uri: fileUri,
+    //             name: pickImg[0].name,
+    //             type: pickImg[0].type
+    //         })
+    //     } else {
+    //         if (DocumentPicker.isCancel(pickImg)) {
+    //             console.log('Pemilihan dibatalkan');
+    //         } else {
+    //             console.error('Error picking image:', pickImg);
+    //         }
+    //     }
+    // }
+
     return (
         <View style={container.defaultTab}>
             <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
             <ScrollView>
                 <View marginT-15 marginH-15>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <TouchableOpacity onPress={() => navigation.goBack()} style={{ width: 20, alignItems: 'center' }}>
+                        <TouchableOpacity onPress={() => {
+                                navigation.goBack()
+                            }} 
+                            style={{ width: 20, alignItems: 'center' }}
+                        >
                             <Icon name="arrow-left" size={20} color="black" />
                         </TouchableOpacity>
                         <Text style={[assets.fonts.bold, { fontSize: 16.5 }]}>Edit Profile</Text>

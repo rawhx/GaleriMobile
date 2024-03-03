@@ -217,7 +217,7 @@ const DetailLike = ({route, navigation}) => {
                                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                         {
                                             route.params && route.params.member ? (
-                                                <View marginR-5 padding-5 style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5}}>
+                                                <View marginR-5 padding-5 style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5}}>
                                                     <Icon5 name="crown" size={10} color={"#FFE500"} solid />
                                                     <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 9, marginLeft: 5, color: "#FFE500" }}>PICTSEA+</Text>
                                                 </View>

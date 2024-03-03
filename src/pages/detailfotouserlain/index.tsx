@@ -3,11 +3,11 @@ import Icon from "react-native-vector-icons/FontAwesome6"
 import Iconfa5 from "react-native-vector-icons/FontAwesome5"
 import { Image, LoaderScreen, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Like, ModalC, Pin, ViewAddKomentar, container } from "../../components";
-import { GestureHandlerRootView, ScrollView, TextInput } from "react-native-gesture-handler";
+import { GestureHandlerRootView, RefreshControl, ScrollView, TextInput } from "react-native-gesture-handler";
 import { assets } from "../../assets";
 import BottomSheetKomentar from "../../components/bottomsheet/bottomsheetKomentar";
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet";
-import { getFollowApi, getKomentarApi, getUserCari, postKomentar, postLike, reportFoto } from "../../api/api";
+import { fotoCari, getFollowApi, getKomentarApi, getUserCari, postKomentar, postLike, reportFoto } from "../../api/api";
 import { StyleSheet } from "react-native";
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -26,6 +26,7 @@ const DetailFotoUserLain = ({route, navigation}) => {
         bottomSheetRef.current?.expand();
     }, [])
 
+    const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState(true)
     const [like, setLike] = useState(route.params.favorite)
     const [follow, setFollow] = useState('Ikuti')
@@ -72,9 +73,6 @@ const DetailFotoUserLain = ({route, navigation}) => {
                 foto_id: route.params.id,
                 komentar: addKomentar
             })
-            console.log('====================================');
-            console.log(res[0].IsiKomentar);
-            console.log('====================================');
             const newKomentarList = [...komentarList];
             newKomentarList.push(res[0].IsiKomentar);
             setKomentarList(newKomentarList);
@@ -97,6 +95,12 @@ const DetailFotoUserLain = ({route, navigation}) => {
         await fetchKomen()
         await setLike(route.params.favorite)
         await setFollow(route.params.follow)
+        await fotoCari({ foto_id: route.params.id }).then((res) => {
+            setLike(res[0].Favorit)
+            setFollow(res[0].Follow === true ? 'Diikuti' : 'Ikuti')
+        }).catch((err) => {
+            console.log('foto cari', err);
+        })
         console.log(route.params.follow);
         
         await setLoad(false)
@@ -152,11 +156,22 @@ const DetailFotoUserLain = ({route, navigation}) => {
             }
         }
         
+        const Refresh = async () => {
+            setKomentarList([])
+            await fetchData()
+            setLoading(false)
+            console.log('fresh');
+        }
+
         return (
             <GestureHandlerRootView style={{flex: 1}}>
                 <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{display: load ? 'block' : 'none'}}/>
                 <View style={container.defaultTab}>
-                    <ScrollView>
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl refreshing={loading} onRefresh={Refresh} />
+                        }
+                    >
                         <View key="Foto">
                             <ImageBg foto={route.params.foto}>
                                 <View style={{
@@ -222,7 +237,7 @@ const DetailFotoUserLain = ({route, navigation}) => {
                                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                     {
                                         route.params && route.params.member ? (
-                                            <View marginR-5 padding-5 style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5}}>
+                                            <View marginR-5 padding-5 style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor: assets.colors.button, borderRadius: 5}}>
                                                 <Iconfa5 name="crown" size={10} color={"#FFE500"} solid />
                                                 <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 9, marginLeft: 5, color: "#FFE500" }}>PICTSEA+</Text>
                                             </View>
@@ -278,11 +293,11 @@ const DetailFotoUserLain = ({route, navigation}) => {
     
                 <BottomSheet
                     ref={bottomSheetRef}
-                    snapTo={'40%'}
+                    snapTo={'35%'}
                     backgroundColor={'white'}
                     backDropColor={'black'}
                 >
-                    <Text style={[assets.fonts.bold, {textAlign: 'center', fontSize: 18}]}>Edit Info</Text>
+                    <Text style={[assets.fonts.bold, {textAlign: 'center', fontSize: 18}]}>Opsi</Text>
                     <View paddingH-25>
                         <View style={assets.styleDefault.garis2}/>
                     </View>
