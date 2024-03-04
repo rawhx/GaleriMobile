@@ -272,6 +272,10 @@ const Select = props => {
     }
 
     useEffect(() => {
+        setSelected(props.dataSelected)
+    }, [props.dataSelected])
+
+    useEffect(() => {
         fetchData()
     }, [props.dataSelect]);
 
@@ -305,7 +309,7 @@ const Select = props => {
                     setClicked(!clicked);
                 }}>
                 <Text style={[assets.fonts.default, { color: 'grey' }]}>
-                    {selected == '' ? '- Pilih -' : selected}
+                    {!selected ? '- Pilih -' : selected}
                 </Text>
                 {clicked ? (
                     <Icon color={'grey'} name="angle-right" size={20} solid style={{ transform: [{ rotate: '-90deg' }] }} />
