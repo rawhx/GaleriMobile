@@ -11,7 +11,7 @@ export const getKomentarApi = async (data) => {
 
         const komentar = response.data.Data
         let hasil
-        console.log('data komentar', response.data);
+        console.log('data komentar', response.data.Data);
 
         if (response.data.IsError) {
             hasil = {
@@ -19,17 +19,17 @@ export const getKomentarApi = async (data) => {
                 komentar: null
             }
         } else {
-            const promisesUser = komentar.map(async (komentar) => {
-                const pengguna = await getUserCari({
-                    id: komentar.UserID,
-                });
-                const user = JSON.parse(JSON.stringify(pengguna));
-                return { ...komentar, user }; // Menambahkan detail pengguna ke setiap komentar
-            });
-            const komentarDenganPengguna = await Promise.all(promisesUser);
+            // const promisesUser = komentar.map(async (komentar) => {
+            //     const pengguna = await getUserCari({
+            //         id: komentar.UserID,
+            //     });
+            //     const user = JSON.parse(JSON.stringify(pengguna));
+            //     return { ...komentar, user }; // Menambahkan detail pengguna ke setiap komentar
+            // });
+            // const komentarDenganPengguna = await Promise.all(promisesUser);
             hasil = {
                 count: response.data.total,
-                komentar: komentarDenganPengguna
+                komentar: komentar
             }
         }
         console.log('komentar', hasil);

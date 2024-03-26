@@ -171,6 +171,20 @@ const Profile = ({ route, navigation }) => {
         return view
     }
 
+    const handleInputHarga = (event) => {
+        const txt = event.target.value;
+        const cleanedValue = txt.replace(/[^0-9.]/g, '');
+        console.log('====================================');
+        console.log(txt);
+        console.log('====================================');
+        const floatValue = parseFloat(cleanedValue);
+        if (!isNaN(floatValue) && floatValue > 0) {
+            setHargaMember(floatValue);
+        } else {
+            setHargaMember(0);
+        }
+    };
+
     return (
         <GestureHandlerRootView style={{ flex: 1, backgroundColor: 'white' }}>
             <LoaderScreen color={'white'} overlay={true} backgroundColor={'rgba(0, 0, 0, 0.2)'} containerStyle={{ display: visible ? 'block' : 'none' }} />
@@ -524,7 +538,7 @@ const Profile = ({ route, navigation }) => {
                     <Text marginB-10 style={[{ fontSize: 13, fontFamily: 'Poppins-Medium' }]}>Atur Harga</Text>
                     <Input
                         keyboardType={'numeric'}
-                        value={'Rp ' + hargaMember.toLocaleString()}
+                        value={'Rp ' + hargaMember}
                         style={[assets.fonts.default, {
                             backgroundColor: '#F5F5F5',
                             borderRadius: 10,
@@ -534,7 +548,7 @@ const Profile = ({ route, navigation }) => {
                         onChangeText={txt => {
                             const cleanedValue = txt.replace(/[^0-9.]/g, '')
                             const floatValue = parseFloat(cleanedValue);
-                            if (!isNaN(floatValue) && floatValue > 0) {
+                            if (!isNaN(floatValue) && floatValue >= 0) {
                                 setHargaMember(floatValue)
                             } else {
                                 setHargaMember(0)
@@ -550,7 +564,7 @@ const Profile = ({ route, navigation }) => {
                             await updateProfile({
                                 harga_member: hargaMember
                             }).then(async (res) => {
-                                if (res) {
+                                if (!res.IsError) {
                                     await setPesan('Harga member  berhasil disimpan')
                                     await setModalNotif(true)
                                     setModalHarga(false)
@@ -558,7 +572,7 @@ const Profile = ({ route, navigation }) => {
                                         setModalNotif(false)
                                     }, 3000)
                                 } else {
-                                    await setPesan('Harga member tidak tersimpan')
+                                    await setPesan(res.ErrMsg)
                                     await setModalNotif(true)
                                     setTimeout(() => {
                                         setModalNotif(false)

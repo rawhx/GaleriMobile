@@ -30,9 +30,9 @@ const SplashScreen = ({ navigation }) => {
         console.log('====================================');
         setToken(dataToken)
         if (!dataToken) {
-            navigation.navigate("Welcome")
+            navigation.replace("Welcome")
         } else {
-            navigation.navigate("Tabs")
+            navigation.replace("Tabs")
         }
     }
 

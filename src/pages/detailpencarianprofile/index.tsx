@@ -6,7 +6,7 @@ import { GestureHandlerRootView, RefreshControl, ScrollView } from "react-native
 import { assets } from "../../assets";
 import BottomSheetKomentar from "../../components/bottomsheet/bottomsheetKomentar";
 import BottomSheet, { BottomSheetMethods } from "../../components/bottomsheet";
-import { EditFoto, cariAlbum, deleteFoto, fotoCari, getKomentarApi, getUserCari, postKomentar, postLike } from "../../api/api";
+import { EditFoto, cariAlbum, deleteFoto, fotoCari, getKomentarApi, getUserCari, kategoriApi, postKomentar, postLike } from "../../api/api";
 import { Alert, StyleSheet, TextInput } from "react-native";
 
 const DetailPencarianProfile = ({ route, navigation }) => {
@@ -21,8 +21,10 @@ const DetailPencarianProfile = ({ route, navigation }) => {
 
     const [load, setLoad] = useState(true)
     const [like, setLike] = useState(route.params.favorite)
+    const [selectedKategori, setSelectedKategori] = useState(route.params.kategoriId);
     const [selectedAlbum, setSelectedAlbum] = useState(route.params.AlbumId);
     const [apiAlbum, setAlbum] = useState()
+    const [apiKategori, setKategori] = useState()
     const [addKomentar, setAddKomentar] = useState()
     const [sendKomen, setSendKomen] = useState(false)
     const [komentarList, setKomentarList] = useState([]);
@@ -71,6 +73,11 @@ const DetailPencarianProfile = ({ route, navigation }) => {
 
     const fetchData = async () => {
         const dataAlbum = await cariAlbum({ select: true })
+        const kategori = await kategoriApi()
+        setKategori(kategori)
+        console.log('====================================');
+        console.log(kategori);
+        console.log('====================================');
         setAlbum(dataAlbum)
         await fetchKomen()
         await setLike(route.params.favorite)
@@ -99,12 +106,15 @@ const DetailPencarianProfile = ({ route, navigation }) => {
     // if (!load) {
     const ViewKomentar = () => {
         const komenAwal = getDataDetail.komentarAwal.komentar
+        console.log('====================================');
+        console.log(komenAwal);
+        console.log('====================================');
         if (komenAwal) {
             return (
                 <View>
                     {
                         komenAwal.map((item) => (
-                            <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.user.Username} profile={item.user.FotoProfil} />
+                            <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.DataUser.Username} profile={item.DataUser.FotoProfil} />
                         ))
                     }
                 </View>
@@ -113,7 +123,7 @@ const DetailPencarianProfile = ({ route, navigation }) => {
             if (!sendKomen) {
                 return (
                     <View center>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12 }}>Tidak ada komenntar</Text>
+                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12 }}>Tidak ada komentar</Text>
                     </View>
                 )
             }
@@ -125,6 +135,7 @@ const DetailPencarianProfile = ({ route, navigation }) => {
         await fetchKomen()
         await setLike(route.params.favorite)
         await setLoading(false)
+        setKomentarList([])
         console.log('fresh');
     }
 
@@ -305,8 +316,20 @@ const DetailPencarianProfile = ({ route, navigation }) => {
                             />
                         </View>
                     </View>
+                    <View marginB-10>
+                        <Text style={[assets.fonts.default, { fontSize: 15, marginBottom: 10 }]}>Kategori Foto</Text>
+                        <Select
+                            dataSelected={selectedKategori}
+                            dataSelect={apiKategori}
+                            backgroundColor='#F5F5F5'
+                            val={(val, label) => {
+                                setSelectedKategori(label)
+                                handleInputChange('kategori_id', val)
+                            }}
+                        />
+                    </View>
                     <View>
-                    <Text style={[assets.fonts.default, { fontSize: 15, marginBottom: 10 }]}>Album Foto</Text>
+                        <Text style={[assets.fonts.default, { fontSize: 15, marginBottom: 10 }]}>Album Foto</Text>
                         <Select
                             dataSelected={selectedAlbum}
                             dataSelect={apiAlbum}
@@ -324,11 +347,12 @@ const DetailPencarianProfile = ({ route, navigation }) => {
                             backgroundColor={assets.colors.button}
                             style={{ elevation: 0 }}
                             onPress={async () => {
+                                setLoad(true)
                                 const data = await EditFoto(formData)
                                 if (!data.IsError) {
                                     setPesan('Data berhasil diperbarui')
                                     setModalNotif(true)
-                                    setTimeout(()=>{
+                                    setTimeout(() => {
                                         setModalNotif(false)
                                     }, 2000)
                                     bottomSheetRef.current?.close();
@@ -336,6 +360,14 @@ const DetailPencarianProfile = ({ route, navigation }) => {
                                         title: data.Data[0].JudulFoto,
                                         deskripsi: data.Data[0].DeskripsiFoto
                                     })
+                                    setLoad(false)
+                                } else {
+                                    setPesan('Data gagal diperbarui')
+                                    setModalNotif(true)
+                                    setTimeout(() => {
+                                        setModalNotif(false)
+                                    }, 2000)
+                                    setLoad(false)
                                 }
                             }}
                         />

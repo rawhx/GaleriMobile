@@ -5,11 +5,11 @@ import {
     Image,
     TextInput,
     FlatList,
-    ScrollView,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { assets } from '../../assets';
 import Icon from "react-native-vector-icons/FontAwesome6"
+import { ScrollView } from 'react-native-gesture-handler';
 const dataSelect = [
     { label: 'Afghanistan', value: '93' },
     { label: 'Albania', value: '355' },

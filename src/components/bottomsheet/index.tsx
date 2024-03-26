@@ -1,4 +1,4 @@
-import {Dimensions, KeyboardAvoidingView, Platform, StyleSheet, View} from 'react-native';
+import { Dimensions, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -15,9 +15,9 @@ import Animated, {
   AnimatedScrollViewProps,
   runOnJS,
 } from 'react-native-reanimated';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import BackDrop from './BackDrop';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import styleDefault from '../../assets/styles';
 
@@ -33,7 +33,7 @@ export interface BottomSheetMethods {
 }
 
 const BottomSheet = forwardRef<BottomSheetMethods, Props>(
-  ({snapTo, children, backgroundColor, backDropColor, ...rest}: Props, ref) => {
+  ({ snapTo, children, backgroundColor, backDropColor, ...rest }: Props, ref) => {
     // const inset = useSafeAreaInsets();
     // const {height} = Dimensions.get('screen');
     const percentage = parseFloat(snapTo.replace('%', '')) / 100;
@@ -68,12 +68,12 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
         });
       }
     }, [openHeight, topAnimation]);
-    
+
     const expand = useCallback(() => {
       'worklet';
       navigation.getParent()?.setOptions({
         tabBarStyle: {
-            display: "none"
+          display: "none"
         }
       });
       topAnimation.value = withTiming(openHeight);
@@ -182,6 +182,17 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
         }
       });
 
+      if (topAnimation.value > openHeight + 50) {
+        navigation.getParent()?.setOptions({
+          tabBarStyle: styleDefault.tabBar,
+        });
+      } else {
+        navigation.getParent()?.setOptions({
+          tabBarStyle: {
+            display: "none"
+          }
+        });
+      }
     const scrollViewGesture = Gesture.Native();
 
     return (
@@ -209,8 +220,8 @@ const BottomSheet = forwardRef<BottomSheetMethods, Props>(
               <View style={styles.line} />
             </View>
             <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1, marginBottom: 20}}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{ flex: 1, marginBottom: 20 }}
             >
               <GestureDetector
                 gesture={Gesture.Simultaneous(scrollViewGesture, panScroll)}>

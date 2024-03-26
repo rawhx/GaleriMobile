@@ -60,7 +60,7 @@ const Kategori = () => {
                                     // navigation.navigate('TabSearch', {search: {value: kategori.id, label: kategori.Kategori}})
                                 }}
                             >
-                                <ImageBackground source={{ uri: `data:image/png;base64,${kategori.Sampul}` }} style={style.kategoriImg}>
+                                <ImageBackground source={{ uri: kategori.Sampul.startsWith('https://') ? kategori.Sampul : `data:image/png;base64,${kategori.Sampul}` }} style={style.kategoriImg}>
                                 <View style={style.overlay}>
                                     <Text color='white' style={style.text}>{kategori.Kategori}</Text>
                                 </View>

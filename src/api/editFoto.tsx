@@ -23,9 +23,9 @@ export const EditFoto = async (data) => {
     console.log('berhasil edit foto');
     console.log('====================================');
 
-    if (res.data.IsError == false) {
+    // if (res.data.IsError == false) {
       return res.data
-    } 
+    // } 
   } catch (error) {
     console.error('error Edit Foto:' + error);
     if (error.response) {

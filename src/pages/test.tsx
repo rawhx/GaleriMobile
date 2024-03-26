@@ -1,45 +1,37 @@
-import React, {useEffect} from 'react';
-import {Text, View, StyleSheet, BackHandler, Alert} from 'react-native';
+import React, { useState } from "react";
+import { View } from "react-native";
 
-const Test = () => {
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        {text: 'YES', onPress: () => BackHandler.exitApp()},
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
-  }, []);
-
+const Square = ({ backgroundColor }) => {
+  const [height, setHeight] = useState(0);
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Click Back button!</Text>
-    </View>
+    <View
+      onLayout={(e) => setHeight(e.nativeEvent.layout.width)}
+      style={{ flex: 1, height, backgroundColor }}
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
-
-export default Test;
+export default function Test() {
+  return (
+    <View style={{ flexDirection: "column" }}>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <Square backgroundColor="red" />
+        <Square backgroundColor="pink" />
+        <Square backgroundColor="orange" />
+        <Square backgroundColor="green" />
+      </View>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <Square backgroundColor="lightgreen" />
+        <Square backgroundColor="yellow" />
+        <Square backgroundColor="blue" />
+        <Square backgroundColor="lightblue" />
+      </View>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <Square backgroundColor="skyblue" />
+        <Square backgroundColor="brown" />
+        <Square backgroundColor="gray" />
+        <Square backgroundColor="red" />
+      </View>
+    </View>
+  );
+}

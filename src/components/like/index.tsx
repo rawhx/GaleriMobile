@@ -11,6 +11,13 @@ const Like = (props) => {
     useEffect(()=>{
         token()
     }, [])
+    
+    useEffect(()=>{
+        console.log('====================================');
+        console.log('like', props.like);
+        console.log('====================================');
+       setLike(props.like)
+    }, [props.like])
 
     const token = async () => {
         const jwtToken = await AsyncStorage.getItem('cache')
