@@ -1,114 +1,61 @@
-import React, { useEffect, useRef, useState } from "react"
-import { ImageBackground, ScrollView, StyleSheet } from "react-native"
-import { Text, TouchableOpacity, View } from "react-native-ui-lib"
-import { assets } from "../../assets"
-import { useNavigation } from "@react-navigation/native"
-import { getItemLabel } from "react-native-ui-lib/src/components/picker/PickerPresenter"
-import axios from "axios"
-
+import { useEffect, useState } from "react"
+import { ImageBackground, ScrollView, Text, TouchableOpacity, View, StyleSheet } from "react-native"
+import { red100 } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { kategoriApi } from "../../api";
+import { style } from "../../assets/style";
 
 const Kategori = () => {
-    const navigation = useNavigation()
-    const kategoriData_old = [
-        { Sampul: assets.images.hewanRusa, Kategori: 'Hewan', id: '659e1e792b908d5941344334' },
-        { Sampul: assets.images.tumbuhanKategori, Kategori: 'Tumbuhan', id: '659e1e702b908d5941344333' },
-        { Sampul: assets.images.musimKategori, Kategori: 'Musim', id: null },
-        { Sampul: assets.images.abstrakKategori, Kategori: 'Abstrak', id: '659e1e802b908d5941344335' },
-        { Sampul: assets.images.kotaKategori, Kategori: 'Kota', id: null },
-    ];
-
-    const [kategoriData, setKategori] = useState([])
-    const [load, setLoad] = useState(false)
-    
-    const fetchData = async () => {
-        await axios.get('https://picsea-1-k3867505.deta.app/kategori-cari?page=1&limit=10').then((res)=>{
-            setKategori(res.data.Data)
-            setLoad(false)
-        })
-    }
-    
-    const getRandomColor = () => {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    };
-    
-    const randomColors = Array.from({ length: 4 }, () => getRandomColor());
-    
+    const [dataKategori, setDataKategori] = useState([])
+    const [load, setLoad] = useState(true)
     useEffect(() => {
-        setLoad(true)
-        fetchData()
-    }, []);
+        kategoriApi().then((res) => {
+            setLoad(false)
+            setDataKategori(res)
+        })
+    }, [])
+
+    const colors = ['blue', 'green', 'red', 'grey', 'red', 'blue'];
 
     return (
-        <ScrollView
-        style={{marginVertical: 5}}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        >
-            <View style={style.sectionKategori}>
+        <ScrollView  horizontal showsHorizontalScrollIndicator={false}>
             {
-                !load ? (
-                    kategoriData.map((kategori, index) => (
-                        <View key={index} style={style.kategori}>
-                            <TouchableOpacity
-                                onPress={()=>{
-                                    navigation.navigate('search', {search: {value: kategori.id, label: kategori.Kategori}})
-                                    // navigation.navigate('TabSearch', {search: {value: kategori.id, label: kategori.Kategori}})
-                                }}
-                            >
-                                <ImageBackground source={{ uri: `data:image/png;base64,${kategori.Sampul}` }} style={style.kategoriImg}>
-                                <View style={style.overlay}>
-                                    <Text color='white' style={style.text}>{kategori.Kategori}</Text>
-                                </View>
+                load ? (
+                    <>
+                        {
+                            Array.from({ length: 4 }).map((_, index) => (
+                                <SkeletonPlaceholder borderRadius={10} key={index} >
+                                    <View style={{ height: 150, width: 200, marginLeft: index > 0 ? 10 : 0 }} />
+                                </SkeletonPlaceholder>
+                            ))
+                        }
+                    </>
+                ) : (
+                    <View style={{ flexDirection: 'row' }}>
+                        {dataKategori.map((data, index) => (
+                            <TouchableOpacity key={index} style={{ height: 150, width: 200, marginLeft: index > 0 ? 10 : 0 }} >
+                                <ImageBackground source={{ uri: (data.Sampul).startsWith('https://') ? data.Sampul : `data:image/png;base64,${data.Sampul}` }} style={{ borderRadius: 10, width: '100%', height: '100%', overflow: 'hidden' }} >
+                                    <View style={{
+                                        ...StyleSheet.absoluteFillObject,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                        borderRadius: 10,
+                                        padding: 10,
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                        <Text style={[style.fontBold, { color: 'white', fontSize: 15 }]}>{data.Kategori}</Text>
+                                    </View>
                                 </ImageBackground>
                             </TouchableOpacity>
-                        </View>
-                    ))
-                ) : (
-                    randomColors.map((color, index) => (
-                        <View key={index} style={style.kategori}>
-                            <View style={[style.kategoriImg, { backgroundColor: color }]} />
-                        </View>
-                    ))
+                        ))}
+                    </View>
                 )
             }
+            <View>
+
             </View>
         </ScrollView>
     )
 }
-
-const style = StyleSheet.create({
-  text: {
-    fontFamily: 'Poppins-Bold',
-    fontSize:14
-  },
-  sectionKategori: {
-      flexDirection: 'row'
-  },
-  kategori: {
-      width: 200,
-      height: 125,
-      marginHorizontal: 5,
-  },
-  kategoriImg: {
-      borderRadius: 10,
-      width: '100%',
-      height: '100%',
-      resizeMode: 'cover',
-      overflow: 'hidden'
-  },
-  overlay: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-      borderRadius: 10,
-      padding: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
-  },
-})
 
 export default Kategori

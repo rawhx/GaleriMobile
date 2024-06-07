@@ -1,27 +1,25 @@
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import config from '../../config';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { BASE_URL } from "@env"
 
-export const postLike = async (data) => {
-  try {
-    const jwtToken = await AsyncStorage.getItem('cache')
+const postLike = async (data) => {
+    const jwtToken = await AsyncStorage.getItem('Token');
 
-    const res = await axios.post(
-        `${config.Base_url}/like-foto`, 
+    if (jwtToken) {
+      const response = await axios.post(
+        `${BASE_URL}/like-foto`,
         {
-            foto_id: data.foto_id,
+          foto_id: data.foto_id,
         },
         {
-            headers: {
-                Authorization: `Bearer ${jwtToken}`,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+          headers: {
+            'Authorization': `Bearer ${jwtToken}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         }
-    );
-    
-    return res.data
-  } catch (error) {
-    console.error('error addKomentar:' + error);
-    throw error;
-  }
+      )
+      return response.data;
+    }
 }
+
+export default postLike

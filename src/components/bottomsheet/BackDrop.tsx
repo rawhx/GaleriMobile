@@ -1,59 +1,25 @@
-import {StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import React from 'react';
-import Animated, {
-  SharedValue,
-  interpolate,
-  useAnimatedStyle,
-} from 'react-native-reanimated';
+import { StyleSheet } from 'react-native';
 
-type Props = {
-  topAnimation: SharedValue<number>;
-  openHeight: number;
-  closeHeight: number;
-  backDropColor: string;
-  close: () => void;
-};
-
-const BackDrop = ({
-  topAnimation,
-  openHeight,
-  closeHeight,
-  backDropColor,
-  close,
-}: Props) => {
-  const backDropAnimation = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      topAnimation.value,
-      [closeHeight, openHeight],
-      [0, 0.5],
-    );
-    const display = opacity === 0 ? 'none' : 'flex';
-    return {
-      opacity,
-      display,
-    };
-  });
+const CustomBackdrop = (props) => {
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        close();
-      }}>
-      <Animated.View
-        style={[
-          styles.backDrop,
-          backDropAnimation,
-          {backgroundColor: backDropColor},
-        ]}
-      />
-    </TouchableWithoutFeedback>
+    <BottomSheetBackdrop
+      {...props}
+      // pressBehavior="none"
+      disappearsOnIndex={-1}
+      appearsOnIndex={0}
+      enableTouchThrough={false}
+      opacity={0.4}
+    />
   );
 };
 
-export default BackDrop;
-
 const styles = StyleSheet.create({
-  backDrop: {
+  backdrop: {
     ...StyleSheet.absoluteFillObject,
-    display: 'none',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
+
+export default CustomBackdrop;

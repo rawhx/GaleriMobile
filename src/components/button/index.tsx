@@ -1,43 +1,23 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
-import { StyleSheet, ToastAndroid } from "react-native";
-import { Button, View } from "react-native-ui-lib";
+import { assets } from "../../assets"
+import { Button } from "react-native-paper";
 
-const ButtonC = props => {
-    const [Token, setToken] = useState()
-    useEffect(()=>{
-        token()
-    })
-
-    const token = async () => {
-        const jwtToken = await AsyncStorage.getItem('cache')
-        setToken(jwtToken)
-    }
+const ButtonC = (props) => {
     return (
-        <View>
-            <Button 
-                label={props.label} 
-                labelStyle={[style.label, props.labelStyle]}
-                size='medium' 
-                borderRadius={props.borderRadius ?? 20} 
-                backgroundColor={props.backgroundColor} 
-                marginV-10 
-                paddingV-10 
-                style={props.style ?? style.default} 
-                onPress={Token? props.onPress : props.blokir ? props.onPress :  ()=>{ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT)}}
-            />
-        </View>
+        <>
+            <Button
+                // icon="camera"
+                mode={props.mode || 'contained'}
+                style={[{ width: '100%' }, props.style]}
+                onPress={props.onPress}
+                labelStyle={[assets.style.fontSemiBold, { color: 'white' }, props.labelStyle]}
+                buttonColor={props.buttonColor || assets.colors.navy}
+                loading={props.loading}
+            // disabled={false}
+            >
+                {props.title}
+            </Button>
+        </>
     )
 }
-
-const style = StyleSheet.create({
-    label: {
-        fontFamily: 'Poppins-Bold',
-    },
-    default: {
-        elevation: 9,
-        shadowRadius: 15,
-    },
-})
 
 export default ButtonC

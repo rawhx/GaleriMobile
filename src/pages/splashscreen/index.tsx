@@ -1,50 +1,41 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
-import { Image, Text, View } from "react-native-ui-lib";
-import { assets } from "../../assets";
-import { container } from "../../components";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserToken } from "../../context/GlobalState";
-import { useIsFocused } from "@react-navigation/native";
+import React, { useContext, useEffect } from "react"
+import { Image, Text, View } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { UserGlobalVar } from "../../context/globalVar"
+import { assets } from "../../assets"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { getProfileApi } from "../../api"
 
-const SplashScreen = ({ navigation }) => {
-    const isFocused = useIsFocused()
+const SplashScreen = ({ route, navigation }) => {
+    const [userglobal, setUserGlobal] = useContext(UserGlobalVar)
 
-    const [Token, setToken] = useContext(UserToken)
-    useEffect(() => {
-        if (isFocused) {
-            console.log('Screen is in focus splash');
-            setTimeout(() => {
-                HandleItem()
-            }, 2500)
-        } else {
-            console.log('Screen is not in focus splash');
-            // tambahkan kode untuk membersihkan efek samping saat layar tidak difokuskan
+    const getUser = async () => {
+        const user = await getProfileApi()
+        if (user) {
+            await setUserGlobal(user)
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Tabs' }],
+            });
+            return
         }
-    }, [isFocused])
-
-    const HandleItem = async () => {
-        const dataToken = await AsyncStorage.getItem('cache')
-        // await AsyncStorage.removeItem('cache')
-        console.log('====================================');
-        console.log(dataToken);
-        console.log('====================================');
-        setToken(dataToken)
-        if (!dataToken) {
-            navigation.navigate("Welcome")
-        } else {
-            navigation.navigate("Tabs")
-        }
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Welcome' }],
+        })
     }
 
+    useEffect(() => {
+        getUser()
+    }, [])
+
     return (
-        <View style={[container.default]}>
-            <View center>
-                <Image source={assets.images.pictsea} style={{
-                    resizeMode: 'contain',
-                    width: 200
-                }} />
-            </View>
-        </View>
+        <SafeAreaView style={[assets.style.containerFirst, {justifyContent: 'center', alignItems: 'center'}]}>
+            <Image source={assets.images.pictsea} style={{
+                resizeMode: 'contain',
+                width: 200
+            }} />
+        </SafeAreaView>
     )
 }
 

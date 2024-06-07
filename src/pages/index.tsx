@@ -1,10 +1,15 @@
-import SplashScreen from "./splashscreen"
-import Welcome from "./welcome"
-import Login from "./login"
-import Register from "./register"
-import Home from "./home"
-import Search from "./pencarian"
-import DetailPencarian from "./detailpencarian"
-import Profile from "./profile"
+import SplashScreen from "./SplashScreen"
+import Welcome from "./Welcome"
+import Login from "./Login"
+import Register from "./Register"
+import Home from "./Home"
+import Search from "./Search"
+import Profile from "./Profile"
+import DetailFoto from "./DetailFoto"
+import Favorite from "./Favorite"
 
-export {SplashScreen, Welcome, Login, Register, Home, Search, DetailPencarian, Profile}
+export {
+    SplashScreen, Welcome, Login, Register, 
+    Home, Search, Profile,
+    DetailFoto, Favorite, 
+}
