@@ -13,9 +13,10 @@ import Select from "./select";
 import ViewAddKomentar from "./viewaddkomentar";
 import ModalC from "./modal";
 import Like from "./like";
+import ViewSearchUser from "./viewsearchuser";
 
 export { 
-    Like,
+    Like, ViewSearchUser,
     BelumLogin, container, Pin, 
     ImageBg, InputKomentar, Header, 
     ButtonC, Input, LoginButton, 

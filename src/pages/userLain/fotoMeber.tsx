@@ -39,7 +39,7 @@ const Member = props => {
                   {index + 1 < dataFoto.length && (
                     // Item 2
                     <TouchableOpacity style={{ width: '33%', aspectRatio: 1, marginHorizontal: 2 }}
-                      onPress={() => navigation.navigate(props.route ? 'SearchDetailFotoUserLain' : 'DetailFotoUserLain', { id: dataFoto[index + 1], foto: dataFoto[index + 1].Foto, title: dataFoto[index + 1].JudulFoto, userId: dataFoto[index + 1].UserID, deskripsi: dataFoto[index + 1].DeskripsiFoto, kategoriId: dataFoto[index + 1].KategoriID, favorite: dataFoto[index + 1].Favorit, DataUser: props.profile, follow: props.follow, member: true })}>
+                      onPress={() => navigation.navigate(props.route ? 'SearchDetailFotoUserLain' : 'DetailFotoUserLain', { id: dataFoto[index + 1].id, foto: dataFoto[index + 1].Foto, title: dataFoto[index + 1].JudulFoto, userId: dataFoto[index + 1].UserID, deskripsi: dataFoto[index + 1].DeskripsiFoto, kategoriId: dataFoto[index + 1].KategoriID, favorite: dataFoto[index + 1].Favorit, DataUser: props.profile, follow: props.follow, member: true })}>
                       <Image source={{ uri: (dataFoto[index + 1].Foto).startsWith('https://') ? dataFoto[index + 1].Foto : `data:image/*;base64,${dataFoto[index + 1].Foto}` }} style={{ flex: 1 }} />
                       <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, padding: 3 }}>
@@ -52,7 +52,7 @@ const Member = props => {
                   {index + 2 < dataFoto.length && (
                     // Item 3
                     <TouchableOpacity style={{ width: '33%', aspectRatio: 1 }}
-                      onPress={() => navigation.navigate(props.route ? 'SearchDetailFotoUserLain' : 'DetailFotoUserLain', { id: dataFoto[index + 2], foto: dataFoto[index + 2].Foto, title: dataFoto[index + 2].JudulFoto, userId: dataFoto[index + 2].UserID, deskripsi: dataFoto[index + 2].DeskripsiFoto, kategoriId: dataFoto[index + 2].KategoriID, favorite: dataFoto[index + 2].Favorit, DataUser: props.profile, follow: props.follow, member: true })}>
+                      onPress={() => navigation.navigate(props.route ? 'SearchDetailFotoUserLain' : 'DetailFotoUserLain', { id: dataFoto[index + 2].id, foto: dataFoto[index + 2].Foto, title: dataFoto[index + 2].JudulFoto, userId: dataFoto[index + 2].UserID, deskripsi: dataFoto[index + 2].DeskripsiFoto, kategoriId: dataFoto[index + 2].KategoriID, favorite: dataFoto[index + 2].Favorit, DataUser: props.profile, follow: props.follow, member: true })}>
                       <Image source={{ uri: (dataFoto[index + 2].Foto).startsWith('https://') ? dataFoto[index + 2].Foto : `data:image/*;base64,${dataFoto[index + 2].Foto}` }} style={{ flex: 1 }} />
                       <View style={{ position: 'absolute', bottom: 5, right: 5 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: assets.colors.button, padding: 3 }}>

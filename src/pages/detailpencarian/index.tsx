@@ -47,7 +47,7 @@ const DetailPencarian = ({ route, navigation }) => {
 
     const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState(true)
-    const [like, setLike] = useState(route.params.favorite)
+    const [like, setLike] = useState()
     const [follow, setFollow] = useState('Ikuti')
     const [addKomentar, setAddKomentar] = useState()
     const [sendKomen, setSendKomen] = useState(false)
@@ -117,21 +117,25 @@ const DetailPencarian = ({ route, navigation }) => {
     };
 
     const Grid = () => {
-        const [data, setData] = useState([])
+        const [data, setData] = useState([]);
+
         useEffect(() => {
-            const fetchData = async () => {
-                const jwtToken = await AsyncStorage.getItem('cache');
-                let url = `${config.apiUrl}foto-cari/guest?page=1&limit=20&kategori_id=${route.params.kategoriId}`
-                if (jwtToken) {
-                    url = `${config.apiUrl}foto-cari?membership=true&keduanya=true&page=1&limit=20&kategori_id=${route.params.kategoriId}`
+            const fetchDataSearch = async () => {
+                try {
+                    const jwtToken = await AsyncStorage.getItem('cache');
+                    let url = `${config.apiUrl}foto-cari/guest?page=1&limit=20&kategori_id=${route.params.kategoriId}`;
+                    if (jwtToken) {
+                        url = `${config.apiUrl}foto-cari?membership=true&keduanya=true&page=1&limit=20&kategori_id=${route.params.kategoriId}`;
+                    }
+                    const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
+                    const response = await axios.get(url, { headers });
+                    setData(response.data.Data);
+                } catch (error) {
+                    console.error('Error fetching search:', error);
                 }
-                const response = await axios.get(url, {
-                    headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
-                });
-                setData(response.data.Data);
             };
 
-            fetchData()
+            fetchDataSearch();
         }, []);
 
         return (
@@ -155,13 +159,13 @@ const DetailPencarian = ({ route, navigation }) => {
     }
 
     const fetchKomen = async () => {
-        const user = await getUserCari({ id: route.params.userId })
+        // const user = await getUserCari({ id: route.params.userId })
         const komentarAwal = await getKomentarApi({ fotoId: route.params.id, limit: 2 })
         console.log('komentar awal', komentarAwal);
 
         setGetDataDetail({
-            username: user.Username,
-            profile: user.FotoProfil,
+            // username: user.Username,
+            // profile: user.FotoProfil,
             komentarAwal: komentarAwal,
         })
     }
@@ -177,7 +181,7 @@ const DetailPencarian = ({ route, navigation }) => {
         }).catch((err) => {
             console.log('foto cari', err);
         })
-        await setLoad(false)
+        await setLoad(false);
     };
 
     const dataFollow = async () => {
@@ -197,9 +201,10 @@ const DetailPencarian = ({ route, navigation }) => {
     }, [route.params.id, route.params.favorite, route.params.follow, isFocused]);
 
     const Refresh = async () => {
+        await setLoading(true)
         setKomentarList([])
         await fetchData()
-        setLoading(false)
+        await setLoading(false)
         console.log('fresh');
     }
 
@@ -218,6 +223,7 @@ const DetailPencarian = ({ route, navigation }) => {
                             width: 45,
                             height: 45,
                             borderRadius: 60,
+                            backgroundColor: 'rgba(240, 240, 240, 1)',
                         }}
                     />
                 </View>
@@ -232,7 +238,7 @@ const DetailPencarian = ({ route, navigation }) => {
                 <View>
                     {
                         komenAwal.map((item) => (
-                            <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.user.Username} profile={item.user.FotoProfil} />
+                            <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.DataUser.Username} profile={item.DataUser.FotoProfil} />
                         ))
                     }
                 </View>
@@ -241,7 +247,7 @@ const DetailPencarian = ({ route, navigation }) => {
             if (!sendKomen) {
                 return (
                     <View center>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12 }}>Tidak ada komenntar</Text>
+                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12 }}>Tidak ada komentar</Text>
                     </View>
                 )
             }

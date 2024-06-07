@@ -59,6 +59,7 @@ const InputKomentar = (props) => {
                             width: 45,
                             height: 45,
                             borderRadius: 60,
+                            backgroundColor: 'rgba(240, 240, 240, 1)',
                         }}
                         />
                     </View>

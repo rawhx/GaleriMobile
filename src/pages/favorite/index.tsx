@@ -8,7 +8,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import config from "../../../config";
 
-const ViewFavorite = ({ navigation }) => {
+const ViewFavorite = ({ route, navigation }) => {
     const [data, setData] = useState([]);
     const [page, setPage] = useState(2);
     const [loading, setLoading] = useState(false);
@@ -33,14 +33,14 @@ const ViewFavorite = ({ navigation }) => {
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('LikeDetail', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('LikeDetail', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: route.params.search, member: item.Membership })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 1).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('LikeDetail', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('LikeDetail', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: route.params.search, member: item.Membership })} />
                         ))
                     }
                 </View>

@@ -23,7 +23,7 @@ const awal = () => {
                 </View>
                 <View style={Style.section2}>
                     <TouchableOpacity
-                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => {
+                        onPress={Token ? () => navigation.navigate("ViewFavorite", {search: false}) : () => {
                             ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT);
                         }}>
                         <Icon name="heart" size={20} color="#040326" solid />
@@ -88,7 +88,7 @@ const profile = () => {
                 </View>
                 <View style={Style.section2}>
                     <TouchableOpacity
-                        onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { 
+                        onPress={Token ? () => navigation.navigate("ViewFavorite", {search: false}) : () => { 
                             ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT);
                         }}>
                         <Icon name="heart" size={20} color="#040326" />
@@ -112,7 +112,7 @@ const Search = props => {
                     onChangeText={props.onChangeText}
                 />
                 <View marginL-20 style={Style.section2}>
-                    <TouchableOpacity onPress={Token ? () => navigation.navigate("ViewFavorite") : () => { 
+                    <TouchableOpacity onPress={Token ? () => navigation.navigate("ViewFavorite", {search: true}) : () => { 
                          ToastAndroid.show('Silahkan masuk terlebih dahulu!', ToastAndroid.SHORT);
                     }}>
                         <Icon name="heart" size={20} color="#040326" solid />

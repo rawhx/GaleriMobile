@@ -39,7 +39,7 @@ const App = () => {
             [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
             { cancelable: false }
           );
-        } 
+        }
       }
     };
 
@@ -57,7 +57,7 @@ const App = () => {
         ToastAndroid.show('Klik lagi untuk keluar aplikasi!', ToastAndroid.SHORT);
         lastBackPressed.current = currentTime;
         return true;
-      }
+      } 
       // Klik ketiga (atau lebih): Lakukan tindakan "back"
       lastBackPressed.current = currentTime;
       return true; // Mengizinkan tindakan back seperti biasa

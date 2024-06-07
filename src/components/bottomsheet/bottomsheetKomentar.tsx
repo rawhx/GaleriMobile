@@ -185,6 +185,18 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
         }
       });
 
+    if (topAnimation.value > openHeight + 50) {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: styleDefault.tabBar,
+      });
+    } else {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          display: "none"
+        }
+      });
+    }
+
     const scrollViewGesture = Gesture.Native();
 
     const kirimPesan = async () => {
@@ -208,7 +220,7 @@ const BottomSheetKomentar = forwardRef<BottomSheetMethods, Props>(
           <View>
             {
               komen.map((item) => (
-                <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.user.Username} profile={item.user.FotoProfil} />
+                <DataKomentar key={item.id} isikomentar={item.IsiKomentar} tanggalkomentar={item.TanggalKomentar} username={item.DataUser.Username} profile={item.DataUser.FotoProfil} />
               ))
             }
           </View>

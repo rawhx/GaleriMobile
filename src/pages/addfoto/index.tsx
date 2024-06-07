@@ -48,6 +48,7 @@ const AddFoto = ({ navigation }) => {
         setSelectedKategori('')
         setSelectedAlbum('')
         setJudul('')
+        getData()
         setDeskripsi('')
         setJenisFoto(null)
         setPreviewData(null)
@@ -72,7 +73,7 @@ const AddFoto = ({ navigation }) => {
         } else {
             console.log('Screen is not focus add foto');
         }
-    }, [])
+    }, [isFocused])
 
     // const uploadFile = async () => {
     //     const pickImg = await DocumentPicker.pick({
@@ -324,9 +325,13 @@ const AddFoto = ({ navigation }) => {
                                         }
                                         setVisible(false)
                                     }).catch((err) => {
+                                        console.log('====================================');
+                                        console.log(err.response);
+                                        console.log('====================================');
                                         setError(true)
                                         setModal(true)
-                                        setPesanModal('Data tidak disimpan')
+                                        // setPesanModal('Data tidak disimpan')
+                                        setPesanModal(err.response.data)
                                         setVisible(false)
                                     })
                                 }}

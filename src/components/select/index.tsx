@@ -5,11 +5,11 @@ import {
     Image,
     TextInput,
     FlatList,
-    ScrollView,
 } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { assets } from '../../assets';
 import Icon from "react-native-vector-icons/FontAwesome6"
+import { ScrollView } from 'react-native-gesture-handler';
 const dataSelect = [
     { label: 'Afghanistan', value: '93' },
     { label: 'Albania', value: '355' },
@@ -272,6 +272,10 @@ const Select = props => {
     }
 
     useEffect(() => {
+        setSelected(props.dataSelected)
+    }, [props.dataSelected])
+
+    useEffect(() => {
         fetchData()
     }, [props.dataSelect]);
 
@@ -305,7 +309,7 @@ const Select = props => {
                     setClicked(!clicked);
                 }}>
                 <Text style={[assets.fonts.default, { color: 'grey' }]}>
-                    {selected == '' ? '- Pilih -' : selected}
+                    {!selected ? '- Pilih -' : selected}
                 </Text>
                 {clicked ? (
                     <Icon color={'grey'} name="angle-right" size={20} solid style={{ transform: [{ rotate: '-90deg' }] }} />

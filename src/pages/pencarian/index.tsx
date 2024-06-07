@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Pin, ViewAddKomentar, container } from "../../components"
+import { ButtonC, DataKomentar, Header, ImageBg, InputKomentar, Pin, ViewAddKomentar, ViewSearchUser, container } from "../../components"
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native-ui-lib"
 import { RefreshControl, ScrollView, StyleSheet } from "react-native"
 import axios from "axios"
@@ -30,9 +30,6 @@ const Search = ({ route, navigation }) => {
         const response = await axios.get(url, {
             headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}
         });
-        console.log(response.data.Data);
-        console.log(route.params);
-
         setData(response.data.Data);
         setPage(2);
     };
@@ -57,9 +54,9 @@ const Search = ({ route, navigation }) => {
     }
 
     const Refresh = async () => {
-        setLoading(true)
+        await setLoading(true)
         await fetchData()
-        setLoading(false)
+        await setLoading(false)
     }
 
     const Grid = () => {
@@ -119,13 +116,24 @@ const Search = ({ route, navigation }) => {
         }
     }
 
+    const SearchUser = () => {
+        return (
+            <View style={{paddingHorizontal: 10}}>
+               <ViewSearchUser search={search} pencarian={true}/>
+            </View>
+        )
+    }
+
     return (
         <View style={container.defaultTab}>
             <Header search={true} value={route.params && route.params.search.label ? route.params.search.label : search} onChangeText={handleSearch} onFocus={route.params && route.params.focus ? true : false} />
             {
                 route.params && route.params.search.label ? (
                     <Text style={[{ paddingHorizontal: 20, paddingBottom: 10 }, assets.fonts.bold]}>Berikut foto yang berkaitan dengan "{route.params.search.label}".</Text>
-                ) : search ? (
+                ) : search ? 
+                search.charAt(0) === "@" ? (
+                    <Text style={[{ paddingHorizontal: 20, paddingBottom: 10 }, assets.fonts.bold]}>Berikut user yang berkaitan dengan "{search}".</Text>
+                ) : (
                     <Text style={[{ paddingHorizontal: 20, paddingBottom: 10 }, assets.fonts.bold]}>Berikut foto yang berkaitan dengan "{search}".</Text>
                 ) : null
             }
@@ -136,7 +144,7 @@ const Search = ({ route, navigation }) => {
                     <RefreshControl refreshing={loading} onRefresh={Refresh} />
                 }
             >
-                {data ? Grid() : null}
+                { route.params && route.params.search.label ? Grid() :  search.charAt(0) === "@" ? SearchUser() : Grid()}
             </ScrollView>
         </View>
     )

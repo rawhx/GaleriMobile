@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Alert, BackHandler, RefreshControl, ScrollView, StyleSheet, } from 'react-native'
-import { ButtonSearch, Header, Pin, container } from '../../components'
+import { ButtonSearch, Header, Pin, ViewSearchUser, container } from '../../components'
 import Kategori from './kategori'
 import { assets } from '../../assets'
 import { Text, TouchableOpacity, View } from 'react-native-ui-lib'
@@ -36,9 +36,10 @@ const Home = ({ route, navigation }) => {
     }, []);
 
     const Refresh = async () => {
+        await setLoading(true)
         await fetchData()
+        await setLoading(false)
         console.log('fresh');
-        setLoading(false)
     }
 
     const Grid = () => {
@@ -47,15 +48,14 @@ const Home = ({ route, navigation }) => {
                 <View style={{ flex: 1 }}>
                     {
                         datapopuler.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id}
-                                onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, member: item.Membership })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
                         datapopuler.filter((item, index) => index % 2 == 1).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, member: item.Membership })} />
                         ))
                     }
                 </View>
@@ -79,23 +79,30 @@ const Home = ({ route, navigation }) => {
     };
 
     const GridSearch = () => {
-        dataSearch()
         return (
             <View style={{ flexDirection: 'row' }} marginT-10>
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 0).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, member: item.Membership })} />
                         ))
                     }
                 </View>
                 <View style={{ flex: 1 }}>
                     {
                         data.filter((item, index) => index % 2 == 1).map((item) => (
-                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, tabSearch: true, member: item.Membership })} />
+                            <Pin key={item.id} foto={item.Foto} title={item.JudulFoto} id={item.id} onPress={() => navigation.navigate('DetailFoto', { id: item.id, foto: item.Foto, title: item.JudulFoto, userId: item.UserID, deskripsi: item.DeskripsiFoto, kategoriId: item.KategoriID, favorite: item.Favorit, DataUser: item.DataUser, sendiri: item.Sendiri, follow: item.Follow, member: item.Membership })} />
                         ))
                     }
                 </View>
+            </View>
+        )
+    }
+
+    const SearchUser = () => {
+        return (
+            <View>
+               <ViewSearchUser search={search} pencarian={false}/>
             </View>
         )
     }
@@ -111,12 +118,12 @@ const Home = ({ route, navigation }) => {
                 <View marginH-20>
                     <TouchableOpacity>
                         <ButtonSearch
-                            onChangeText={(txt) => {
-                                console.log(txt);
+                            onChangeText={async (txt) => {
                                 if (!txt) {
-                                    setSearch('')
+                                    await setSearch('')
                                 } else {
-                                    setSearch(txt)
+                                    await setSearch(txt)
+                                    dataSearch()
                                 }
                             }}
                             styleView={style.view} />
@@ -127,12 +134,14 @@ const Home = ({ route, navigation }) => {
                             <Kategori />
                             {search == '' ? (
                                 <Text style={assets.fonts.bold} marginT-20>Gambar paling populer</Text>
+                            ) : search.charAt(0) === "@" ? (
+                                <Text marginT-20 style={[{ paddingBottom: 10 }, assets.fonts.bold]}>Berikut user yang berkaitan dengan "{search}".</Text>
                             ) : (
                                 <Text marginT-20 style={[{ paddingBottom: 10 }, assets.fonts.bold]}>Berikut foto yang berkaitan dengan "{search}".</Text>
                             )}
                         </View>
                     </ScrollView>
-                    {search === '' ? Grid() : GridSearch()}
+                    {search === '' ? Grid() : search.charAt(0) === "@" ? SearchUser() : GridSearch()}
                 </View>
             </ScrollView>
         </SafeAreaView>
